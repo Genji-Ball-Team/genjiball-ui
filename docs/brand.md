@@ -20,16 +20,17 @@
 - No region colours. Region is text only, never colour.
 - Neutrals: hue 210 (teal-blue), low chroma.
 
-| Token  | Value                    |
-| ------ | ------------------------ |
-| bg     | `oklch(15% 0.007 210)`   |
-| panel  | `oklch(17.7% 0.008 210)` |
-| raised | `oklch(21.4% 0.010 210)` |
-| line   | `oklch(24% 0.011 210)`   |
-| border | `oklch(28% 0.012 210)`   |
-| muted  | `oklch(63% 0.012 210)`   |
-| soft   | `oklch(80% 0.008 210)`   |
-| fg     | `oklch(96% 0.005 210)`   |
+| Token          | Value                    |
+| -------------- | ------------------------ |
+| bg             | `oklch(15% 0.007 210)`   |
+| panel          | `oklch(17.7% 0.008 210)` |
+| raised         | `oklch(21.4% 0.010 210)` |
+| line           | `oklch(24% 0.011 210)`   |
+| border         | `oklch(28% 0.012 210)`   |
+| control-border | `oklch(52% 0.012 210)`   |
+| muted          | `oklch(63% 0.012 210)`   |
+| soft           | `oklch(80% 0.008 210)`   |
+| fg             | `oklch(96% 0.005 210)`   |
 
 - Brand green means only "Genji Ball / interactive": logo, primary buttons, links, active tab, focus.
 - Gains and losses never use brand colours, and never colour alone (always ▲▼ or a WIN/LOSS label too).
@@ -68,8 +69,8 @@
 | Master      | `oklch(86% 0.15 100)` | [232,211,79]        | [255,215,0]   |
 | Grandmaster | `oklch(76% 0.16 70)`  | [240,156,23]        | [255,140,0]   |
 | Ascendant   | `oklch(70% 0.15 265)` | [112,154,251]       | [60,160,255]  |
-| Champion    | `oklch(60% 0.2 22)`   | [222,58,70]         | [150,0,0]     |
-| Sovereign   | `oklch(62% 0.19 305)` | [161,97,224]        | [90,20,140]   |
+| Champion    | `oklch(68% 0.2 22)`   | [251,87,93]         | [150,0,0]     |
+| Sovereign   | `oklch(69% 0.19 305)` | [183,119,248]       | [90,20,140]   |
 
 ## Type
 
@@ -111,7 +112,7 @@
 ## Accessibility
 
 - Target: WCAG 2.1 AA everywhere.
-- Text contrast at least 4.5:1 (3:1 for large text and UI outlines). Checked: muted is the weakest at 5.0:1 on raised; everything else is 6.9:1 or higher.
+- Text contrast at least 4.5:1 (3:1 for large text and UI outlines). Checked: muted is the weakest text at 5.0:1 on raised; tier chips go down to 4.6:1 (Champion and Sovereign were lightened to get there). `line` and `border` are decorative separators and need no ratio; an edge that shows where a control is uses `control-border`.
 - Visible focus ring (brand green) on everything focusable; every component works by keyboard.
 - Icons and charts carry screen-reader labels; icon-only buttons need a label.
 - Reduced motion: slash, count-up, title effects and sweeps switch off.
@@ -163,7 +164,7 @@
 
 ## Inputs
 
-- `raised` fill, 1px `border`, label above (never placeholder-only), green focus ring.
+- `raised` fill, 1px `control-border` (3:1 against the surface, so the field can be seen), label above (never placeholder-only), green focus ring.
 - Errors go below the field in `down` with ⚠ and say how to fix it.
 
 ## Empty states
