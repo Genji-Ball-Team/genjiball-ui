@@ -10,13 +10,20 @@ It's built for the [ranked website](https://github.com/Genji-Ball-Team/genjiball
 
 ## Status
 
-Brand decided, library not built yet. The plan is in the [milestones](https://github.com/Genji-Ball-Team/genjiball-ui/milestones):
+Brand decided, package set up, components not built yet. The plan is in the [milestones](https://github.com/Genji-Ball-Team/genjiball-ui/milestones):
 
 1. **Brand:** review the brand sheet and run a second brainstorm for what's still open.
 2. **v0.1 Foundations:** package, tokens, base CSS, Saira, icons, contrast test, npm publishing.
 3. **v0.2 Components:** buttons, inputs, chips, leaderboard rows, chart, toasts, dialogs and the rest.
 4. **Gallery:** a site showing every component and state.
 5. **Adoption:** the website and host tool switch to the library.
+
+## Working on it
+
+```sh
+npm ci
+npm run check   # typecheck, lint, tests, build
+```
 
 ## License
 

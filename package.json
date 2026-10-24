@@ -1,0 +1,50 @@
+{
+  "name": "@genji-ball-team/ui",
+  "version": "0.0.0",
+  "description": "The Genji Ball UI library: design tokens, CSS, icons and gb- web components",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "type": "module",
+  "exports": {
+    "./*.js": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "prepare": "gb-hooks install",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "format": "prettier --write .",
+    "typecheck": "tsc",
+    "lint": "prettier --check . && eslint . && gb-size",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Genji-Ball-Team/genjiball-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Genji-Ball-Team/genjiball-ui/issues"
+  },
+  "homepage": "https://github.com/Genji-Ball-Team/genjiball-ui#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "prettier": "@genji-ball-team/style/prettier",
+  "devDependencies": {
+    "@genji-ball-team/style": "^1.0.0",
+    "eslint": "^10.13.0",
+    "happy-dom": "^21.0.4",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  }
+}
