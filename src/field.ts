@@ -1,4 +1,5 @@
 import { defineElement } from "./define.js";
+import { lightStyles } from "./light-styles.js";
 
 // The field has no shadow root: the control stays a native element in the page, so it submits with
 // its form, autofills, works with password managers and can be named by a real <label for>, none
@@ -63,21 +64,7 @@ gb-field:dir(rtl) > [role="switch"]:checked + .gb-field-mark { translate: -14px 
 const chevron = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>`;
 const tick = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.3 5 8.7l4.5-5"/></svg>`;
 
-let sheet: CSSStyleSheet | undefined;
-const styled = new WeakSet<Node>();
-
-/** Adopts the field's stylesheet into the document or shadow root the field is in, once. */
-function adoptStyles(root: Node): void {
-  // A field not yet in a document or shadow root has nothing to adopt into.
-  if (!("adoptedStyleSheets" in root) || styled.has(root)) return;
-  if (!sheet) {
-    sheet = new CSSStyleSheet();
-    sheet.replaceSync(styles);
-  }
-  const target = root as Document | ShadowRoot;
-  target.adoptedStyleSheets = [...target.adoptedStyleSheets, sheet];
-  styled.add(root);
-}
+const adoptStyles = lightStyles(styles);
 
 let nextId = 0;
 

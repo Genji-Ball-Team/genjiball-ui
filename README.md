@@ -142,6 +142,69 @@ Placeholders in the shape of the content that's loading, so nothing jumps when i
 
 Skeletons are hidden from screen readers: mark the loading area `aria-busy="true"` and give it a name. Lines are `raised`, for a `panel`; on a `raised` surface, set `--gb-skeleton-fill: var(--border)` on it.
 
+### Panels, stats and empty states
+
+```ts
+import "@genji-ball-team/ui/panel.js"; // registers <gb-panel>
+import "@genji-ball-team/ui/stat.js"; // registers <gb-stat>
+import "@genji-ball-team/ui/empty.js"; // registers <gb-empty>
+```
+
+```html
+<gb-panel label="Player">
+  <gb-stat label="Rating">2,214</gb-stat>
+  <gb-stat label="Deflects">1,204</gb-stat>
+</gb-panel>
+<gb-panel label="Matches">
+  <gb-empty>
+    No matches yet.
+    <gb-button slot="action" variant="primary">Host a ranked lobby</gb-button>
+  </gb-empty>
+</gb-panel>
+```
+
+- `<gb-panel>` is a flat box: `panel` fill and a 1px line, no shadow. `label` puts a small uppercase heading over it (a level 2 heading for screen readers; `level` changes that). `raised` is for a box inside a panel: one step up, no line. `compact` has 12px padding instead of 16px.
+- `<gb-stat>` is one number with its label in a raised tile: big, condensed and tabular. Format the number yourself ("1,204", "54%"); it's the content, so it shows before the script loads.
+- `<gb-empty>` goes where a list, table or chart would be: one muted line saying what's missing, and an optional next step in the `action` slot. No second line explaining it.
+
+### Nav and tabs
+
+```ts
+import "@genji-ball-team/ui/nav.js"; // registers <gb-nav>
+import "@genji-ball-team/ui/tabs.js"; // registers <gb-tabs>
+```
+
+```html
+<gb-nav aria-label="Main">
+  <a href="/" aria-current="page"><gb-icon name="leaderboard"></gb-icon>Leaderboard</a>
+  <a href="/matches"><gb-icon name="matches"></gb-icon>Matches</a>
+</gb-nav>
+
+<gb-tabs label="Player stats">
+  <button>Overview</button>
+  <button>Matches</button>
+  <section>…</section>
+  <section>…</section>
+</gb-tabs>
+```
+
+- `<gb-nav>` is for links between pages. They stay plain `<a>` links, so they work with any router and before the script loads. Mark the current one `aria-current="page"`: it gets the raised fill and a green icon (a green bar if it has no icon). On a narrow screen the row scrolls sideways and starts with the current link in view; call `nav.revealCurrent()` after moving `aria-current` without a page load.
+- `<gb-tabs>` is for sections of one page. Each `<button>` child is a tab and each other child its panel, in the same order. `selected` is the shown tab's index; picking a tab updates it and fires `change`. The arrow keys, Home and End move between tabs, and Tab goes on to the panel. A disabled button is skipped.
+
+Items are 32px tall, 40px on touch screens. Neither has a shadow root; their styles are added to the page once, like the field's.
+
+### Avatars
+
+```ts
+import "@genji-ball-team/ui/avatar.js"; // registers <gb-avatar>
+```
+
+```html
+<gb-avatar name="Kyoryu" src="https://cdn.discordapp.com/avatars/…"></gb-avatar> Kyoryu
+```
+
+A player's picture, or the grey first letter of their name when there's no `src` or it fails to load. **Hidden by default:** players have no pictures until they can link Discord, so nothing shows until the app sets `--gb-avatar-display: inline-block` (on `:root` to turn avatars on everywhere). `size` sets the side in pixels (32 by default). It's hidden from screen readers, since the name is always next to it.
+
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
 ## Working on it
