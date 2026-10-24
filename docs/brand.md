@@ -167,7 +167,7 @@
 Tooltips, popovers, menus and dialogs: the things that sit on top of the page for a moment.
 
 - All of them: `raised` fill, 1px `border`, 6px radius, `shadow-float`. They fade in over `fade-duration` (no slide, no scale) and appear at once under reduced motion.
-- Placed below what opened them, lined up with its start edge; above it when there's no room below. Always kept 8px inside the window, and they follow it on scroll.
+- Placed below what opened them, lined up with its start edge, or its end edge when only that fits; above it when there's no room below. Always kept 8px inside the window, and they follow it on scroll.
 - **Tooltip:** a few words naming or explaining a control, never anything to click. Shows after ~400ms of hover, straight away on keyboard focus; Escape hides it. The pointer can move onto it without it closing. Not on touch screens, so nothing may be only in a tooltip. An icon-only button still needs its own label.
 - **Popover:** a small box of content or controls (filters, a share link) opened by a button. Click outside or Escape closes it, and focus goes back to the button.
 - **Menu:** a short list of actions opened by a button. Items are text (an icon only if every item has one), 32px tall (40px on touch screens), hovered or focused item on `line`. Destructive items in `down`, last, after a divider. Arrow keys, Home, End and the first letter move; Enter runs an item and closes the menu; Escape or Tab closes it.
