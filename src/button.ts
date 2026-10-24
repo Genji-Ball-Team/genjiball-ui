@@ -20,6 +20,10 @@ const submitsOnEnter = new Set([
 
 const variants: readonly ButtonVariant[] = ["primary", "secondary", "ghost", "danger"];
 
+// ARIA set on <gb-button> that belongs on the real button inside: a name for an icon-only button,
+// and what a menu, popover or tooltip says about the button it's on.
+const forwarded = ["aria-label", "aria-description", "aria-expanded", "aria-haspopup"] as const;
+
 // The label, the spinner and the feedback text share one grid cell, so the button is as wide as the
 // widest of them and doesn't change width when it gets busy or says "Copied ✓". The label is hidden
 // with opacity, not visibility, so it stays the button's name for screen readers.
@@ -78,7 +82,7 @@ button { background: var(--raised); border-color: var(--border); }
  * readers hear it.
  */
 export class GbButton extends HTMLElement {
-  static readonly observedAttributes = ["disabled", "busy"];
+  static readonly observedAttributes = ["disabled", "busy", ...forwarded];
 
   readonly #root = this.attachShadow({ mode: "open", delegatesFocus: true });
   readonly #button = document.createElement("button");
@@ -164,6 +168,11 @@ export class GbButton extends HTMLElement {
 
   #sync(): void {
     this.#button.disabled = this.disabled;
+    for (const name of forwarded) {
+      const value = this.getAttribute(name);
+      if (value === null) this.#button.removeAttribute(name);
+      else this.#button.setAttribute(name, value);
+    }
     // aria-disabled, not disabled: a busy button keeps focus, so the keyboard user isn't dropped.
     if (this.busy) this.#button.setAttribute("aria-disabled", "true");
     else this.#button.removeAttribute("aria-disabled");
