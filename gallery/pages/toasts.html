@@ -1,0 +1,52 @@
+<section class="g-section">
+  <h2>Kinds</h2>
+  <div class="g-row">
+    <figure class="g-state" id="success-state">
+      <gb-toast>Match uploaded</gb-toast>
+      <figcaption>Success</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-toast kind="error">Upload failed. Your log is kept.</gb-toast>
+      <figcaption>Error</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-toast kind="error"
+        >Couldn't reach genjiball.us.<gb-button slot="action">Retry</gb-button></gb-toast
+      >
+      <figcaption>Error with a fix</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Live</h2>
+  <div class="g-row">
+    <gb-button id="toast-success">Upload a match</gb-button>
+    <gb-button id="toast-error">Fail an upload</gb-button>
+  </div>
+</section>
+
+<gb-toast-region></gb-toast-region>
+
+<script type="module">
+  import { toast } from "./ui/toast.js";
+
+  // A success toast closes itself after 4s; the example comes back, so the state stays on show.
+  const state = document.getElementById("success-state");
+  state.addEventListener("close", (event) => {
+    const again = event.target.cloneNode(true);
+    setTimeout(() => state.prepend(again), 600);
+  });
+
+  let match = 415;
+  document.getElementById("toast-success").addEventListener("click", () => {
+    match += 1;
+    toast(`Match #${match} uploaded`);
+  });
+  document.getElementById("toast-error").addEventListener("click", () => {
+    toast("Upload failed. Your log is kept.", {
+      kind: "error",
+      action: { label: "Retry", run: () => toast("Match uploaded") },
+    });
+  });
+</script>

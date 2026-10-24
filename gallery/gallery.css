@@ -1,0 +1,384 @@
+/* The gallery's own layout, around the components. Tokens only, like the components themselves. */
+
+.g-skip {
+  position: absolute;
+  inset-inline-start: 8px;
+  inset-block-start: -40px;
+  padding: 6px 10px;
+  background: var(--raised);
+  border-radius: var(--r);
+}
+
+.g-skip:focus {
+  inset-block-start: 8px;
+}
+
+.g-shell {
+  display: grid;
+  grid-template-columns: 216px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.g-side {
+  background: var(--panel);
+  border-inline-end: 1px solid var(--line);
+}
+
+.g-side-inner {
+  position: sticky;
+  top: 0;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 20px 12px 32px;
+}
+
+.g-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  color: var(--fg);
+  text-decoration: none;
+  font-size: var(--title-size);
+  font-weight: var(--heading-weight);
+  font-stretch: var(--heading-width);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.g-brand b {
+  color: var(--green);
+}
+
+.g-version {
+  display: block;
+  margin: 4px 0 0 42px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.g-side h2 {
+  margin: 24px 8px 6px;
+}
+
+.g-side ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.g-side a:not(.g-brand) {
+  display: block;
+  padding: 5px 8px;
+  border-radius: var(--r);
+  color: var(--soft);
+  text-decoration: none;
+}
+
+.g-side a:not(.g-brand):hover {
+  color: var(--fg);
+  background: var(--raised);
+}
+
+.g-side a[aria-current="page"] {
+  color: var(--fg);
+  background: var(--raised);
+  box-shadow: inset 2px 0 var(--green);
+}
+
+.g-main {
+  width: 100%;
+  max-width: 1000px;
+  padding: 32px 40px 80px;
+}
+
+.g-head {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.g-usage,
+.g-code {
+  margin: 0;
+  padding: 10px 14px;
+  overflow-x: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  color: var(--soft);
+  font-size: 0.8rem;
+}
+
+code {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 0.85em;
+}
+
+.g-section {
+  display: grid;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.g-section > h2 {
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* A row of examples, each with its state named under it. */
+.g-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px 24px;
+}
+
+.g-state {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+}
+
+.g-state > figcaption {
+  font-size: var(--label-size);
+  font-weight: var(--label-weight);
+  font-stretch: var(--label-width);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.g-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.g-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.g-box {
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+
+.g-narrow {
+  max-width: 420px;
+}
+
+/* Tokens */
+.g-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.g-swatch {
+  display: grid;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+
+.g-swatch > span {
+  height: 56px;
+  border-bottom: 1px solid var(--line);
+}
+
+.g-swatch > figcaption {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.g-swatch code {
+  color: var(--fg);
+}
+
+.g-depth {
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 90px;
+  border-radius: var(--r);
+  color: var(--soft);
+  font-size: 0.8rem;
+}
+
+.g-scrim {
+  position: relative;
+  overflow: hidden;
+  background: repeating-linear-gradient(45deg, var(--soft) 0 8px, var(--raised) 8px 16px);
+}
+
+.g-scrim::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+.g-scrim > span {
+  position: relative;
+}
+
+.g-values {
+  width: 100%;
+  max-width: 640px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.g-values :is(th, td) {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
+}
+
+.g-values th {
+  color: var(--muted);
+  font-weight: var(--title-weight);
+}
+
+/* Icons */
+.g-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.g-icon {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+}
+
+.g-icon > div {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.g-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1.25rem;
+}
+
+.g-icon-row code {
+  margin-inline-start: 8px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Type */
+.g-type {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 18px 24px;
+}
+
+.g-type > code {
+  color: var(--muted);
+}
+
+/* Overview */
+.g-hero {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.g-hero h1 {
+  font-size: var(--display-size);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-width);
+  text-transform: uppercase;
+}
+
+.g-hero h1 b {
+  color: var(--green);
+}
+
+.g-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.g-cards a {
+  display: block;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.g-cards a:hover {
+  border-color: var(--border);
+  background: var(--raised);
+}
+
+@media (max-width: 760px) {
+  .g-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .g-side {
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .g-side-inner {
+    position: static;
+    max-height: none;
+    padding: 14px 12px;
+  }
+
+  .g-side nav {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+  }
+
+  .g-side h2 {
+    display: none;
+  }
+
+  .g-side ul {
+    display: flex;
+    gap: 2px;
+  }
+
+  .g-side a:not(.g-brand) {
+    white-space: nowrap;
+  }
+
+  .g-version {
+    display: none;
+  }
+
+  .g-main {
+    padding: 24px 16px 64px;
+  }
+
+  .g-type {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+}

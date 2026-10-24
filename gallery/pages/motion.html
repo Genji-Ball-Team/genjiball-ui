@@ -1,0 +1,70 @@
+<section class="g-section">
+  <h2>Rating update</h2>
+  <gb-panel>
+    <gb-slash>
+      <div class="g-motion-hero">
+        <div class="g-stack" style="gap: 6px">
+          <span class="gb-label">Rating</span>
+          <span class="g-motion-line">
+            <span class="gb-display"><gb-count id="rating" value="1818"></gb-count></span>
+            <gb-delta id="delta" value="-11"></gb-delta>
+            <gb-chip tier="master">Master</gb-chip>
+          </span>
+        </div>
+        <span class="g-row" style="gap: 8px; margin-inline-start: auto">
+          <gb-button variant="primary" id="win">Win a match</gb-button>
+          <gb-button id="lose">Lose a match</gb-button>
+        </span>
+      </div>
+    </gb-slash>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>Stat tiles</h2>
+  <gb-slash>
+    <div class="g-grid" style="grid-template-columns: repeat(3, minmax(0, 1fr))">
+      <gb-stat label="Matches"><gb-count id="matches" value="211"></gb-count></gb-stat>
+      <gb-stat label="Deflects"><gb-count id="deflects" value="1204"></gb-count></gb-stat>
+      <gb-stat label="Wins"><gb-count id="wins" value="58"></gb-count></gb-stat>
+    </div>
+  </gb-slash>
+</section>
+
+<section class="g-section">
+  <h2>Slash on its own</h2>
+  <div class="g-row" style="align-items: center">
+    <gb-slash id="slash"><div class="g-box">Match #415 · 1st of 6</div></gb-slash>
+    <gb-button variant="ghost" id="play">Play</gb-button>
+  </div>
+</section>
+
+<style>
+  .g-motion-hero {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 0;
+  }
+
+  .g-motion-line {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+</style>
+
+<script type="module">
+  const $ = (id) => document.getElementById(id);
+  const change = (by) => {
+    $("rating").value += by;
+    $("delta").value = by;
+    $("matches").value += 1;
+    $("deflects").value += 9;
+    if (by > 0) $("wins").value += 1;
+  };
+  $("win").addEventListener("click", () => change(24));
+  $("lose").addEventListener("click", () => change(-13));
+  $("play").addEventListener("click", () => $("slash").play());
+</script>

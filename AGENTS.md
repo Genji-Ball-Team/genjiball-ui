@@ -9,6 +9,7 @@ npm ci          # also installs the pre-commit hook
 npm run check   # typecheck, Prettier, ESLint, size check, Vitest, build
 npm run format  # Prettier --write
 npm run build   # dist/: ESM and .d.ts, what npm gets
+npm run gallery # gallery-dist/: the gallery site, from dist/ and gallery/pages/
 ```
 
 `npm run check` is what CI runs, and **it must pass before a change is done.** It includes the contrast test (`test/contrast.test.ts`), which fails the build when a token pair drops below WCAG 2.1 AA.
@@ -33,7 +34,7 @@ npm run build   # dist/: ESM and .d.ts, what npm gets
 
 - Web components prefixed `gb-`, no framework, no runtime dependencies. They must work in a Cloudflare Worker-rendered page and in the Tauri webview.
 - Keyboard and screen reader first: every control is reachable by keyboard, has a visible green focus ring and a label.
-- Each component's gallery page shows every state (default, hover, focus, disabled, loading, error, empty).
+- Each component's gallery page (`gallery/pages/`) shows every state (default, hover, focus, disabled, loading, error, empty). A test fails when a `gb-` element is on no page.
 
 ## Releases
 

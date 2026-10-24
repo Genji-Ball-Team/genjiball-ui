@@ -1,0 +1,62 @@
+[
+  { "group": "Foundations", "slug": "index", "title": "Overview", "modules": [] },
+  { "group": "Foundations", "slug": "tokens", "title": "Tokens", "modules": [] },
+  { "group": "Foundations", "slug": "type", "title": "Type", "modules": [] },
+  { "group": "Foundations", "slug": "icons", "title": "Icons", "modules": ["icon"] },
+  { "group": "Controls", "slug": "buttons", "title": "Buttons", "modules": ["button", "icon"] },
+  { "group": "Controls", "slug": "inputs", "title": "Inputs", "modules": ["field", "button"] },
+  { "group": "Controls", "slug": "chips", "title": "Chips", "modules": ["chip"] },
+  {
+    "group": "Controls",
+    "slug": "nav",
+    "title": "Nav and tabs",
+    "modules": ["nav", "tabs", "icon"]
+  },
+  {
+    "group": "Data",
+    "slug": "panels",
+    "title": "Panels and stats",
+    "modules": ["panel", "stat", "empty", "button"]
+  },
+  {
+    "group": "Data",
+    "slug": "leaderboard",
+    "title": "Leaderboard",
+    "modules": ["leaderboard", "chip", "delta"]
+  },
+  { "group": "Data", "slug": "tables", "title": "Tables", "modules": ["table", "delta", "chip"] },
+  {
+    "group": "Data",
+    "slug": "rating-chart",
+    "title": "Rating chart",
+    "modules": ["rating-chart", "panel", "delta", "empty"]
+  },
+  { "group": "Data", "slug": "avatars", "title": "Avatars", "modules": ["avatar"] },
+  { "group": "Feedback", "slug": "toasts", "title": "Toasts", "modules": ["toast", "button"] },
+  {
+    "group": "Feedback",
+    "slug": "skeletons",
+    "title": "Skeletons",
+    "modules": ["skeleton", "panel", "button"]
+  },
+  {
+    "group": "Feedback",
+    "slug": "motion",
+    "title": "Motion",
+    "modules": ["count", "slash", "delta", "stat", "panel", "chip", "button"]
+  },
+  {
+    "group": "Overlays",
+    "slug": "tooltips",
+    "title": "Tooltips",
+    "modules": ["tooltip", "button", "icon"]
+  },
+  {
+    "group": "Overlays",
+    "slug": "popovers",
+    "title": "Popovers",
+    "modules": ["popover", "button", "field"]
+  },
+  { "group": "Overlays", "slug": "menus", "title": "Menus", "modules": ["menu", "button"] },
+  { "group": "Overlays", "slug": "dialogs", "title": "Dialogs", "modules": ["dialog", "button"] }
+]

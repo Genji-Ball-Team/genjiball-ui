@@ -6,6 +6,7 @@ It's built for the [ranked website](https://github.com/Genji-Ball-Team/genjiball
 
 - **Brand rules:** [docs/brand.md](docs/brand.md). Every colour, type, icon, motion and component decision, with the reasons.
 - **Brand sheet:** [docs/brand-sheet.html](docs/brand-sheet.html). All of the rules on one page; open it in a browser.
+- **Gallery:** every component in every state, built from the package with `npm run gallery` (see [Working on it](#working-on-it)).
 - **Discord:** [discord.gg/sv9VVjh5pT](https://discord.gg/sv9VVjh5pT)
 
 ## Status
@@ -394,8 +395,14 @@ The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against 
 
 ```sh
 npm ci
-npm run check   # typecheck, lint, tests, build
+npm run check   # typecheck, lint, tests, build, gallery
 ```
+
+### The gallery
+
+`npm run build && npm run gallery` writes the gallery to `gallery-dist/`, a static site that loads the built package from `gallery-dist/ui/`. Serve that folder with any static server to look at it. Each page's source is in `gallery/pages/`, listed in `gallery/pages.json`; the tokens and icons pages are generated from `src/`. A test fails when an element the package defines isn't on any page, so a new component comes with its page.
+
+`npm run gallery:deploy` puts it on ui.genjiball.us (a Cloudflare Worker with static assets, `gallery/wrangler.jsonc`). It's run by hand: check `npx wrangler whoami` shows the Genji Ball account first.
 
 ## License
 

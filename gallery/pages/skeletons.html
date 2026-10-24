@@ -1,0 +1,61 @@
+<section class="g-section">
+  <h2>Loading a list</h2>
+  <gb-panel label="Leaderboard">
+    <section aria-busy="true" aria-label="Leaderboard" class="g-stack" style="gap: 6px">
+      <gb-skeleton block class="g-skeleton-row">
+        <gb-skeleton style="inline-size: 6%"></gb-skeleton>
+        <gb-skeleton style="inline-size: 34%"></gb-skeleton>
+        <gb-skeleton style="inline-size: 12%; margin-inline-start: auto"></gb-skeleton>
+      </gb-skeleton>
+      <gb-skeleton block class="g-skeleton-row">
+        <gb-skeleton style="inline-size: 6%"></gb-skeleton>
+        <gb-skeleton style="inline-size: 26%"></gb-skeleton>
+        <gb-skeleton style="inline-size: 12%; margin-inline-start: auto"></gb-skeleton>
+      </gb-skeleton>
+      <gb-skeleton block class="g-skeleton-row">
+        <gb-skeleton style="inline-size: 6%"></gb-skeleton>
+        <gb-skeleton style="inline-size: 40%"></gb-skeleton>
+        <gb-skeleton style="inline-size: 12%; margin-inline-start: auto"></gb-skeleton>
+      </gb-skeleton>
+    </section>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>Lines of text</h2>
+  <gb-panel>
+    <div class="g-stack" style="gap: 10px">
+      <gb-skeleton style="inline-size: 60%"></gb-skeleton>
+      <gb-skeleton style="inline-size: 82%"></gb-skeleton>
+      <gb-skeleton style="inline-size: 44%"></gb-skeleton>
+    </div>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>After 300ms</h2>
+  <div class="g-row">
+    <gb-button id="reload">Load again</gb-button>
+  </div>
+  <gb-panel id="reload-target">
+    <gb-skeleton style="inline-size: 60%"></gb-skeleton>
+  </gb-panel>
+</section>
+
+<style>
+  .g-skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 12px;
+    min-block-size: 40px;
+  }
+</style>
+
+<script type="module">
+  const target = document.getElementById("reload-target");
+  document.getElementById("reload").addEventListener("click", () => {
+    target.innerHTML = `<gb-skeleton style="inline-size: 60%"></gb-skeleton>`;
+    setTimeout(() => (target.textContent = "Loaded: 211 matches."), 1500);
+  });
+</script>

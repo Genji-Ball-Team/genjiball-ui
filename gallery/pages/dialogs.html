@@ -1,0 +1,45 @@
+<section class="g-section">
+  <h2>Confirm</h2>
+  <div class="g-row" style="align-items: center">
+    <gb-button variant="danger" id="delete">Delete match</gb-button>
+    <gb-button id="ask">Move match to NA</gb-button>
+    <span id="answer" class="gb-label" aria-live="polite"></span>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Own dialog</h2>
+  <div class="g-row">
+    <gb-button id="own">Leave the lobby</gb-button>
+  </div>
+  <gb-dialog label="Leave the lobby?" id="own-dialog">
+    <p>The match keeps going without you and counts as a loss.</p>
+    <gb-button slot="actions" value="stay">Stay</gb-button>
+    <gb-button slot="actions" variant="primary" value="leave">Leave lobby</gb-button>
+  </gb-dialog>
+</section>
+
+<script type="module">
+  import { confirmDialog } from "./ui/dialog.js";
+
+  const answer = document.getElementById("answer");
+  document.getElementById("delete").addEventListener("click", async () => {
+    const yes = await confirmDialog({
+      title: "Delete this match?",
+      text: "Its rating changes are undone for all six players.",
+      action: "Delete match",
+      danger: true,
+    });
+    answer.textContent = yes ? "Deleted" : "Cancelled";
+  });
+  document.getElementById("ask").addEventListener("click", async () => {
+    const yes = await confirmDialog({
+      title: "Move this match to NA?",
+      text: "It leaves the EU board and counts on NA's.",
+      action: "Move match",
+    });
+    answer.textContent = yes ? "Moved" : "Cancelled";
+  });
+  const own = document.getElementById("own-dialog");
+  document.getElementById("own").addEventListener("click", () => own.show());
+</script>

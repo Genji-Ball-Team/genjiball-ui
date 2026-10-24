@@ -1,0 +1,54 @@
+<section class="g-section">
+  <h2>Panel</h2>
+  <div class="g-grid">
+    <figure class="g-state">
+      <gb-panel label="Player" style="inline-size: 100%">
+        <p>Kyoryu, EU. Last match 2 hours ago.</p>
+      </gb-panel>
+      <figcaption>With a label</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-panel style="inline-size: 100%">
+        <gb-panel raised>A raised box inside a panel.</gb-panel>
+      </gb-panel>
+      <figcaption>Raised inside</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-panel compact style="inline-size: 100%"><p>12px padding.</p></gb-panel>
+      <figcaption>Compact</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Stats</h2>
+  <gb-panel label="Season">
+    <div class="g-grid" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))">
+      <gb-stat label="Rating">2,214</gb-stat>
+      <gb-stat label="Matches">211</gb-stat>
+      <gb-stat label="Win rate">54%</gb-stat>
+      <gb-stat label="Deflects">1,204</gb-stat>
+    </div>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>Empty</h2>
+  <div class="g-grid">
+    <figure class="g-state">
+      <gb-panel label="Matches" style="inline-size: 100%">
+        <gb-empty>
+          No matches yet.
+          <gb-button slot="action" variant="primary">Host a ranked lobby</gb-button>
+        </gb-empty>
+      </gb-panel>
+      <figcaption>With an action</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-panel label="Records" style="inline-size: 100%">
+        <gb-empty>No records this season.</gb-empty>
+      </gb-panel>
+      <figcaption>Line only</figcaption>
+    </figure>
+  </div>
+</section>

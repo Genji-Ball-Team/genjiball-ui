@@ -1,0 +1,84 @@
+<section class="g-section">
+  <h2>Text</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-field label="BattleTag"><input name="battletag" /></gb-field>
+      <figcaption>Empty</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="BattleTag"><input value="Kyoryu#1234" /></gb-field>
+      <figcaption>Filled</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="Host token" error="This token isn't valid. Copy it again from the site."
+        ><input value="gb_12ab"
+      /></gb-field>
+      <figcaption>Error</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="Server"><input value="genjiball.us" disabled /></gb-field>
+      <figcaption>Disabled</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Select and text area</h2>
+  <div class="g-row">
+    <gb-field label="Region">
+      <select>
+        <option>EU</option>
+        <option>NA</option>
+      </select>
+    </gb-field>
+    <gb-field label="Notes"><textarea rows="3">Played on Ayutthaya.</textarea></gb-field>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Checkbox and switch</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-field label="Upload automatically"><input type="checkbox" checked /></gb-field>
+      <figcaption>Checked</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="Keep old logs"><input type="checkbox" /></gb-field>
+      <figcaption>Unchecked</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="Start with Windows"
+        ><input type="checkbox" role="switch" checked
+      /></gb-field>
+      <figcaption>Switch on</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="Show spectators"><input type="checkbox" role="switch" /></gb-field>
+      <figcaption>Switch off</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-field label="Beta updates"><input type="checkbox" role="switch" disabled /></gb-field>
+      <figcaption>Disabled</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>In a form</h2>
+  <form class="g-box g-narrow g-stack" id="form-demo" novalidate>
+    <gb-field label="Host token"><input name="token" required /></gb-field>
+    <div><gb-button variant="primary" type="submit">Save</gb-button></div>
+  </form>
+</section>
+
+<script type="module">
+  const form = document.getElementById("form-demo");
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const field = form.querySelector("gb-field");
+    const ok = form.token.value.startsWith("gb_");
+    field.error = ok ? "" : "This token isn't valid. Copy it again from the site.";
+    if (ok) form.querySelector("gb-button").flash("Saved ✓");
+    else form.token.focus();
+  });
+</script>
