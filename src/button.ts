@@ -2,6 +2,22 @@ import { defineElement } from "./define.js";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
+// Inputs where Enter submits the form, as it does natively.
+const submitsOnEnter = new Set([
+  "text",
+  "search",
+  "url",
+  "tel",
+  "email",
+  "password",
+  "number",
+  "date",
+  "datetime-local",
+  "month",
+  "week",
+  "time",
+]);
+
 const variants: readonly ButtonVariant[] = ["primary", "secondary", "ghost", "danger"];
 
 // The label, the spinner and the feedback text share one grid cell, so the button is as wide as the
@@ -55,6 +71,9 @@ button { background: var(--raised); border-color: var(--border); }
  * - `disabled`: greyed out, can't be focused or clicked.
  * - `busy`: a spinner in place of the label, same width. It stays focusable but ignores clicks.
  *
+ * Enter in a text field of the form presses the form's first submit `<gb-button>`, as with a native
+ * submit button.
+ *
  * `flash("Copied ✓")` shows a short message in place of the label for two seconds, and screen
  * readers hear it.
  */
@@ -66,6 +85,7 @@ export class GbButton extends HTMLElement {
   readonly #feedback = document.createElement("span");
   readonly #status = document.createElement("span");
   #flashTimer: ReturnType<typeof setTimeout> | undefined;
+  #form: HTMLFormElement | null = null;
 
   constructor() {
     super();
@@ -87,9 +107,13 @@ export class GbButton extends HTMLElement {
 
   connectedCallback(): void {
     this.#sync();
+    this.#form = this.closest("form");
+    this.#form?.addEventListener("keydown", this.#onFormKeydown);
   }
 
   disconnectedCallback(): void {
+    this.#form?.removeEventListener("keydown", this.#onFormKeydown);
+    this.#form = null;
     clearTimeout(this.#flashTimer);
     this.#button.classList.remove("flashing");
     this.#feedback.textContent = "";
@@ -158,6 +182,23 @@ export class GbButton extends HTMLElement {
     const form = this.closest("form");
     if (type === "submit") form?.requestSubmit();
     else if (type === "reset") form?.reset();
+  };
+
+  // Enter in a text field submits the form through its submit button, but a shadow-DOM button isn't
+  // one, so the form's first submit <gb-button> does it instead, unless it's busy or disabled.
+  readonly #onFormKeydown = (event: KeyboardEvent): void => {
+    const form = this.#form;
+    const field = event.composedPath()[0];
+    if (!form || event.key !== "Enter" || event.isComposing || event.defaultPrevented) return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (!(field instanceof HTMLInputElement) || !submitsOnEnter.has(field.type)) return;
+    if (this.getAttribute("type") !== "submit") return;
+    if (form.querySelector('gb-button[type="submit"]') !== this) return;
+    // A native submit button in the form is the browser's to press.
+    if (form.querySelector('button:not([type]), [type="submit"]:not(gb-button), [type="image"]'))
+      return;
+    event.preventDefault();
+    if (!this.disabled && !this.busy) form.requestSubmit();
   };
 }
 

@@ -53,11 +53,37 @@ import "@genji-ball-team/ui/button.js"; // registers <gb-button>
 ```
 
 - `variant`: `primary` (solid green, at most one per screen: the obvious next step), `secondary` (the default), `ghost` (text only, for small actions like "Copy") or `danger` (orange outline, for deletes; always ask for confirmation first, the button doesn't).
-- `type`: `button` (the default, unlike a native button), `submit` or `reset`, acting on the form the button is in. Enter in a text field doesn't click a `<gb-button>`, so handle that in the form if you need it.
+- `type`: `button` (the default, unlike a native button), `submit` or `reset`, acting on the form the button is in. Enter in a text field submits through the form's first submit `<gb-button>`, as with a native one, unless it's busy or disabled.
 - `disabled` greys it out and takes it out of the tab order. `busy` shows a spinner at the same width and ignores clicks, but keeps focus, so set it while a submit runs.
 - `button.flash("Copied ✓")` shows a short message in place of the label for two seconds; screen readers hear it.
 
 It's 36px tall, 40px on touch screens.
+
+### Inputs
+
+```ts
+import "@genji-ball-team/ui/field.js"; // registers <gb-field>
+```
+
+```html
+<gb-field label="BattleTag"><input name="battletag" required /></gb-field>
+<gb-field label="Region">
+  <select name="region">
+    <option>EU</option>
+    <option>NA</option>
+  </select>
+</gb-field>
+<gb-field label="Upload automatically"><input type="checkbox" name="auto" /></gb-field>
+<gb-field label="Start with Windows"><input type="checkbox" role="switch" /></gb-field>
+```
+
+`<gb-field>` wraps one native `<input>`, `<select>` or `<textarea>` and gives it the brand look: raised fill, a visible edge, the label above (beside a checkbox or switch) as a real `<label>`, and the error below. The control stays the page's own element, so it submits with the form, autofills and takes `name`, `value`, `required` and the rest as usual. `role="switch"` on a checkbox makes it a toggle.
+
+- `label` is required: never a placeholder on its own.
+- `error`: what's wrong and how to fix it ("This token isn't valid. Copy it again from the site."). It shows under the field in orange with ⚠, and the control gets `aria-invalid` and is described by it. Set `field.error = ""` once it's fixed. After a failed submit, focus the first field with an error.
+- Disable the control itself (`input.disabled = true`); the field greys out with it.
+
+Fields are 36px tall, 40px on touch screens. The field has no shadow root; its styles are added to the page (or the shadow root it's in) once.
 
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
