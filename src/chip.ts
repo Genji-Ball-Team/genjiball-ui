@@ -18,6 +18,9 @@ export const tiers: readonly Tier[] = [
 
 const titles: readonly ChipTitle[] = ["god", "demigod"];
 
+// Only the known titles: an unknown \`title-chip\` stays a plain chip.
+const titled = titles.map((title) => `:host([title-chip="${title}"])`).join(", ");
+
 // The host is the chip; the text stays in the page, so it shows before the element upgrades and is
 // what screen readers and search read. A tier chip is the tier colour on 16% of itself, the one
 // place tier colour goes besides the row's side bar. A plain chip (a region) is grey: regions have
@@ -32,7 +35,7 @@ const styles = `:host {
 :host([hidden]) { display: none; }
 ${tiers.map((tier) => `:host([tier="${tier}"]) { --chip: var(--t-${tier}); }`).join("\n")}
 
-:host([title-chip]) {
+${titled} {
   padding: 0.06rem 0.38rem; font-size: 0.52rem; line-height: 1.4; letter-spacing: 0.14em;
   background-size: 200% 100%; animation: shimmer 2.6s linear infinite;
 }
@@ -46,7 +49,7 @@ ${tiers.map((tier) => `:host([tier="${tier}"]) { --chip: var(--t-${tier}); }`).j
   background-image: linear-gradient(110deg, var(--demi-deep) 0 40%, var(--demi) 48%, var(--demi-deep) 56% 100%);
 }
 @keyframes shimmer { to { background-position: -200% 0; } }
-@media (prefers-reduced-motion: reduce) { :host([title-chip]) { animation: none; background-image: none; } }`;
+@media (prefers-reduced-motion: reduce) { ${titled} { animation: none; background-image: none; } }`;
 
 /**
  * `<gb-chip tier="master">Master</gb-chip>`: a small label next to a player's name.

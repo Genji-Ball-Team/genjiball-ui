@@ -59,9 +59,9 @@ test("only title chips move, and not under reduced motion", () => {
   const styles = css(make());
   const animated = styles.split("}").filter((rule) => /animation: (?!none)/.test(rule));
   expect(animated).toHaveLength(1);
-  expect(animated[0]).toContain(":host([title-chip]) {");
+  expect(animated[0]).toContain(':host([title-chip="god"]), :host([title-chip="demigod"]) {');
   expect(styles).toMatch(
-    /prefers-reduced-motion: reduce\) \{ :host\(\[title-chip\]\) \{ animation: none;/,
+    /prefers-reduced-motion: reduce\) \{ :host\(\[title-chip="god"\]\), :host\(\[title-chip="demigod"\]\) \{ animation: none;/,
   );
 });
 
