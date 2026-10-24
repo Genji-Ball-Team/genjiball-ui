@@ -41,6 +41,24 @@ import { iconSvg } from "@genji-ball-team/ui/icons.js"; // the same icons as <sv
 
 The set: `player`, `matches`, `records`, `deflects`, `live`, `leaderboard`. They're drawn in `currentColor`, so they take the text colour. `<gb-icon>` is 1.25em by default; set `inline-size` and `block-size` to change that. Leave `label` off when text next to the icon already says the same (the icon is then hidden from screen readers), and always give one to an icon-only button. The SVG files are in the package too, as `dist/icons/<name>.svg`.
 
+### Buttons
+
+```ts
+import "@genji-ball-team/ui/button.js"; // registers <gb-button>
+```
+
+```html
+<gb-button variant="primary" type="submit">Save</gb-button>
+<gb-button variant="ghost"><gb-icon name="records"></gb-icon> Show more</gb-button>
+```
+
+- `variant`: `primary` (solid green, at most one per screen: the obvious next step), `secondary` (the default), `ghost` (text only, for small actions like "Copy") or `danger` (orange outline, for deletes; always ask for confirmation first, the button doesn't).
+- `type`: `button` (the default, unlike a native button), `submit` or `reset`, acting on the form the button is in. Enter in a text field doesn't click a `<gb-button>`, so handle that in the form if you need it.
+- `disabled` greys it out and takes it out of the tab order. `busy` shows a spinner at the same width and ignores clicks, but keeps focus, so set it while a submit runs.
+- `button.flash("Copied ✓")` shows a short message in place of the label for two seconds; screen readers hear it.
+
+It's 36px tall, 40px on touch screens.
+
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
 ## Working on it
