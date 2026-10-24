@@ -25,7 +25,7 @@ Not set up yet (see the "Set up the package" issue). Once it is, `npm run check`
 
 ## Releases
 
-Versioned, published to npm from CI with trusted publishing (no npm token in the repo). Apps upgrade deliberately; a breaking change is a major version and says what to change in the release notes.
+Versioned, published to npm from CI: with the `NPM_TOKEN` secret until trusted publishing is set up, by 2027-01-01 (#4). Never put a token in the repo. Apps upgrade deliberately; a breaking change is a major version and says what to change in the release notes.
 
 ## PR habits
 
