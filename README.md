@@ -121,7 +121,7 @@ For things that happen in the background. Anything tied to one control gets inli
 - `action`: a button that fixes it. Pressing it runs `run` and closes the toast.
 - Every toast has a close button, and Escape closes the one with focus. `toast()` returns the `<gb-toast>`: `close()` takes it away early, and it fires `close` when it goes.
 
-Toasts stack in a `<gb-toast-region>` at the bottom right of the page, bottom centre on phones. Screen readers hear each one: errors straight away, successes when they're done speaking. `toast()` adds the region on first use; put `<gb-toast-region></gb-toast-region>` in the page's markup to have it ready from the start.
+Toasts stack in a `<gb-toast-region>` at the bottom right of the page, bottom centre on phones. Screen readers hear each one: errors straight away, successes once the screen reader finishes what it's saying. `toast()` adds the region on first use; put `<gb-toast-region></gb-toast-region>` in the page's markup to have it ready from the start.
 
 ### Skeletons
 
