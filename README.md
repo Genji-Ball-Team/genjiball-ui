@@ -249,6 +249,29 @@ import "@genji-ball-team/ui/delta.js"; // registers <gb-delta>
 
 Both tables keep a real `<table>` in the page, so they show before the script loads. Neither has a shadow root; their styles are added to the page once.
 
+### Rating chart
+
+```ts
+import "@genji-ball-team/ui/rating-chart.js"; // registers <gb-rating-chart>
+
+const chart = document.querySelector("gb-rating-chart");
+chart.points = [
+  { rating: 1830, label: "Match #412", place: 3, players: 6, href: "/match?id=412" },
+  { rating: 1854, label: "Match #415", place: 1, players: 6, href: "/match?id=415" },
+];
+chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
+```
+
+```html
+<gb-rating-chart label="Rating over the last 40 matches"></gb-rating-chart>
+```
+
+- A player's rating after each match, oldest first, drawn as brand.md's Charts section says. The whole line is `up` if the rating went up over the points shown, `down` if it went down. `direction` on the element (`up`, `down` or `none`) says which, so a `<gb-delta>` in the header can match it.
+- Tiers near the ratings shown get a dashed line in their colour with their chip, placed where the line doesn't run through it. No bands.
+- Hover, a tap or the arrow keys (Home and End too) show a green crosshair and a tooltip with the match, place, rating, change and "Open match →". Screen readers hear each point as the keys reach it. A point's `change` is worked out from the point before when it isn't given.
+- A mouse click, a second tap on the same point, or Enter fires a cancelable `open` event (`detail: { index, point }`), then goes to the point's `href`. Cancel it to open the match some other way.
+- One axis, on the left. It draws at its box's width, 240px tall (180px under 480px wide), or the `height` attribute. `--gb-chart-bg` is the surface it sits on (`panel` unless the app says so). With no points it draws nothing; show a `<gb-empty>` instead.
+
 ### Avatars
 
 ```ts
