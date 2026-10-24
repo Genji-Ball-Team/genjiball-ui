@@ -1,0 +1,31 @@
+<section class="g-section">
+  <h2>Filters</h2>
+  <div class="g-row">
+    <gb-popover id="filters">
+      <gb-button>Filters</gb-button>
+      <div aria-label="Filters" class="g-stack" style="gap: 12px; inline-size: 240px">
+        <gb-field label="Region">
+          <select>
+            <option>EU</option>
+            <option>NA</option>
+          </select>
+        </gb-field>
+        <gb-field label="Only tourney matches"><input type="checkbox" role="switch" /></gb-field>
+        <div><gb-button variant="primary" id="apply">Apply</gb-button></div>
+      </div>
+    </gb-popover>
+    <gb-popover>
+      <gb-button variant="ghost">Share</gb-button>
+      <div aria-label="Share" class="g-stack" style="gap: 8px">
+        <span class="gb-label">Match link</span>
+        <code>genjiball.us/match?id=415</code>
+      </div>
+    </gb-popover>
+  </div>
+</section>
+
+<script type="module">
+  document.getElementById("apply").addEventListener("click", () => {
+    document.getElementById("filters").hide();
+  });
+</script>

@@ -1,0 +1,30 @@
+<section class="g-section">
+  <h2>Actions</h2>
+  <div class="g-row" style="align-items: center">
+    <gb-menu label="Match actions" id="menu">
+      <gb-button variant="ghost" aria-label="Match actions">⋯</gb-button>
+      <div>
+        <button>Copy match link</button>
+        <a href="#admin">Open in admin</a>
+        <button>Move to NA</button>
+        <hr />
+        <button data-danger>Delete match</button>
+      </div>
+    </gb-menu>
+    <gb-menu label="Sort">
+      <gb-button>Sort by rating</gb-button>
+      <div>
+        <button>Rating</button>
+        <button>Matches</button>
+        <button>Win rate</button>
+      </div>
+    </gb-menu>
+    <span id="picked" class="gb-label" aria-live="polite"></span>
+  </div>
+</section>
+
+<script type="module">
+  document.getElementById("menu").addEventListener("select", (event) => {
+    document.getElementById("picked").textContent = `Picked: ${event.detail.textContent}`;
+  });
+</script>

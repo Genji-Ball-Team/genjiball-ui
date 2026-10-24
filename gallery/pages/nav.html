@@ -1,0 +1,49 @@
+<section class="g-section">
+  <h2>Nav</h2>
+  <div class="g-stack">
+    <figure class="g-state">
+      <gb-nav aria-label="Main">
+        <a href="#leaderboard" aria-current="page"
+          ><gb-icon name="leaderboard"></gb-icon>Leaderboard</a
+        >
+        <a href="#matches"><gb-icon name="matches"></gb-icon>Matches</a>
+        <a href="#records"><gb-icon name="records"></gb-icon>Records</a>
+        <a href="#live"><gb-icon name="live"></gb-icon>Live</a>
+      </gb-nav>
+      <figcaption>With icons</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-nav aria-label="Admin">
+        <a href="#uploads">Uploads</a>
+        <a href="#players" aria-current="page">Players</a>
+        <a href="#tokens">Host tokens</a>
+      </gb-nav>
+      <figcaption>Text only</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-nav aria-label="Narrow" style="inline-size: 300px">
+        <a href="#leaderboard"><gb-icon name="leaderboard"></gb-icon>Leaderboard</a>
+        <a href="#matches"><gb-icon name="matches"></gb-icon>Matches</a>
+        <a href="#records"><gb-icon name="records"></gb-icon>Records</a>
+        <a href="#live" aria-current="page"><gb-icon name="live"></gb-icon>Live</a>
+      </gb-nav>
+      <figcaption>Narrow, scrolled to the current link</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Tabs</h2>
+  <div class="g-box">
+    <gb-tabs label="Player stats">
+      <button>Overview</button>
+      <button>Matches</button>
+      <button>Records</button>
+      <button disabled>Tourneys</button>
+      <section><p>211 matches, 58 wins, 1,204 deflects.</p></section>
+      <section><p>Match #415 · 1st of 6 · ▲ 24</p></section>
+      <section><p>Most goals in one match: 7.</p></section>
+      <section><p>Coming soon.</p></section>
+    </gb-tabs>
+  </div>
+</section>

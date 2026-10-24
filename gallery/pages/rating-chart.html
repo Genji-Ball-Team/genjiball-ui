@@ -1,0 +1,49 @@
+<section class="g-section">
+  <h2>Net up</h2>
+  <gb-panel label="Rating">
+    <gb-rating-chart id="chart-up" label="Rating over the last 30 matches"></gb-rating-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>Net down</h2>
+  <gb-panel label="Rating">
+    <gb-rating-chart
+      id="chart-down"
+      label="Rating over the last 20 matches"
+      height="200"
+    ></gb-rating-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>No matches</h2>
+  <gb-panel label="Rating">
+    <gb-empty>No rated matches yet.</gb-empty>
+  </gb-panel>
+</section>
+
+<script type="module">
+  // A seeded walk, so the page looks the same on every load.
+  function walk(start, steps, drift, seed) {
+    let rating = start;
+    let state = seed;
+    const random = () => (state = (state * 16807) % 2147483647) / 2147483647;
+    return Array.from({ length: steps }, (_, i) => {
+      const change = Math.round((random() - 0.5) * 50 + drift);
+      rating += change;
+      const place = 1 + Math.floor(random() * 6);
+      return { rating, change, place, players: 6, label: `Match #${380 + i}`, href: "#" };
+    });
+  }
+  const up = document.getElementById("chart-up");
+  up.points = walk(1780, 30, 6, 7);
+  up.tiers = [
+    { tier: "master", label: "Master", threshold: 1800 },
+    { tier: "grandmaster", label: "Grandmaster", threshold: 1900 },
+  ];
+  const down = document.getElementById("chart-down");
+  down.points = walk(2280, 20, -9, 11);
+  down.tiers = [{ tier: "ascendant", label: "Ascendant", threshold: 2200 }];
+  for (const chart of [up, down]) chart.addEventListener("open", (event) => event.preventDefault());
+</script>

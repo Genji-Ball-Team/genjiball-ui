@@ -1,0 +1,127 @@
+<section class="g-section">
+  <h2>Every tier and title</h2>
+  <gb-leaderboard>
+    <table>
+      <thead>
+        <tr>
+          <th>Place</th>
+          <th>Player</th>
+          <th>Tier</th>
+          <th>Rating</th>
+          <th>Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-tier="sovereign" data-title="god">
+          <td>1</td>
+          <td><a href="#kyoryu">Kyoryu</a><gb-chip title-chip="god">God</gb-chip></td>
+          <td><gb-chip tier="sovereign">Sovereign</gb-chip></td>
+          <td>2,871</td>
+          <td><gb-delta value="24"></gb-delta></td>
+        </tr>
+        <tr data-tier="champion" data-title="demigod">
+          <td>2</td>
+          <td><a href="#shimada">Shimada</a><gb-chip title-chip="demigod">Demigod</gb-chip></td>
+          <td><gb-chip tier="champion">Champion</gb-chip></td>
+          <td>2,640</td>
+          <td><gb-delta value="-9"></gb-delta></td>
+        </tr>
+        <tr data-tier="champion">
+          <td>3</td>
+          <td><a href="#ronin">Ronin</a></td>
+          <td><gb-chip tier="champion">Champion</gb-chip></td>
+          <td>2,512</td>
+          <td><gb-delta value="0"></gb-delta></td>
+        </tr>
+        <tr data-tier="ascendant">
+          <td>4</td>
+          <td><a href="#long">AVeryLongBattleTagThatGetsCutShort</a></td>
+          <td><gb-chip tier="ascendant">Ascendant</gb-chip></td>
+          <td>2,230</td>
+          <td><gb-delta value="17"></gb-delta></td>
+        </tr>
+        <tr data-tier="grandmaster">
+          <td>5</td>
+          <td><a href="#sparrow">Sparrow</a></td>
+          <td><gb-chip tier="grandmaster">Grandmaster</gb-chip></td>
+          <td>1,961</td>
+          <td><gb-delta value="-21"></gb-delta></td>
+        </tr>
+        <tr data-tier="master">
+          <td>6</td>
+          <td><a href="#tanuki">Tanuki</a></td>
+          <td><gb-chip tier="master">Master</gb-chip></td>
+          <td>1,842</td>
+          <td><gb-delta value="11"></gb-delta></td>
+        </tr>
+        <tr data-tier="apprentice">
+          <td>7</td>
+          <td><a href="#mochi">Mochi</a></td>
+          <td><gb-chip tier="apprentice">Apprentice</gb-chip></td>
+          <td>1,288</td>
+          <td><gb-delta value="-4"></gb-delta></td>
+        </tr>
+        <tr data-tier="rookie">
+          <td>8</td>
+          <td><a href="#new">Newcomer</a></td>
+          <td><gb-chip tier="rookie">Rookie</gb-chip></td>
+          <td>800</td>
+          <td><gb-delta value="6"></gb-delta></td>
+        </tr>
+      </tbody>
+    </table>
+  </gb-leaderboard>
+</section>
+
+<section class="g-section">
+  <h2>Narrow box</h2>
+  <div style="max-width: 400px">
+    <gb-leaderboard>
+      <table>
+        <thead>
+          <tr>
+            <th>Place</th>
+            <th>Player</th>
+            <th>Tier</th>
+            <th>Rating</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-tier="sovereign" data-title="god">
+            <td>1</td>
+            <td><a href="#kyoryu">Kyoryu</a><gb-chip title-chip="god">God</gb-chip></td>
+            <td><gb-chip tier="sovereign">Sovereign</gb-chip></td>
+            <td>2,871</td>
+            <td><gb-delta value="24"></gb-delta></td>
+          </tr>
+          <tr data-tier="master">
+            <td>6</td>
+            <td><a href="#tanuki">Tanuki</a></td>
+            <td><gb-chip tier="master">Master</gb-chip></td>
+            <td>1,842</td>
+            <td><gb-delta value="-11"></gb-delta></td>
+          </tr>
+        </tbody>
+      </table>
+    </gb-leaderboard>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Delta</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-delta value="24"></gb-delta>
+      <figcaption>Up</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-delta value="-11"></gb-delta>
+      <figcaption>Down</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-delta value="0"></gb-delta>
+      <figcaption>No change</figcaption>
+    </figure>
+  </div>
+</section>

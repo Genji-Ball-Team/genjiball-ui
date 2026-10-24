@@ -1,0 +1,125 @@
+<section class="g-section">
+  <h2>Sortable</h2>
+  <gb-table>
+    <table>
+      <thead>
+        <tr>
+          <th data-sort>Match</th>
+          <th data-sort>Map</th>
+          <th data-sort>Region</th>
+          <th data-sort data-type="number">Place</th>
+          <th data-sort data-type="number" aria-sort="descending">Goals</th>
+          <th data-type="number">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-value="415">#415</td>
+          <td>Ayutthaya</td>
+          <td><gb-chip>EU</gb-chip></td>
+          <td>1</td>
+          <td>7</td>
+          <td><gb-delta value="24"></gb-delta></td>
+        </tr>
+        <tr>
+          <td data-value="414">#414</td>
+          <td>Black Forest</td>
+          <td><gb-chip>EU</gb-chip></td>
+          <td>2</td>
+          <td>5</td>
+          <td><gb-delta value="9"></gb-delta></td>
+        </tr>
+        <tr>
+          <td data-value="409">#409</td>
+          <td>Castillo</td>
+          <td><gb-chip>NA</gb-chip></td>
+          <td>4</td>
+          <td>3</td>
+          <td><gb-delta value="-6"></gb-delta></td>
+        </tr>
+        <tr>
+          <td data-value="402">#402</td>
+          <td>Ecopoint: Antarctica</td>
+          <td><gb-chip>EU</gb-chip></td>
+          <td>6</td>
+          <td>1</td>
+          <td><gb-delta value="-18"></gb-delta></td>
+        </tr>
+      </tbody>
+    </table>
+  </gb-table>
+</section>
+
+<section class="g-section">
+  <h2>Wide, scrolling sideways</h2>
+  <div style="max-width: 360px">
+    <gb-table>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th data-type="number">Goals</th>
+            <th data-type="number">Assists</th>
+            <th data-type="number">Deflects</th>
+            <th data-type="number">Beamed</th>
+            <th data-type="number">Edashes</th>
+            <th data-type="number">Saves</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Kyoryu</td>
+            <td>7</td>
+            <td>3</td>
+            <td>41</td>
+            <td>2</td>
+            <td>12</td>
+            <td>9</td>
+          </tr>
+          <tr>
+            <td>Shimada</td>
+            <td>4</td>
+            <td>5</td>
+            <td>36</td>
+            <td>1</td>
+            <td>8</td>
+            <td>14</td>
+          </tr>
+          <tr>
+            <td>Ronin</td>
+            <td>2</td>
+            <td>1</td>
+            <td>29</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+          </tr>
+        </tbody>
+      </table>
+    </gb-table>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Sticky header</h2>
+  <gb-table sticky style="--gb-table-height: 220px">
+    <table>
+      <thead>
+        <tr>
+          <th>Upload</th>
+          <th>Host</th>
+          <th data-type="number">Matches</th>
+        </tr>
+      </thead>
+      <tbody id="sticky-rows"></tbody>
+    </table>
+  </gb-table>
+</section>
+
+<script type="module">
+  const hosts = ["Kyoryu", "Shimada", "Ronin", "Tanuki"];
+  document.getElementById("sticky-rows").innerHTML = Array.from(
+    { length: 16 },
+    (_, i) => `<tr><td>Log ${1060 - i}</td><td>${hosts[i % 4]}</td><td>${1 + (i % 3)}</td></tr>`,
+  ).join("");
+</script>

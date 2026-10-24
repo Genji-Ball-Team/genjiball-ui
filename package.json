@@ -21,7 +21,9 @@
     "typecheck": "tsc",
     "lint": "prettier --check . && eslint . && gb-size",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run gallery",
+    "gallery": "node scripts/build-gallery.js",
+    "gallery:deploy": "npm run build && npm run gallery && npx wrangler deploy -c gallery/wrangler.jsonc"
   },
   "repository": {
     "type": "git",

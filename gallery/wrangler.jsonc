@@ -1,0 +1,13 @@
+// The gallery at ui.genjiball.us: static files only, no Worker code. Deployed by hand with
+// `npm run gallery:deploy`, to the Genji Ball Cloudflare account only (check `npx wrangler whoami`).
+{
+  "name": "genjiball-ui-gallery",
+  "account_id": "c212ad20cc4f4b5382766735f57b91c3",
+  "compatibility_date": "2026-08-22",
+  "assets": {
+    "directory": "../gallery-dist",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "none",
+  },
+  "routes": [{ "pattern": "ui.genjiball.us", "custom_domain": true }],
+}

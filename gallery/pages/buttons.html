@@ -1,0 +1,72 @@
+<section class="g-section">
+  <h2>Variants</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-button variant="primary">Copy ranked code</gb-button>
+      <figcaption>Primary</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-button>Show matches</gb-button>
+      <figcaption>Secondary</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-button variant="ghost">Show more</gb-button>
+      <figcaption>Ghost</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-button variant="danger">Delete match</gb-button>
+      <figcaption>Danger</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Disabled</h2>
+  <div class="g-row">
+    <gb-button variant="primary" disabled>Copy ranked code</gb-button>
+    <gb-button disabled>Show matches</gb-button>
+    <gb-button variant="ghost" disabled>Show more</gb-button>
+    <gb-button variant="danger" disabled>Delete match</gb-button>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Busy</h2>
+  <div class="g-row">
+    <gb-button variant="primary" busy>Upload log</gb-button>
+    <gb-button busy>Refresh</gb-button>
+    <gb-button id="busy-demo">Click to submit</gb-button>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Flash</h2>
+  <div class="g-row">
+    <gb-button variant="ghost" id="flash-demo">Copy</gb-button>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>With an icon</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-button><gb-icon name="leaderboard"></gb-icon> Leaderboard</gb-button>
+      <figcaption>Icon and text</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-button aria-label="Records"><gb-icon name="records"></gb-icon></gb-button>
+      <figcaption>Icon only</figcaption>
+    </figure>
+  </div>
+</section>
+
+<script type="module">
+  const busy = document.getElementById("busy-demo");
+  busy.addEventListener("click", () => {
+    busy.busy = true;
+    setTimeout(() => (busy.busy = false), 1500);
+  });
+  document.getElementById("flash-demo").addEventListener("click", (event) => {
+    event.currentTarget.flash("Copied ✓");
+  });
+</script>
