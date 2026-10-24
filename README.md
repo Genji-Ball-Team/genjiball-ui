@@ -103,6 +103,45 @@ Kyoryu <gb-chip title-chip="god">God</gb-chip> <gb-chip tier="sovereign">Soverei
 
 The text is the chip's content, so it shows before the script loads; it's drawn uppercase.
 
+### Toasts
+
+```ts
+import { toast } from "@genji-ball-team/ui/toast.js"; // registers <gb-toast> and <gb-toast-region>
+
+toast("Match uploaded");
+toast("Upload failed. Your log is kept.", {
+  kind: "error",
+  action: { label: "Retry", run: retryUpload },
+});
+```
+
+For things that happen in the background. Anything tied to one control gets inline feedback instead: `button.flash("Copied ✓")` or a field's `error`.
+
+- `kind`: `success` (the default, ✓ in blue) goes away after about 4s, waiting while the pointer or focus is on it. `error` (⚠ in orange) stays until closed. Errors say what happened and what to do.
+- `action`: a button that fixes it. Pressing it runs `run` and closes the toast.
+- Every toast has a close button, and Escape closes the one with focus. `toast()` returns the `<gb-toast>`: `close()` takes it away early, and it fires `close` when it goes.
+
+Toasts stack in a `<gb-toast-region>` at the bottom right of the page, bottom centre on phones. Screen readers hear each one: errors straight away, successes when they're done speaking. `toast()` adds the region on first use; put `<gb-toast-region></gb-toast-region>` in the page's markup to have it ready from the start.
+
+### Skeletons
+
+```ts
+import "@genji-ball-team/ui/skeleton.js"; // registers <gb-skeleton>
+```
+
+```html
+<section aria-busy="true" aria-label="Leaderboard">
+  <gb-skeleton block class="row">
+    <gb-skeleton style="inline-size: 38%"></gb-skeleton>
+    <gb-skeleton style="inline-size: 16%; margin-inline-start: auto"></gb-skeleton>
+  </gb-skeleton>
+</section>
+```
+
+Placeholders in the shape of the content that's loading, so nothing jumps when it arrives. A `<gb-skeleton>` is a line of text: give it a width. With `block` it's a row or box that holds lines; lay it out like the real row. They show only after 300ms, so a fast load never flashes grey, and lines pulse slowly (still under reduced motion).
+
+Skeletons are hidden from screen readers: mark the loading area `aria-busy="true"` and give it a name. Lines are `raised`, for a `panel`; on a `raised` surface, set `--gb-skeleton-fill: var(--border)` on it.
+
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
 ## Working on it
