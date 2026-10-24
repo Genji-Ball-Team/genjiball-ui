@@ -27,6 +27,20 @@ import { tokens } from "@genji-ball-team/ui/tokens.js"; // the same values for c
 
 `base.css` loads Saira from the package (`fonts/`, no Google Fonts request), sets the dark page, headings and links, gives every focusable element the green focus ring, uses tabular numbers in tables and on `.gb-num`, and turns animation off under `prefers-reduced-motion`. It also has `.gb-display` for big numbers and `.gb-label` for small uppercase labels. To get only the custom properties, import `@genji-ball-team/ui/tokens.css` instead.
 
+### Icons
+
+```ts
+import "@genji-ball-team/ui/icon.js"; // registers <gb-icon>
+import { iconSvg } from "@genji-ball-team/ui/icons.js"; // the same icons as <svg> strings, for server-rendered HTML
+```
+
+```html
+<gb-icon name="leaderboard"></gb-icon> Leaderboard
+<button><gb-icon name="records" label="Records"></gb-icon></button>
+```
+
+The set: `player`, `matches`, `records`, `deflects`, `live`, `leaderboard`. They're drawn in `currentColor`, so they take the text colour. `<gb-icon>` is 1.25em by default; set `inline-size` and `block-size` to change that. Leave `label` off when text next to the icon already says the same (the icon is then hidden from screen readers), and always give one to an icon-only button. The SVG files are in the package too, as `dist/icons/<name>.svg`.
+
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
 ## Working on it
