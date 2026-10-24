@@ -128,3 +128,72 @@ test("removing the button cancels a flash", () => {
   expect(inner(element).classList.contains("flashing")).toBe(false);
   expect(vi.getTimerCount()).toBe(0);
 });
+
+function pressEnter(target: HTMLElement, init: KeyboardEventInit = {}): KeyboardEvent {
+  const event = new KeyboardEvent("keydown", {
+    key: "Enter",
+    bubbles: true,
+    cancelable: true,
+    ...init,
+  });
+  target.dispatchEvent(event);
+  return event;
+}
+
+function formWithField(): {
+  form: HTMLFormElement;
+  input: HTMLInputElement;
+  onSubmit: ReturnType<typeof vi.fn>;
+} {
+  const form = document.createElement("form");
+  const input = document.createElement("input");
+  form.append(input);
+  document.body.append(form);
+  const onSubmit = vi.fn((event: Event) => event.preventDefault());
+  form.addEventListener("submit", onSubmit);
+  return { form, input, onSubmit };
+}
+
+test("Enter in a text field submits through the form's submit button", () => {
+  const { form, input, onSubmit } = formWithField();
+  make({ type: "submit" }, form);
+  make({ type: "submit" }, form);
+  expect(pressEnter(input).defaultPrevented).toBe(true);
+  expect(onSubmit).toHaveBeenCalledOnce();
+});
+
+test("Enter doesn't submit through a busy or disabled button, or without a submit button", () => {
+  const { form, input, onSubmit } = formWithField();
+  const button = make({}, form);
+  pressEnter(input);
+  button.setAttribute("type", "submit");
+  button.busy = true;
+  expect(pressEnter(input).defaultPrevented).toBe(true);
+  button.busy = false;
+  button.disabled = true;
+  pressEnter(input);
+  expect(onSubmit).not.toHaveBeenCalled();
+});
+
+test("Enter is left alone in a textarea, a checkbox, with a modifier, or with a native submit button", () => {
+  const { form, input, onSubmit } = formWithField();
+  make({ type: "submit" }, form);
+  const textarea = document.createElement("textarea");
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  form.append(textarea, checkbox);
+  pressEnter(textarea);
+  pressEnter(checkbox);
+  pressEnter(input, { shiftKey: true });
+  const native = document.createElement("button");
+  form.append(native);
+  expect(pressEnter(input).defaultPrevented).toBe(false);
+  expect(onSubmit).not.toHaveBeenCalled();
+});
+
+test("a removed button stops listening to its form", () => {
+  const { form, input, onSubmit } = formWithField();
+  make({ type: "submit" }, form).remove();
+  pressEnter(input);
+  expect(onSubmit).not.toHaveBeenCalled();
+});
