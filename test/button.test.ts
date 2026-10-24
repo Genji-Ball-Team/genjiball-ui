@@ -95,12 +95,16 @@ test("flash shows a message in a live region, then clears it", () => {
   vi.useFakeTimers();
   const element = make();
   const feedback = shadow(element, ".feedback");
-  expect(feedback.getAttribute("role")).toBe("status");
+  const status = shadow(element, "[role=status]");
+  expect(inner(element).contains(status)).toBe(false);
+  expect(feedback.getAttribute("aria-hidden")).toBe("true");
   element.flash("Copied ✓");
   expect(feedback.textContent).toBe("Copied ✓");
+  expect(status.textContent).toBe("Copied ✓");
   expect(inner(element).classList.contains("flashing")).toBe(true);
   vi.advanceTimersByTime(2000);
   expect(feedback.textContent).toBe("");
+  expect(status.textContent).toBe("");
   expect(inner(element).classList.contains("flashing")).toBe(false);
 });
 
@@ -114,4 +118,13 @@ test("a second flash restarts the timer", () => {
   expect(inner(element).classList.contains("flashing")).toBe(true);
   vi.advanceTimersByTime(500);
   expect(inner(element).classList.contains("flashing")).toBe(false);
+});
+
+test("removing the button cancels a flash", () => {
+  vi.useFakeTimers();
+  const element = make();
+  element.flash("Copied ✓");
+  element.remove();
+  expect(inner(element).classList.contains("flashing")).toBe(false);
+  expect(vi.getTimerCount()).toBe(0);
 });

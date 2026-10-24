@@ -5,7 +5,8 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 const variants: readonly ButtonVariant[] = ["primary", "secondary", "ghost", "danger"];
 
 // The label, the spinner and the feedback text share one grid cell, so the button is as wide as the
-// widest of them and doesn't change width when it gets busy or says "Copied ✓".
+// widest of them and doesn't change width when it gets busy or says "Copied ✓". The label is hidden
+// with opacity, not visibility, so it stays the button's name for screen readers.
 const styles = `:host { display: inline-block; vertical-align: middle; }
 :host([hidden]) { display: none; }
 button {
@@ -23,8 +24,10 @@ button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
   border-radius: 50%; animation: spin 0.7s linear infinite;
 }
 @keyframes spin { to { transform: rotate(1turn); } }
-:host([busy]) .label, .flashing .label { visibility: hidden; }
+:host([busy]) .label, .flashing .label { opacity: 0; }
 :host([busy]) .spinner, .flashing .feedback { visibility: visible; }
+:host([busy]) .flashing .feedback { visibility: hidden; }
+.status { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 :host([busy]) button { cursor: progress; }
 :host([disabled]) button { cursor: not-allowed; opacity: 0.5; }
 
@@ -61,6 +64,7 @@ export class GbButton extends HTMLElement {
   readonly #root = this.attachShadow({ mode: "open", delegatesFocus: true });
   readonly #button = document.createElement("button");
   readonly #feedback = document.createElement("span");
+  readonly #status = document.createElement("span");
   #flashTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
@@ -71,15 +75,25 @@ export class GbButton extends HTMLElement {
     this.#button.setAttribute("part", "button");
     this.#button.innerHTML = `<span class="label"><slot></slot></span><span class="spinner" aria-hidden="true"></span>`;
     this.#feedback.className = "feedback";
-    this.#feedback.setAttribute("role", "status");
+    this.#feedback.setAttribute("aria-hidden", "true");
     this.#button.append(this.#feedback);
-    this.#root.append(style, this.#button);
+    // Screen readers hear the flash from here: inside the button it would also change its name.
+    this.#status.className = "status";
+    this.#status.setAttribute("role", "status");
+    this.#root.append(style, this.#button, this.#status);
     // Registered first, so a busy or disabled button stops the click before the app's own listeners.
     this.addEventListener("click", this.#onClick, { capture: true });
   }
 
   connectedCallback(): void {
     this.#sync();
+  }
+
+  disconnectedCallback(): void {
+    clearTimeout(this.#flashTimer);
+    this.#button.classList.remove("flashing");
+    this.#feedback.textContent = "";
+    this.#status.textContent = "";
   }
 
   attributeChangedCallback(): void {
@@ -115,10 +129,12 @@ export class GbButton extends HTMLElement {
   flash(text: string, ms = 2000): void {
     clearTimeout(this.#flashTimer);
     this.#feedback.textContent = text;
+    this.#status.textContent = text;
     this.#button.classList.add("flashing");
     this.#flashTimer = setTimeout(() => {
       this.#button.classList.remove("flashing");
       this.#feedback.textContent = "";
+      this.#status.textContent = "";
     }, ms);
   }
 
