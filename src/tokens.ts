@@ -43,6 +43,8 @@ export const tokens = {
   r: "6px",
   "r-chip": "4px",
   "shadow-float": "0 8px 24px oklch(5% 0.01 210 / 0.55), 0 2px 6px oklch(5% 0.01 210 / 0.4)",
+  // The dimmed page behind a dialog.
+  scrim: "oklch(5% 0.01 210 / 0.6)",
 
   // Type: Saira only. Width does the work: condensed for labels, headings and big numbers.
   font: "Saira, system-ui, sans-serif",

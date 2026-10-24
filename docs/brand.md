@@ -162,6 +162,21 @@
 - Shadow means "on top and temporary": only menus, tooltips, popovers, dialogs and toasts get one soft dark shadow (one token, `shadow-float`).
 - Dialogs also dim the page behind them.
 
+## Overlays
+
+Tooltips, popovers, menus and dialogs: the things that sit on top of the page for a moment.
+
+- All of them: `raised` fill, 1px `border`, 6px radius, `shadow-float`. They fade in over `fade-duration` (no slide, no scale) and appear at once under reduced motion.
+- Placed below what opened them, lined up with its start edge, or its end edge when only that fits; above it when there's no room below. Always kept 8px inside the window, and they follow it on scroll.
+- **Tooltip:** a few words naming or explaining a control, never anything to click. Shows after ~400ms of hover, straight away on keyboard focus; Escape hides it. The pointer can move onto it without it closing. Not on touch screens, so nothing may be only in a tooltip. An icon-only button still needs its own label.
+- **Popover:** a small box of content or controls (filters, a share link) opened by a button. Click outside or Escape closes it, and focus goes back to the button.
+- **Menu:** a short list of actions opened by a button. Items are text (an icon only if every item has one), 32px tall (40px on touch screens), hovered or focused item on `line`. Destructive items in `down`, last, after a divider. Arrow keys, Home, End and the first letter move; Enter runs an item and closes the menu; Escape or Tab closes it.
+- **Dialog:** only to confirm something destructive or ask one short question, never for content that could be a page. Dims the page (`scrim`), centred, at most 440px wide. A heading that is the question ("Delete this match?"), one plain line on what happens, then the buttons at the bottom right: Cancel first, the action last, named by what it does ("Delete match", never "OK"). Focus starts on Cancel and stays in the dialog; Escape and a click on the dimmed page cancel.
+
+| Token | Value                      | Use                            |
+| ----- | -------------------------- | ------------------------------ |
+| scrim | `oklch(5% 0.01 210 / 0.6)` | the dimmed page behind dialogs |
+
 ## Inputs
 
 - `raised` fill, 1px `control-border` (3:1 against the surface, so the field can be seen), label above (never placeholder-only), green focus ring.

@@ -8,9 +8,11 @@ const brand = readFileSync("docs/brand.md", "utf8");
 function brandTableColours(): Map<string, string> {
   const colours = new Map<string, string>();
   const tierRow = brand.indexOf("| Tier ");
+  // The tier table ends at the first blank line after its header.
+  const tierEnd = tierRow + brand.slice(tierRow).search(/\n\s*\n/);
   for (const match of brand.matchAll(/^\| ([A-Za-z-]+) +\| `(oklch\([^)]+\))`/gm)) {
     const [, name = "", value = ""] = match;
-    const isTier = match.index > tierRow;
+    const isTier = match.index > tierRow && match.index < tierEnd;
     colours.set(isTier ? `t-${name.toLowerCase()}` : name, value);
   }
   return colours;
@@ -18,7 +20,7 @@ function brandTableColours(): Map<string, string> {
 
 test("every colour in brand.md's tables is a token with the same value", () => {
   const colours = brandTableColours();
-  expect(colours.size).toBe(9 + 2 + 7 + 7);
+  expect(colours.size).toBe(9 + 2 + 7 + 7 + 1);
   for (const [name, value] of colours) expect(tokens).toHaveProperty([name], value);
 });
 
