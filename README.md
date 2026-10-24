@@ -193,6 +193,62 @@ import "@genji-ball-team/ui/tabs.js"; // registers <gb-tabs>
 
 Items are 32px tall, 40px on touch screens. Neither has a shadow root; their styles are added to the page once, like the field's.
 
+### Leaderboard and tables
+
+```ts
+import "@genji-ball-team/ui/leaderboard.js"; // registers <gb-leaderboard>
+import "@genji-ball-team/ui/table.js"; // registers <gb-table>
+import "@genji-ball-team/ui/delta.js"; // registers <gb-delta>
+```
+
+```html
+<gb-leaderboard>
+  <table>
+    <thead>
+      <tr>
+        <th>Place</th>
+        <th>Player</th>
+        <th>Tier</th>
+        <th>Rating</th>
+        <th>Change</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-tier="sovereign" data-title="god">
+        <td>1</td>
+        <td><a href="/player/kyoryu">Kyoryu</a><gb-chip title-chip="god">God</gb-chip></td>
+        <td><gb-chip tier="sovereign">Sovereign</gb-chip></td>
+        <td>2,871</td>
+        <td><gb-delta value="24"></gb-delta></td>
+      </tr>
+    </tbody>
+  </table>
+</gb-leaderboard>
+
+<gb-table sticky>
+  <table>
+    <thead>
+      <tr>
+        <th data-sort>Map</th>
+        <th data-sort data-type="number" aria-sort="descending">Goals</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ayutthaya</td>
+        <td>4</td>
+      </tr>
+    </tbody>
+  </table>
+</gb-table>
+```
+
+- `<gb-leaderboard>` is the brand sheet's leaderboard: one rounded row per player with the tier bar (`data-tier`), place, name, tier chip, rating and change. `data-title="god"` or `"demigod"` gives a row its title look, the only rows that move (still under reduced motion). Put the name first in its cell, in an `<a>` or `<span>`, so a long one is cut short. In a box narrower than 440px the tier chip moves under the name. The header row is read by screen readers but not shown.
+- `<gb-table>` is any other data table: compact rows, tabular numbers, every other row raised, 40px rows on phones. A table too wide for its box scrolls sideways with the first column held still. `data-type="number"` on a header lines its column up on the right. `data-sort` makes a header a sort button: numbers sort high to low first, text A to Z, and `aria-sort` follows. It fires a cancelable `sort` event (`detail: { column, direction }`) first; cancel it to sort on the server. A cell's `data-value` is sorted on instead of its text. `sticky` keeps the header in view while the table scrolls in its own box, up to `--gb-table-height` (70vh).
+- `<gb-delta value="-11">` is a rating change: "▲ 24" in `up`, "▼ 11" in `down`, a muted "–" for 0. Screen readers hear "up 24".
+
+Both tables keep a real `<table>` in the page, so they show before the script loads. Neither has a shadow root; their styles are added to the page once.
+
 ### Avatars
 
 ```ts
