@@ -21,9 +21,11 @@ Brand decided, package set up, components not built yet. The plan is in the [mil
 ## Using it
 
 ```ts
-import "@genji-ball-team/ui/tokens.css"; // every token as a :root custom property: var(--panel), var(--t-master)
+import "@genji-ball-team/ui/base.css"; // the tokens, Saira, a reset and the page defaults: include it first
 import { tokens } from "@genji-ball-team/ui/tokens.js"; // the same values for code: tokens.up, tokens["t-master"]
 ```
+
+`base.css` loads Saira from the package (`fonts/`, no Google Fonts request), sets the dark page, headings and links, gives every focusable element the green focus ring, uses tabular numbers in tables and on `.gb-num`, and turns animation off under `prefers-reduced-motion`. It also has `.gb-display` for big numbers and `.gb-label` for small uppercase labels. To get only the custom properties, import `@genji-ball-team/ui/tokens.css` instead.
 
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
