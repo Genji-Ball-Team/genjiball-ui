@@ -17,6 +17,8 @@ gb-field > :is(input, select, textarea) {
 }
 gb-field > textarea { block-size: auto; min-block-size: 80px; padding: 8px 10px; resize: vertical; }
 gb-field > select { appearance: none; padding-inline-end: 32px; cursor: pointer; }
+/* Autofill keeps the raised fill instead of the browser's own colour. */
+gb-field > input:autofill { box-shadow: inset 0 0 0 100px var(--raised); -webkit-text-fill-color: var(--fg); caret-color: var(--fg); }
 gb-field > :is(input, select, textarea)::placeholder { color: var(--muted); opacity: 1; }
 gb-field > :is(input, select, textarea):hover:not(:disabled) { border-color: var(--muted); }
 gb-field > :is(input, select, textarea, .gb-field-mark) { -webkit-tap-highlight-color: transparent; }
