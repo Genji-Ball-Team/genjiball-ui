@@ -8,14 +8,15 @@
     "./*.js": {
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
-    }
+    },
+    "./*.css": "./dist/*.css"
   },
   "files": [
     "dist/"
   ],
   "scripts": {
     "prepare": "gb-hooks install",
-    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json && node scripts/build-css.js",
     "format": "prettier --write .",
     "typecheck": "tsc",
     "lint": "prettier --check . && eslint . && gb-size",
