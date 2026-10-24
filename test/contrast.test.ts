@@ -48,6 +48,20 @@ test.each([
     expect(contrastRatio(rgb(colour), rgb(fill))).toBeGreaterThanOrEqual(text);
 });
 
+// Leaderboard title rows: each text on them over the haze at the row's start, its lightest point.
+// The God row's place and rating are white, so muted never sits on it.
+test.each([
+  ["god row", blend(rgb("god-cream"), rgb("panel"), 0.14), ["fg", "god", "up", "down"]],
+  [
+    "demigod row",
+    blend(rgb("demi"), blend(rgb("demi-dark"), rgb("bg"), 0.17), 0.14),
+    ["fg", "muted", "up", "down"],
+  ],
+] as const)("%s: its text passes over the haze", (_, fill, colours) => {
+  for (const colour of colours)
+    expect(contrastRatio(rgb(colour), fill)).toBeGreaterThanOrEqual(text);
+});
+
 test("muted on raised is the weakest text pair, as brand.md says", () => {
   expect(contrastRatio(rgb("muted"), rgb("raised"))).toBeCloseTo(5.0, 1);
 });
