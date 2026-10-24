@@ -18,6 +18,15 @@ Brand decided, package set up, components not built yet. The plan is in the [mil
 4. **Gallery:** a site showing every component and state.
 5. **Adoption:** the website and host tool switch to the library.
 
+## Using it
+
+```ts
+import "@genji-ball-team/ui/tokens.css"; // every token as a :root custom property: var(--panel), var(--t-master)
+import { tokens } from "@genji-ball-team/ui/tokens.js"; // the same values for code: tokens.up, tokens["t-master"]
+```
+
+The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
+
 ## Working on it
 
 ```sh
