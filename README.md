@@ -10,7 +10,7 @@ It's built for the [ranked website](https://github.com/Genji-Ball-Team/genjiball
 
 ## Status
 
-Brand decided, package set up, components not built yet. The plan is in the [milestones](https://github.com/Genji-Ball-Team/genjiball-ui/milestones):
+Brand decided, package set up, components in progress. The plan is in the [milestones](https://github.com/Genji-Ball-Team/genjiball-ui/milestones):
 
 1. **Brand:** review the brand sheet and run a second brainstorm for what's still open.
 2. **v0.1 Foundations:** package, tokens, base CSS, Saira, icons, contrast test, npm publishing.
@@ -84,6 +84,24 @@ import "@genji-ball-team/ui/field.js"; // registers <gb-field>
 - Disable the control itself (`input.disabled = true`); the field greys out with it.
 
 Fields are 36px tall, 40px on touch screens. The field has no shadow root; its styles are added to the page (or the shadow root it's in) once.
+
+### Chips
+
+```ts
+import "@genji-ball-team/ui/chip.js"; // registers <gb-chip>
+import { tiers } from "@genji-ball-team/ui/chip.js"; // "rookie" … "sovereign", lowest first
+```
+
+```html
+Kyoryu <gb-chip title-chip="god">God</gb-chip> <gb-chip tier="sovereign">Sovereign</gb-chip>
+<gb-chip>EU</gb-chip>
+```
+
+- `tier`: a tier chip, in that tier's colour. Tier colour goes only here and on a row's side bar, never on text.
+- `title-chip`: `god` (white, glowing) or `demigod` (deep red). A light band sweeps across them; it stops under reduced motion. They're the only chips that move.
+- Neither: a grey chip, for a region. Regions have no colours.
+
+The text is the chip's content, so it shows before the script loads; it's drawn uppercase.
 
 The tokens come from [src/tokens.ts](src/tokens.ts). A test checks them against the tables in brand.md, so change brand.md first.
 
