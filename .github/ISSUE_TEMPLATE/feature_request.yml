@@ -1,0 +1,15 @@
+name: Feature / idea
+description: Suggest a component, icon or brand change
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What's the idea?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: Where would it be used (website, host tool, bot)?

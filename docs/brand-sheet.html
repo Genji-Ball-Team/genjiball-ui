@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Genji Ball brand sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wdth,wght@50..125,100..900&display=swap" rel="stylesheet">
+<style>
+@property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
+:root{
+ --bg:oklch(15% 0.007 210);--panel:oklch(17.7% 0.008 210);--raised:oklch(21.4% 0.010 210);--line:oklch(24% 0.011 210);--border:oklch(28% 0.012 210);
+ --muted:oklch(63% 0.012 210);--soft:oklch(80% 0.008 210);--fg:oklch(96% 0.005 210);
+ --green:oklch(79% 0.132 158);--up:oklch(80% 0.11 230);--down:oklch(73% 0.16 48);--gold:oklch(86.6% 0.126 90);
+ --god:oklch(100% 0 0);--god-cream:oklch(97% 0.04 93);--god-rim:oklch(93.7% 0.086 92);
+ --demi:oklch(48.6% 0.185 28);--demi-hi:oklch(62.6% 0.182 32);--demi-deep:oklch(36.4% 0.149 29);--demi-dark:oklch(24% 0.026 11);
+ --t-rookie:oklch(82% 0.07 185);--t-apprentice:oklch(68% 0.11 50);--t-master:oklch(86% 0.15 100);--t-grandmaster:oklch(76% 0.16 70);
+ --t-ascendant:oklch(70% 0.15 265);--t-champion:oklch(60% 0.2 22);--t-sovereign:oklch(62% 0.19 305);
+ --r:6px;--r-chip:4px;--shadow-float:0 8px 24px oklch(5% 0.01 210 / .55),0 2px 6px oklch(5% 0.01 210 / .4);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Saira,system-ui,sans-serif;color:var(--fg)}
+.sheet{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:16px}
+svg{display:block}
+.lab{font-size:.64rem;font-weight:700;font-stretch:75%;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+.hdr{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.word{font-size:1.5rem;font-weight:800;font-stretch:78%;letter-spacing:.04em;line-height:1}
+.hdr .lab{margin-left:auto;text-align:right;line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+.full{grid-column:1/-1}
+.p{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.p>.lab:first-child{display:block;margin-bottom:10px}
+/* colour */
+.sw{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.s{border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.s i{display:block;height:34px}
+.s b{display:block;font-size:.72rem;font-weight:650;padding:5px 7px 0}
+.s small{display:block;font-size:.6rem;color:var(--muted);padding:0 7px 6px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw+.sw{margin-top:8px}
+/* type */
+.ty{display:flex;flex-direction:column;gap:8px}
+.ty .row{display:flex;align-items:baseline;gap:12px}
+.ty .row .lab{width:62px;flex:none}
+.d1{font-size:2.4rem;font-weight:750;font-stretch:78%;line-height:1}
+.h1{font-size:1.4rem;font-weight:700;font-stretch:80%;line-height:1.1}
+.h2{font-size:1.05rem;font-weight:650;font-stretch:85%}
+.bd{font-size:.9rem;color:var(--soft);line-height:1.45}
+/* chips */
+.chip{display:inline-block;font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.1rem .42rem;border-radius:var(--r-chip);line-height:1.45;color:var(--t);background:color-mix(in oklch,var(--t) 16%,transparent)}
+.tiers{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+@media (max-width:560px){.tiers{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tier{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:8px;border-radius:var(--r);background:var(--raised);position:relative;overflow:hidden}
+.tier::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--t)}
+.tier .chip{font-size:.52rem;letter-spacing:.06em}
+.tier small{font-size:.66rem;color:var(--muted);font-variant-numeric:tabular-nums;padding-left:2px}
+/* leaderboard */
+.lb .r{--fill:transparent;position:relative;display:grid;grid-template-columns:18px minmax(0,1fr) auto 44px 42px;align-items:center;gap:8px;height:36px;padding:0 .6rem 0 .8rem;border-radius:var(--r);font-size:.86rem;border:1.5px solid transparent}
+.lb .r.alt{--fill:var(--raised);background:var(--fill)}
+.lb .r::before{content:"";position:absolute;left:3px;top:9px;bottom:9px;width:3px;border-radius:2px;background:var(--t,transparent)}
+.lb .n{color:var(--muted);font-weight:700;font-stretch:75%;font-variant-numeric:tabular-nums}
+.lb .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:7px}
+.lb .sr{font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.u,.dn{font-size:.78rem;font-weight:650;font-variant-numeric:tabular-nums;text-align:right}
+.u{color:var(--up)}.dn{color:var(--down)}
+.tc{font-size:.52rem;font-weight:800;letter-spacing:.14em;padding:.06rem .38rem;border-radius:var(--r-chip);line-height:1.4;background-size:200% 100%}
+.lb .r.god{--fill:var(--panel);margin:2px 0 4px;isolation:isolate;overflow:hidden;
+ background:linear-gradient(90deg,oklch(97% 0.04 93 / .14),transparent 80%) padding-box,linear-gradient(var(--fill),var(--fill)) padding-box,
+ conic-gradient(from var(--spin),var(--line) 0 55%,var(--god) 72%,var(--god-rim) 80%,var(--line) 92% 100%) border-box;
+ box-shadow:0 0 18px oklch(97% 0.04 93 / .12);animation:spin 4s linear infinite}
+.lb .r.god::before{background:linear-gradient(var(--god-cream),var(--god));box-shadow:0 0 8px oklch(97% 0.04 93 / .9)}
+.lb .r.god .n,.lb .r.god .sr{color:var(--god);text-shadow:0 0 12px oklch(93.7% 0.086 92 / .8)}
+.lb .r.god .who{background:linear-gradient(110deg,var(--god) 0 35%,var(--god-rim) 45%,var(--god) 50%,var(--god-cream) 55%,var(--god) 65% 100%) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:650;animation:shim 3s linear infinite}
+.tc.god{color:oklch(22% 0.03 90);background-image:linear-gradient(110deg,var(--god) 0 40%,var(--god-rim) 48%,var(--god) 56% 100%);box-shadow:0 0 10px oklch(93.7% 0.086 92 / .55);animation:shim 2.6s linear infinite}
+.lb .r.demi{--fill:oklch(16.5% 0.012 11);margin:2px 0;overflow:hidden;
+ background:linear-gradient(90deg,oklch(48.6% 0.185 28 / .14),transparent 70%) padding-box,linear-gradient(var(--fill),var(--fill)) padding-box,
+ conic-gradient(from var(--spin),var(--demi-dark) 0 35%,var(--demi) 45%,var(--demi-hi) 50%,var(--demi-dark) 60% 85%,var(--demi-deep) 92%,var(--demi-dark) 100%) border-box;
+ animation:spin 7s linear infinite reverse}
+.lb .r.demi::before{background:linear-gradient(var(--demi-hi),var(--demi));box-shadow:0 0 8px oklch(62.6% 0.182 32 / .75)}
+.tc.demi{color:#fff;background-image:linear-gradient(110deg,var(--demi-deep) 0 40%,var(--demi-hi) 48%,var(--demi-deep) 56% 100%);animation:shim 3.6s linear infinite}
+@keyframes spin{to{--spin:360deg}}
+@keyframes shim{to{background-position:-200% 0}}
+/* icons */
+.ic{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.ic{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.ic figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 4px;background:var(--raised);border-radius:var(--r)}
+.ic .sz{display:flex;align-items:flex-end;gap:8px;color:var(--fg)}
+.ic figcaption{font-size:.6rem;font-weight:700;font-stretch:75%;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.i{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;overflow:visible}
+.i .f{fill:currentColor;fill-opacity:.22;stroke:none}
+.nav{display:flex;gap:4px;margin-top:10px;flex-wrap:wrap}
+.nav a{display:flex;align-items:center;gap:6px;padding:0 .65rem;height:32px;border-radius:var(--r);color:var(--muted);font-size:.82rem;font-weight:550}
+.nav a.on{background:var(--raised);color:var(--fg)}.nav a.on svg{color:var(--green)}
+/* buttons + inputs */
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.b{font:inherit;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 14px;border-radius:var(--r);font-size:.84rem;font-weight:650;border:1px solid transparent;cursor:pointer;color:var(--fg);background:none}
+.b.pri{background:var(--green);color:var(--bg)}
+.b.sec{background:var(--raised);border-color:var(--border)}
+.b.gh{color:var(--soft);padding:0 8px}
+.b.dan{border-color:color-mix(in oklch,var(--down) 70%,transparent);color:var(--down)}
+.b:focus-visible,.in input:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.b.pri:hover{background:oklch(84% 0.12 158)}.b.sec:hover{background:var(--line)}.b.gh:hover{color:var(--fg)}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.in{display:flex;flex-direction:column;gap:5px}
+.in label{font-size:.74rem;font-weight:600;color:var(--soft)}
+.in input{font:inherit;font-size:.86rem;height:36px;padding:0 10px;border-radius:var(--r);border:1px solid var(--border);background:var(--raised);color:var(--fg)}
+.in.err input{border-color:var(--down)}
+.in .e{font-size:.72rem;color:var(--down)}
+/* feedback */
+.fb{display:flex;flex-direction:column;gap:8px}
+.toast{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);background:var(--raised);border:1px solid var(--border);box-shadow:var(--shadow-float);font-size:.84rem}
+.toast .ti{font-weight:800;width:16px;text-align:center}
+.toast .ti.ok{color:var(--up)}.toast .ti.wa{color:var(--down)}
+.toast .b{margin-left:auto;height:30px;font-size:.78rem}
+.toast .x{margin-left:auto;color:var(--muted);font-size:.9rem}
+.skel{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.skel .sr2{display:flex;align-items:center;gap:10px;height:30px;padding:0 10px;border-radius:var(--r);background:var(--raised)}
+.skel i{display:block;height:9px;border-radius:4px;background:var(--border);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+/* chart */
+.ch-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.big{font-size:1.6rem;font-weight:750;font-stretch:78%;font-variant-numeric:tabular-nums;line-height:1}
+.big small{font-size:.82rem;margin-left:6px;font-weight:650}
+.ch{position:relative}
+.ch .hit{cursor:pointer}
+.tip{position:absolute;pointer-events:none;background:var(--raised);border:1px solid var(--green);border-radius:var(--r);box-shadow:var(--shadow-float);padding:5px 9px;font-size:.72rem;white-space:nowrap;opacity:0;transition:opacity .1s;line-height:1.35;font-variant-numeric:tabular-nums}
+.tip .m{color:var(--muted)}.tip .go{color:var(--green);font-weight:650;font-size:.66rem}
+/* motion */
+.mo{position:relative;overflow:hidden;background:var(--raised);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:14px}
+.mo .big{font-size:2rem}
+.mo .d{color:var(--up);font-weight:650;font-size:.9rem;font-variant-numeric:tabular-nums;opacity:0}
+.mo.go .d{animation:pop .5s .15s ease-out forwards}
+.mo::after{content:"";position:absolute;left:-10%;top:50%;width:120%;height:1.5px;background:linear-gradient(90deg,transparent,var(--green) 30%,var(--fg) 60%,transparent);transform:rotate(-14deg) scaleX(0);transform-origin:0 50%;opacity:0;box-shadow:0 0 8px var(--green)}
+.mo.go::after{animation:slash .55s cubic-bezier(.2,.8,.2,1) forwards}
+.mo .b{margin-left:auto}
+@keyframes slash{0%{opacity:1;transform:rotate(-14deg) scaleX(0)}45%{opacity:1;transform:rotate(-14deg) scaleX(1)}100%{opacity:0;transform:rotate(-14deg) scaleX(1)}}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* voice */
+.vo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vo div{background:var(--raised);border-radius:var(--r);padding:9px 11px;font-size:.84rem;line-height:1.4}
+.vo .lab{display:block;margin-bottom:3px}
+.vo .no{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--down)}
+@media (max-width:560px){.vo,.form{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.mo .d{opacity:1}}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+ <mask id="logo-cut" maskUnits="userSpaceOnUse" x="-4" y="-4" width="40" height="40"><rect x="-4" y="-4" width="40" height="40" fill="#fff"/><path d="M4 24.4 28 7.6" stroke="#000" stroke-width="3.5" stroke-linecap="round"/></mask>
+ <mask id="ic-cut" maskUnits="userSpaceOnUse" x="-4" y="-4" width="32" height="32"><rect x="-4" y="-4" width="32" height="32" fill="#fff"/><path d="M3 18.3 21 5.7" stroke="#000" stroke-width="2.6" stroke-linecap="round"/></mask>
+</defs></svg>
+
+<div class="sheet">
+ <header class="hdr">
+  <svg width="38" height="38" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="var(--green)" mask="url(#logo-cut)"/></svg>
+  <span class="word">GENJI BALL</span>
+  <span class="lab">Brand &amp; UI rules<br>draft · 2026-10-24</span>
+ </header>
+
+ <div class="grid">
+  <section class="p">
+   <span class="lab">Colour · surfaces &amp; text</span>
+   <div class="sw" id="sw-n"></div>
+   <div class="sw" id="sw-t"></div>
+  </section>
+  <section class="p">
+   <span class="lab">Colour · meaning</span>
+   <div class="sw" id="sw-m"></div><div class="sw" id="sw-m2"></div>
+  </section>
+
+  <section class="p full">
+   <span class="lab">Rank tiers</span>
+   <div class="tiers" id="tiers"></div>
+  </section>
+
+  <section class="p">
+   <span class="lab">Leaderboard · titles</span>
+   <div class="lb" id="lb"></div>
+  </section>
+  <section class="p">
+   <span class="lab">Type · Saira</span>
+   <div class="ty">
+    <div class="row"><span class="lab">Display</span><span class="d1 num">2,184</span></div>
+    <div class="row"><span class="lab">Heading</span><span class="h1">Autumn season leaderboard</span></div>
+    <div class="row"><span class="lab">Title</span><span class="h2">Recent matches</span></div>
+    <div class="row"><span class="lab">Body</span><span class="bd">Hosts copy the ranked code from the host tool. Matches upload by themselves.</span></div>
+    <div class="row"><span class="lab">Label</span><span class="lab" style="width:auto;color:var(--muted)">Deflects · Ball speed · Place</span></div>
+   </div>
+  </section>
+
+  <section class="p full">
+   <span class="lab">Icons · duotone, 1.75px, 24px grid</span>
+   <div class="ic" id="ic"></div>
+   <div class="nav" id="nav"></div>
+  </section>
+
+  <section class="p">
+   <span class="lab">Buttons &amp; inputs</span>
+   <div class="btns">
+    <button class="b pri">Copy ranked code</button>
+    <button class="b sec">Settings</button>
+    <button class="b gh">Show more</button>
+    <button class="b dan">Delete match</button>
+   </div>
+   <div class="form">
+    <div class="in"><label for="f1">BattleTag</label><input id="f1" value="Kyoryu#2184"></div>
+    <div class="in err"><label for="f2">Host token</label><input id="f2" value="gb_4f…"><span class="e">⚠ This token isn't valid. Copy it again from the site.</span></div>
+   </div>
+  </section>
+  <section class="p">
+   <span class="lab">Feedback · loading</span>
+   <div class="fb">
+    <div class="toast"><span class="ti ok">✓</span><div>Match uploaded</div><span class="x">×</span></div>
+    <div class="toast"><span class="ti wa">⚠</span><div>Upload failed. Your log is kept.</div><button class="b sec">Retry</button></div>
+    <div class="skel" aria-label="Loading">
+     <div class="sr2"><i style="width:12px"></i><i style="width:38%"></i><i style="width:16%;margin-left:auto"></i></div>
+     <div class="sr2"><i style="width:12px"></i><i style="width:30%"></i><i style="width:16%;margin-left:auto"></i></div>
+    </div>
+   </div>
+  </section>
+
+  <section class="p">
+   <span class="lab">Chart · rating</span>
+   <div class="ch" id="ch"></div>
+  </section>
+  <section class="p">
+   <span class="lab">Motion · blade slash</span>
+   <div class="mo" id="mo"><div><span class="lab">Your rating</span><div style="display:flex;align-items:baseline;gap:10px"><span class="big" id="mo-n">1,818</span><span class="d">▲ 24</span></div></div><button class="b sec" id="mo-b">Replay</button></div>
+   <span class="lab" style="display:block;margin:14px 0 8px">Voice</span>
+   <div class="vo">
+    <div><span class="lab">Gameplay</span>Kyoryu beamed Shimada for 1st.</div>
+    <div><span class="lab">Errors</span>Upload failed. Your log is kept; try again.</div>
+    <div><span class="lab">Plain</span>No matches yet.</div>
+    <div><span class="lab">Never</span><span class="no">Oopsie, the ninjas dropped your upload!</span></div>
+   </div>
+  </section>
+ </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const sw=(n,v,c)=>`<div class="s"><i style="background:var(--${c})"></i><b>${n}</b><small>${v}</small></div>`;
+$("sw-n").innerHTML=[["bg","15% .007"],["panel","17.7% .008"],["raised","21.4% .010"],["border","28% .012"]].map(([n,v])=>sw(n,v,n)).join("");
+$("sw-t").innerHTML=[["line","24% .011"],["muted","63% .012"],["soft","80% .008"],["fg","96% .005"]].map(([n,v])=>sw(n,v,n)).join("");
+$("sw-m").innerHTML=[["green","79% .132 158"],["up","80% .11 230"],["down","73% .16 48"],["gold","86.6% .126 90"]].map(([n,v])=>sw(n,v,n)).join("");
+$("sw-m2").innerHTML=[["god","100% 0 0","god"],["god-rim","93.7% .086 92","god-rim"],["demi","48.6% .185 28","demi"],["demi-deep","36.4% .149 29","demi-deep"]].map(([n,v,c])=>sw(n,v,c)).join("");
+const T=[["Rookie",1100],["Apprentice",1300],["Master",1600],["Grandmaster",1900],["Ascendant",2200],["Champion",2500],["Sovereign",2800]];
+$("tiers").innerHTML=T.map(([n,r])=>`<div class="tier" style="--t:var(--t-${n.toLowerCase()})"><span class="chip">${n}</span><small>${r.toLocaleString("en")}+</small></div>`).join("");
+const L=[[1,"Kyoryu","god","sovereign",2871,24],[2,"Shimada","demi","champion",2604,-11],[3,"Bladewave","","champion",2512,8],[4,"Swiftstrike","","ascendant",2290,-3],[5,"Ryujin","","grandmaster",1977,12]];
+$("lb").innerHTML=L.map(([p,n,t,tier,r,d],i)=>`<div class="r ${t} ${!t&&i%2?'alt':''}" style="--t:var(--t-${tier})"><span class="n">${p}</span><span class="nm"><span class="who">${n}</span>${t?`<span class="tc ${t}">${t==="god"?"GOD":"DEMIGOD"}</span>`:""}</span><span class="chip" style="--t:var(--t-${tier})">${tier}</span><span class="sr">${r.toLocaleString("en")}</span><span class="${d>0?'u':'dn'}">${d>0?'▲':'▼'} ${Math.abs(d)}</span></div>`).join("");
+// icons: [fill, stroke]
+const blade='M9.7 14.3C12.9 12.1 17.1 8.3 20.6 3.4 18.7 8.4 14.8 12.6 10.8 15.3z';
+const I={
+ player:['<path d="M6.5 9.5a5.5 5.5 0 0 1 11 0v2.8l-2.6 5h-5.8l-2.6-5z"/>','<path d="M6.5 9.5a5.5 5.5 0 0 1 11 0v2.8l-2.6 5h-5.8l-2.6-5zM8.4 10.4l3.6 1.6 3.6-1.6M4.5 21.2c1.4-1.5 4-2.3 7.5-2.3s6.1.8 7.5 2.3"/>'],
+ matches:['<g mask="url(#ic-cut)"><circle cx="12" cy="12" r="8.5"/></g>','<g mask="url(#ic-cut)"><circle cx="12" cy="12" r="8.5"/></g>'],
+ records:['<circle cx="12" cy="15.5" r="5"/><path d="M7.5 3h3l2 6.2h-3zM16.5 3h-3l-1.1 3.4"/>','<path d="M7.5 3h3l2 6.2M16.5 3h-3l-1.1 3.4M14.5 3l-2 6.2"/><circle cx="12" cy="15.5" r="5"/><path d="M12 13.3v4.4M10.8 14.2l1.2-.9"/>'],
+ deflects:[`<path d="${blade}"/>`,`<path d="${blade}M7.6 13.2l3.6 3.4M9 15.9 4.4 20.5M4.2 9.4A9.5 9.5 0 0 1 11 3.2"/>`],
+ live:['<circle cx="15" cy="12" r="5.5"/>','<circle cx="15" cy="12" r="5.5"/><path d="M3 8.5h3.5M2 12h4M3 15.5h3.5"/>'],
+ leaderboard:['<path d="M9 9h6v11H9zM3.5 13H9v7H3.5zM15 15.5h5.5V20H15z"/>','<path d="M9 20V9h6v11M3.5 20v-7H9M15 15.5h5.5V20M2.5 20h19"/>']};
+const ico=(k,s)=>`<svg class="i" width="${s}" height="${s}" viewBox="0 0 24 24" aria-hidden="true"><g class="f">${I[k][0]}</g>${I[k][1]}</svg>`;
+$("ic").innerHTML=Object.keys(I).map(k=>`<figure><div class="sz">${ico(k,32)}${ico(k,20)}${ico(k,16)}</div><figcaption>${k}</figcaption></figure>`).join("");
+$("nav").innerHTML=[["leaderboard","Leaderboard",1],["matches","Matches"],["records","Records"],["live","Live"],["player","Profile"]].map(([k,n,on])=>`<a class="${on?'on':''}">${ico(k,18)}${n}</a>`).join("");
+// chart
+let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;
+const N=40,data=[];let r=1830;for(let i=0;i<N;i++){const d=Math.round((rnd()-.43)*70);const pl=d>20?1:d>0?2+Math.floor(rnd()*2):3+Math.floor(rnd()*4);r+=d;data.push({r,d,pl:Math.min(pl,6)});}
+const W=300,H=140,P={l:30,r:8,t:8,b:10},min=1780,max=2260,x=i=>P.l+i*(W-P.l-P.r)/(N-1),y=v=>P.t+(max-v)*(H-P.t-P.b)/(max-min);
+const net=data[N-1].r-data[0].r,lc=net>=0?"var(--up)":"var(--down)",ord=n=>n+(["th","st","nd","rd"][n]||"th");
+let g="";[1800,1900,2000,2100,2200].forEach(v=>g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${P.l-5}" y="${y(v)+3}" font-size="8" fill="var(--muted)" text-anchor="end" font-family="Saira">${v}</text>`);
+[["Grandmaster",1900],["Ascendant",2200]].forEach(([n,v])=>{const c=`var(--t-${n.toLowerCase()})`;g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y(v)}" y2="${y(v)}" stroke="${c}" stroke-dasharray="3 3" opacity=".7"/><rect x="${P.l+4}" y="${y(v)+3}" width="58" height="10" rx="3" fill="color-mix(in oklch,${c} 18%,var(--panel))"/><text x="${P.l+33}" y="${y(v)+10.5}" font-size="6.5" font-weight="800" letter-spacing=".8" fill="${c}" text-anchor="middle" font-family="Saira">${n.toUpperCase()}</text>`});
+g+=`<path d="${data.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.r).toFixed(1)).join("")}" fill="none" stroke="${lc}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${x(N-1)}" cy="${y(data[N-1].r)}" r="4" fill="${lc}" stroke="var(--panel)" stroke-width="2"/>`;
+$("ch").innerHTML=`<div class="ch-h"><span class="lab">Rating · last 40 matches</span><span class="big">${data[N-1].r.toLocaleString("en")}<small style="color:${lc}">${net>=0?"▲":"▼"} ${Math.abs(net)}</small></span></div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible" role="img" aria-label="Rating over the last 40 matches, now ${data[N-1].r}">${g}<g class="hov" style="display:none"><line class="cx" y1="${P.t}" y2="${H-P.b}" stroke="var(--green)" stroke-opacity=".5"/><circle class="cd" r="4.5" fill="var(--green)" stroke="var(--panel)" stroke-width="2"/></g><rect class="hit" x="${P.l}" y="0" width="${W-P.l-P.r}" height="${H}" fill="transparent"/></svg><div class="tip"></div>`;
+{const c=$("ch"),svg=c.querySelector("svg"),hov=c.querySelector(".hov"),tip=c.querySelector(".tip"),hit=c.querySelector(".hit");
+ hit.addEventListener("pointermove",e=>{const b=svg.getBoundingClientRect(),i=Math.max(0,Math.min(N-1,Math.round(((e.clientX-b.left)*W/b.width-P.l)/(W-P.l-P.r)*(N-1)))),p=data[i];hov.style.display="";
+  hov.querySelector(".cx").setAttribute("x1",x(i));hov.querySelector(".cx").setAttribute("x2",x(i));hov.querySelector(".cd").setAttribute("cx",x(i));hov.querySelector(".cd").setAttribute("cy",y(p.r));
+  tip.innerHTML=`<span class="m">Match ${i+1} · ${ord(p.pl)} of 6</span><br><b>${p.r.toLocaleString("en")}</b> <span class="${p.d>=0?'u':'dn'}">${p.d>=0?'▲':'▼'} ${Math.abs(p.d)}</span><br><span class="go">Open match →</span>`;
+  const cb=c.getBoundingClientRect(),px=b.left-cb.left+x(i)*b.width/W,py=b.top-cb.top+y(p.r)*b.height/H;tip.style.left=Math.min(cb.width-tip.offsetWidth-4,Math.max(4,px-tip.offsetWidth/2))+"px";tip.style.top=(py-tip.offsetHeight-10<0?py+12:py-tip.offsetHeight-10)+"px";tip.style.opacity=1;});
+ hit.addEventListener("pointerleave",()=>{hov.style.display="none";tip.style.opacity=0;});}
+// motion
+const play=()=>{const m=$("mo"),n=$("mo-n");m.classList.remove("go");void m.offsetWidth;m.classList.add("go");
+ if(matchMedia("(prefers-reduced-motion:reduce)").matches){n.textContent="1,842";return}
+ const t0=performance.now(),tick=t=>{const p=Math.min(1,(t-t0)/600),e=1-Math.pow(1-p,3);n.textContent=(1818+Math.round(24*e)).toLocaleString("en");if(p<1)requestAnimationFrame(tick)};requestAnimationFrame(tick)};
+$("mo-b").addEventListener("click",play);
+</script>
+</body></html>
