@@ -11,7 +11,7 @@ npm run format  # Prettier --write
 npm run build   # dist/: ESM and .d.ts, what npm gets
 ```
 
-`npm run check` is what CI runs, and **it must pass before a change is done.** The contrast test joins it with the tokens (#8).
+`npm run check` is what CI runs, and **it must pass before a change is done.** It includes the contrast test (`test/contrast.test.ts`), which fails the build when a token pair drops below WCAG 2.1 AA.
 
 - Code follows the team [STYLE.md](https://github.com/Genji-Ball-Team/.github/blob/main/STYLE.md); the lint config comes from `@genji-ball-team/style`.
 - Each component is its own module under `src/`, exported as `@genji-ball-team/ui/<path>.js`. No `index.ts` that only re-exports.
