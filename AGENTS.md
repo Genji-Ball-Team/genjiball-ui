@@ -4,7 +4,19 @@ The Genji Ball UI library: design tokens, CSS, icons and framework-free web comp
 
 ## Commands
 
-Not set up yet (see the "Set up the package" issue). Once it is, `npm run check` (typecheck, lint, tests, contrast test) is what CI runs, and **it must pass before a change is done.**
+```sh
+npm ci          # also installs the pre-commit hook
+npm run check   # typecheck, Prettier, ESLint, size check, Vitest, build
+npm run format  # Prettier --write
+npm run build   # dist/: ESM and .d.ts, what npm gets
+```
+
+`npm run check` is what CI runs, and **it must pass before a change is done.** The contrast test joins it with the tokens (#8).
+
+- Code follows the team [STYLE.md](https://github.com/Genji-Ball-Team/.github/blob/main/STYLE.md); the lint config comes from `@genji-ball-team/style`.
+- Each component is its own module under `src/`, exported as `@genji-ball-team/ui/<path>.js`. No `index.ts` that only re-exports.
+- Register elements with `defineElement` (`src/define.ts`), never `customElements.define` directly.
+- Tests run in happy-dom (`test/`).
 
 ## The brand is the spec
 
@@ -35,13 +47,13 @@ Versioned, published to npm from CI: with the `NPM_TOKEN` secret until trusted p
 
 ## Other repos
 
-| Repo | What it is |
-|---|---|
-| `GenjiBall-CE` | The game. Rank tags and their colours are on its `v1.3.3R` branch |
-| `genjiball-ranked` | Cloudflare Worker: API, ratings and the website at genjiball.us. Uses this library |
-| `genjiball-host-tool` | Tauri app that uploads matches. Uses this library |
-| `Discord-Bot` | Discord bot reading the ranked API. Uses the brand colours in embeds |
-| `genjiball-ui` (this one) | The UI library |
+| Repo                      | What it is                                                                         |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| `GenjiBall-CE`            | The game. Rank tags and their colours are on its `v1.3.3R` branch                  |
+| `genjiball-ranked`        | Cloudflare Worker: API, ratings and the website at genjiball.us. Uses this library |
+| `genjiball-host-tool`     | Tauri app that uploads matches. Uses this library                                  |
+| `Discord-Bot`             | Discord bot reading the ranked API. Uses the brand colours in embeds               |
+| `genjiball-ui` (this one) | The UI library                                                                     |
 
 - An issue here may need work in another repo. Keep one PR per repo and link them to each other (`Genji-Ball-Team/genjiball-ranked#12`).
 - Each repo has its own `AGENTS.md`; follow it when working there.
