@@ -6,7 +6,7 @@ It's built for the [ranked website](https://github.com/Genji-Ball-Team/genjiball
 
 - **Brand rules:** [docs/brand.md](docs/brand.md). Every colour, type, icon, motion and component decision, with the reasons.
 - **Brand sheet:** [docs/brand-sheet.html](docs/brand-sheet.html). All of the rules on one page; open it in a browser.
-- **Gallery:** every component in every state, built from the package with `npm run gallery` (see [Working on it](#working-on-it)).
+- **Gallery:** [ui.genjiball.us](https://ui.genjiball.us). Every component in every state, built from the package (see [The gallery](#the-gallery)).
 - **Discord:** [discord.gg/sv9VVjh5pT](https://discord.gg/sv9VVjh5pT)
 
 ## Status
@@ -16,7 +16,7 @@ Brand decided, package set up, components in progress. The plan is in the [miles
 1. **Brand:** review the brand sheet and run a second brainstorm for what's still open.
 2. **v0.1 Foundations:** package, tokens, base CSS, Saira, icons, contrast test, npm publishing.
 3. **v0.2 Components:** buttons, inputs, chips, leaderboard rows, chart, toasts, dialogs and the rest.
-4. **Gallery:** a site showing every component and state.
+4. **Gallery:** a site showing every component and state. Live at [ui.genjiball.us](https://ui.genjiball.us).
 5. **Adoption:** the website and host tool switch to the library.
 
 ## Using it
