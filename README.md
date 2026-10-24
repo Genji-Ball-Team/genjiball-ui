@@ -57,7 +57,7 @@ import "@genji-ball-team/ui/button.js"; // registers <gb-button>
 - `disabled` greys it out and takes it out of the tab order. `busy` shows a spinner at the same width and ignores clicks, but keeps focus, so set it while a submit runs.
 - `button.flash("Copied ✓")` shows a short message in place of the label for two seconds; screen readers hear it.
 
-It's 36px tall, 40px on touch screens.
+It's 36px tall, 40px on touch screens. `aria-label`, `aria-description`, `aria-expanded` and `aria-haspopup` set on `<gb-button>` are passed on to the button inside it, so an icon-only button gets its name with `aria-label`.
 
 ### Inputs
 
@@ -122,6 +122,83 @@ For things that happen in the background. Anything tied to one control gets inli
 - Every toast has a close button, and Escape closes the one with focus. `toast()` returns the `<gb-toast>`: `close()` takes it away early, and it fires `close` when it goes.
 
 Toasts stack in a `<gb-toast-region>` at the bottom right of the page, bottom centre on phones. Screen readers hear each one: errors straight away, successes once the screen reader finishes what it's saying. `toast()` adds the region on first use; put `<gb-toast-region></gb-toast-region>` in the page's markup to have it ready from the start.
+
+### Tooltips
+
+```ts
+import "@genji-ball-team/ui/tooltip.js"; // registers <gb-tooltip>
+```
+
+```html
+<gb-tooltip text="Copies the ranked code with rank tags">
+  <gb-button variant="ghost">Copy code</gb-button>
+</gb-tooltip>
+```
+
+A short hint about the one element inside. It shows after about 400ms of hover, straight away on keyboard focus, and Escape hides it. It never shows on touch, so nothing may only be said in a tooltip, and an icon-only button still needs its own `aria-label`. The text describes the element to screen readers (unless it only repeats its name).
+
+### Popovers
+
+```ts
+import "@genji-ball-team/ui/popover.js"; // registers <gb-popover>
+```
+
+```html
+<gb-popover>
+  <gb-button>Filters</gb-button>
+  <div aria-label="Filters">
+    <gb-field label="Region"
+      ><select>
+        …
+      </select></gb-field
+    >
+    <gb-button variant="primary">Apply</gb-button>
+  </div>
+</gb-popover>
+```
+
+The first child is the button, the last is the panel it opens. The panel opens below the button (above when there's no room), focus moves into it, and a click outside, Escape or focus leaving closes it; Escape puts focus back on the button. `show()`, `hide()`, `toggle()` and `open` drive it from code, and it fires `open` and `close`.
+
+### Menus
+
+```ts
+import "@genji-ball-team/ui/menu.js"; // registers <gb-menu>
+```
+
+```html
+<gb-menu label="Match actions">
+  <gb-button variant="ghost" aria-label="Match actions">⋯</gb-button>
+  <div>
+    <button>Copy match link</button>
+    <a href="/admin/matches/412">Open in admin</a>
+    <hr />
+    <button data-danger>Delete match</button>
+  </div>
+</gb-menu>
+```
+
+A list of actions, laid out like a popover. The panel's `<button>`s and links are the items; `<hr>` is a divider. Arrow keys, Home, End and a first letter move between items, Enter or a click runs one and closes the menu, and Escape or Tab closes it. Choosing an item fires `select` on the menu with the item as `detail`. A `data-danger` item is orange; put it last, after a divider, and confirm before doing it. Items are 32px tall, 40px on touch screens.
+
+### Dialogs
+
+```ts
+import { confirmDialog } from "@genji-ball-team/ui/dialog.js"; // registers <gb-dialog>
+
+if (
+  await confirmDialog({
+    title: "Delete this match?",
+    text: "Its rating changes are undone for all six players.",
+    action: "Delete match",
+    danger: true,
+  })
+) {
+  await deleteMatch();
+}
+```
+
+Only for confirmations. The title is the question, `text` one line on what happens, and `action` names what the button does ("Delete match", not "OK"). Cancel comes first and has focus; Escape or a click on the dimmed page cancels. It resolves `true` for the action, `false` otherwise.
+
+For a dialog of your own, use `<gb-dialog label="…">` with the text inside and buttons in `slot="actions"`: a button with a `value` closes it with that `returnValue`. `show()` opens it, `close(value)` closes it and fires `close`, and focus goes back where it was.
 
 ### Skeletons
 
