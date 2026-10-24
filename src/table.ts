@@ -56,11 +56,13 @@ gb-table .gb-table-num { text-align: end; }
 [aria-sort] > .gb-table-sort > svg { opacity: 1; }
 [aria-sort="ascending"] > .gb-table-sort > svg { rotate: 180deg; }
 
-/* Phones step up to comfortable, with 40px rows to tap. */
+/* Phones step up to comfortable, with 40px rows to tap. A sort button's tap area grows past its
+   label without moving it, so every header label stays on one line. */
 @media (pointer: coarse), (max-width: 560px) {
   gb-table :is(th, td) { block-size: 40px; padding-inline: 12px; }
   gb-table th { block-size: 36px; }
-  .gb-table-sort { min-block-size: 32px; }
+  .gb-table-sort { position: relative; }
+  .gb-table-sort::after { content: ""; position: absolute; inset: -14px -4px -6px; }
 }`;
 
 const adoptStyles = lightStyles(styles);
