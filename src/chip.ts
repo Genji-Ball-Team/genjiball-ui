@@ -18,7 +18,7 @@ export const tiers: readonly Tier[] = [
 
 const titles: readonly ChipTitle[] = ["god", "demigod"];
 
-// Only the known titles: an unknown \`title-chip\` stays a plain chip.
+// Only the known titles: an unknown `title-chip` stays a plain chip.
 const titled = titles.map((title) => `:host([title-chip="${title}"])`).join(", ");
 
 // The host is the chip; the text stays in the page, so it shows before the element upgrades and is
