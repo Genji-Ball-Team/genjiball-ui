@@ -349,6 +349,33 @@ chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
 - A mouse click, a second tap on the same point, or Enter fires a cancelable `open` event (`detail: { index, point }`), then goes to the point's `href`. Cancel it to open the match some other way.
 - One axis, on the left. It draws at its box's width, 240px tall (180px under 480px wide), or the `height` attribute. `--gb-chart-bg` is the surface it sits on (`panel` unless the app says so). With no points it draws nothing; show a `<gb-empty>` instead.
 
+### Motion: count-up and the blade slash
+
+```ts
+import "@genji-ball-team/ui/count.js"; // registers <gb-count>
+import "@genji-ball-team/ui/slash.js"; // registers <gb-slash>
+import "@genji-ball-team/ui/delta.js"; // registers <gb-delta>
+```
+
+```html
+<gb-slash>
+  <gb-stat label="Rating">
+    <gb-count value="1818"></gb-count> <gb-delta value="-11"></gb-delta>
+  </gb-stat>
+</gb-slash>
+```
+
+```ts
+// After a match, in front of the player: the number counts up, the slash cuts across, the delta fades in.
+count.value = 1842;
+delta.value = 24;
+```
+
+- `<gb-count>` is a whole number, formatted ("1,842") and tabular. The first value shows straight away; only a change from one number to another counts, over 0.6s with an ease-out. Screen readers get the new value at once. It fires a bubbling `count` event when it starts.
+- `<gb-slash>` is brand.md's blade slash: a thin green line cuts across its content once (0.55s) and fades. It plays when a `<gb-count>` inside it starts counting, or on `play()`. It's a block with the 6px radius; wrap the panel or tile that changed.
+- `<gb-delta>` fades in when its value changes from one number to another, just after the count starts.
+- None of it plays on page load or loops. Under reduced motion, or on a page in the background, the new numbers show at once and nothing moves.
+
 ### Avatars
 
 ```ts
