@@ -55,3 +55,25 @@ test("only the arrow text is hidden from screen readers", () => {
   expect(shown?.getAttribute("aria-hidden")).toBe("true");
   expect(spoken?.hasAttribute("aria-hidden")).toBe(false);
 });
+
+test("a change from one number to another fades in, the first value doesn't", () => {
+  const element = make("-11");
+  const shown = () => element.shadowRoot?.querySelector("[part=value]");
+  expect(shown()?.classList.contains("in")).toBe(false);
+  element.value = 24;
+  expect(shown()?.classList.contains("in")).toBe(true);
+});
+
+test("a value set after none doesn't fade in", () => {
+  const element = make();
+  element.value = 24;
+  expect(element.shadowRoot?.querySelector("[part=value]")?.classList.contains("in")).toBe(false);
+});
+
+test("the fade waits for the count and is off under reduced motion", () => {
+  const css = make().shadowRoot?.querySelector("style")?.textContent ?? "";
+  expect(css).toContain(
+    "animation: delta-in var(--delta-duration) var(--delta-delay) ease-out both;",
+  );
+  expect(css).toContain("@media (prefers-reduced-motion: reduce) { .in { animation: none; } }");
+});
