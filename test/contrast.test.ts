@@ -25,6 +25,11 @@ describe.each(surfaces)("on %s", (surface) => {
     expect(contrastRatio(rgb(tier), chip)).toBeGreaterThanOrEqual(text);
   });
 
+  test("plain (region) chip", () => {
+    const chip = blend(rgb("soft"), rgb(surface), chipTint);
+    expect(contrastRatio(rgb("soft"), chip)).toBeGreaterThanOrEqual(text);
+  });
+
   test("control-border edge", () => {
     expect(contrastRatio(rgb("control-border"), rgb(surface))).toBeGreaterThanOrEqual(ui);
   });
@@ -32,6 +37,15 @@ describe.each(surfaces)("on %s", (surface) => {
 
 test("primary buttons: dark text on brand green", () => {
   expect(contrastRatio(rgb("bg"), rgb("green"))).toBeGreaterThanOrEqual(text);
+});
+
+// Title chips: every colour the shimmer passes under the text, from the base to the band's peak.
+test.each([
+  ["god", "bg", ["god", "god-rim"]],
+  ["demigod", "fg", ["demi-deep", "demi"]],
+] as const)("%s chip: %s text across its shimmer", (_, colour, fills) => {
+  for (const fill of fills)
+    expect(contrastRatio(rgb(colour), rgb(fill))).toBeGreaterThanOrEqual(text);
 });
 
 test("muted on raised is the weakest text pair, as brand.md says", () => {
