@@ -91,6 +91,7 @@
   - Style: duotone. 1.75px rounded outline on a 24px grid, plus a soft fill (currentColor at ~20%). Checked at 16, 20 and 24px.
   - Theming comes from the subjects, not from a filter. No mechanical cut or effect applied to every icon (tried: reads as damage).
   - Chosen subjects: player = Genji faceplate (V visor, pointed chin); matches = the logo's sliced ball; records = medal with a "1"; deflects = katana + slash arc; live = ball with speed lines; leaderboard = podium.
+  - Everyday icons in the same style: search (a lens), close (an ×), back (an arrow left), next (an arrow right), share (an arrow rising out of an open box), enlarge (four corners pointing out), external (an arrow out of a square), copy (two sheets) and tourney (a cup on a short stem). The fill goes on the closed shape (the lens glass, the box, the front sheet, the cup). Line-only icons (close, back, next, enlarge) have no fill.
   - Avoid: the 4-point "AI sparkle" star, generic person silhouettes, Western sword shapes.
   - The dash-afterimage (offset fill) is motion only (hover/active), never static.
 - No kanji or Japanese text as decoration.
@@ -124,6 +125,8 @@
 - Tier thresholds: dashed line in the tier colour with its small tier chip; reaching a rank = crossing a line. No tier-coloured bands.
 - Clickable: each point opens that match. Hover (or first tap on phones): pointer cursor, green crosshair and dot, tooltip with match, place, rating, delta and a green "Open match →".
 - Other charts: neutral marks; colour only where it means something (up/down, tier chips, gold for records). Recessive grid and axes, 2px lines, tabular numbers, one axis only, screen-reader label on every chart.
+- Compare chart: one line a player, up to three, told apart by stroke as well as shade, never by hue: `fg` solid, `soft` dashed, `muted` dotted. Up and down don't apply, since the chart compares players, not one player over time. Each line has its player's name at its end, plus a key above the chart. Tier lines, hover and click work as on the rating line; the tooltip lists every player's rating at that point.
+- Bar chart (e.g. activity a day): bars in `muted`, the hovered or focused one in `fg`. A zero is a 2px stub in `border`, so the day still shows. Bars are rounded at the top only. The axis is the first and last label under the bars, with the highest value in the chart's label. Each bar is focusable, arrow keys step between bars, and each bar has a tooltip and a screen-reader label with its value.
 
 ## Buttons
 
@@ -145,6 +148,7 @@
 - Name only for now: name, tier chip, title if any. No generated or fake avatars.
 - Later (not now): players may link Discord. Their Discord picture then shows on their profile, probably not on the leaderboard.
 - The library still ships an avatar component from the start: picture if there is one, grey initial if not, hidden by default.
+- Recent form: a row of small squares (24px, 40px tap targets on phones), oldest left and newest right, so it reads like the chart. Each square shows the place as a tabular number and opens its match. A win is filled with `up` and has dark text. Other places are on `raised`, in `soft`. The number tells the place, so colour is never the only cue, and each square has a full label ("Won round 3 of match #812").
 
 ## Loading
 
@@ -181,6 +185,9 @@ Tooltips, popovers, menus and dialogs: the things that sit on top of the page fo
 
 - `raised` fill, 1px `control-border` (3:1 against the surface, so the field can be seen), label above (never placeholder-only), green focus ring.
 - Errors go below the field in `down` with ⚠ and say how to fix it.
+- **Search box:** a field with the search icon at its start, and a label (shown, or for screen readers when the page heading says what it searches). When suggestions come, they appear in a list below the box with the overlay look, at most 8. In each one, the part that matches is in `fg`, semibold, and the rest is in `soft`. Arrow keys move through the list; Enter opens the item; Escape closes the list, then clears the box. "No one called “x”." when nothing matches. A page with one main search lets `/` focus it, shown as a small key hint inside the box while it's empty and not focused, and never on touch screens.
+- **Segmented control:** one choice out of 2 to 4 short options, all in view (region, a view switch). The options sit in a track with the `panel` fill and a 1px `control-border`. The chosen one is on `raised` in `fg`, with the active tab's green bar. Arrow keys move the choice. Use it to change the view of a page; going to another page is tabs or nav.
+- **Pager:** "← Previous" and "Next →" as ghost links at the two ends, with "Page 2 of 9" in `muted` between them. Every page has its own URL. At the first or last page, the link that can't go anywhere is hidden but keeps its space, so nothing moves.
 
 ## Empty states
 
