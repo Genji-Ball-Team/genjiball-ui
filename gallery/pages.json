@@ -5,6 +5,12 @@
   { "group": "Foundations", "slug": "icons", "title": "Icons", "modules": ["icon"] },
   { "group": "Controls", "slug": "buttons", "title": "Buttons", "modules": ["button", "icon"] },
   { "group": "Controls", "slug": "inputs", "title": "Inputs", "modules": ["field", "button"] },
+  {
+    "group": "Controls",
+    "slug": "search",
+    "title": "Search",
+    "modules": ["search", "chip"]
+  },
   { "group": "Controls", "slug": "chips", "title": "Chips", "modules": ["chip"] },
   {
     "group": "Controls",

@@ -1,0 +1,131 @@
+<section class="g-section">
+  <h2>Suggestions</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-search
+        id="players"
+        label="Find a player"
+        placeholder="Find a player"
+        shortcut="/"
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>Empty, with the / hint</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-search
+        id="typed"
+        label="Find a player"
+        placeholder="Find a player"
+        value="ryu"
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>Typed: focus it, or press ↓</figcaption>
+    </figure>
+  </div>
+  <p class="gb-label" id="picked" aria-live="polite"></p>
+</section>
+
+<section class="g-section">
+  <h2>Other states</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-search
+        class="mock"
+        label="Find a player"
+        placeholder="Find a player"
+        value="zzz"
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>No results: focus it</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-search
+        class="mock"
+        label="Find a player"
+        placeholder="Find a player"
+        value="err"
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>Error: focus it</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-search
+        class="mock"
+        label="Find a player"
+        placeholder="Find a player"
+        value="slow"
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>Loading: type “slow”</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-search
+        label="Find a player"
+        placeholder="Find a player"
+        disabled
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>Disabled</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Without a list</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-search
+        id="filter"
+        filter
+        label="Filter the leaderboard"
+        hide-label
+        placeholder="Find a player"
+        shortcut="f"
+        style="inline-size: 320px"
+      ></gb-search>
+      <figcaption>Filters the page; press f</figcaption>
+    </figure>
+    <p id="filtered" class="gb-label" aria-live="polite"></p>
+  </div>
+</section>
+
+<script type="module">
+  const names = [
+    { name: "Kyoryu", tier: "master", detail: "1840", href: "#kyoryu" },
+    { name: "Ryuji", tier: "grandmaster", detail: "2105", href: "#ryuji" },
+    { name: "Hanzo Main", note: "was Ryu", tier: "rookie", detail: "612" },
+    { name: "Dragon Ryu", detail: "Unranked" },
+    { name: "Genjitsu", tier: "champion", detail: "2890", href: "#genjitsu" },
+    { name: "Sparrow", tier: "ascendant", detail: "2410", href: "#sparrow" },
+  ];
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // A mock server: slow answers can arrive late, and the box drops the ones for old queries.
+  for (const search of document.querySelectorAll("gb-search:not([filter]):not([disabled])")) {
+    search.addEventListener("query", async (event) => {
+      const { query, signal, answer, fail } = event.detail;
+      await wait(query === "slow" ? 2500 : 250);
+      if (signal.aborted) return;
+      if (query === "err") return fail();
+      const lower = query.toLowerCase();
+      answer(
+        names.filter(
+          (one) =>
+            one.name.toLowerCase().includes(lower) || one.note?.toLowerCase().includes(lower),
+        ),
+      );
+    });
+    search.addEventListener("pick", (event) => {
+      event.preventDefault();
+      document.getElementById("picked").textContent = `Picked: ${event.detail.name}`;
+    });
+    // The pre-filled ones start with their query answered.
+    if (search.value) search.input.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  document.getElementById("filter").addEventListener("input", (event) => {
+    document.getElementById("filtered").textContent = event.target.value
+      ? `Showing players matching “${event.target.value}”`
+      : "";
+  });
+</script>
