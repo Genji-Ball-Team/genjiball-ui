@@ -1,0 +1,25 @@
+<section class="g-section">
+  <h2>Pager</h2>
+  <div class="g-stack g-narrow">
+    <figure class="g-state">
+      <gb-pager page="1" pages="9" href="#page-{page}"></gb-pager>
+      <figcaption>First page: Previous is hidden but keeps its space</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-pager page="2" pages="9" href="#page-{page}"></gb-pager>
+      <figcaption>In the middle</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-pager page="9" pages="9" href="#page-{page}"></gb-pager>
+      <figcaption>Last page: Next is hidden</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-pager page="3" more href="#page-{page}"></gb-pager>
+      <figcaption>Total unknown, another page follows</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-pager page="1" pages="1" href="#page-{page}"></gb-pager>
+      <figcaption>Only page: nothing shows</figcaption>
+    </figure>
+  </div>
+</section>

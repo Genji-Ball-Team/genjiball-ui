@@ -271,6 +271,40 @@ import "@genji-ball-team/ui/tabs.js"; // registers <gb-tabs>
 
 Items are 32px tall, 40px on touch screens. Neither has a shadow root; their styles are added to the page once, like the field's.
 
+### Segmented control, pager and recent form
+
+```ts
+import "@genji-ball-team/ui/segmented.js"; // registers <gb-segmented>
+import "@genji-ball-team/ui/pager.js"; // registers <gb-pager>
+import "@genji-ball-team/ui/form-row.js"; // registers <gb-form-row>
+```
+
+```html
+<gb-segmented label="View" value="rating">
+  <button value="rating">Rating</button>
+  <button value="places">Places</button>
+</gb-segmented>
+
+<gb-segmented label="Region">
+  <a href="?region=eu" aria-current="true">EU</a>
+  <a href="?region=na">NA</a>
+</gb-segmented>
+
+<gb-pager page="2" pages="9" href="/matches?page={page}"></gb-pager>
+
+<gb-form-row label="Recent form"></gb-form-row>
+```
+
+```js
+row.results = [{ place: 1, players: 6, href: "/match?id=812", label: "Won round 3 of match #812" }];
+```
+
+- `<gb-segmented>` is one choice out of 2 to 4 options, for changing the view of a page. With `<button>` children it is a radio group: `value` is the chosen option's `value` attribute (else its text), the first enabled option when none matches. Picking one sets `value` and fires `change` (not when the app sets it); the arrow keys move the choice, and a disabled button is skipped. With `<a>` children each option is a page (the region switch): mark the chosen one `aria-current="true"`; it is a plain navigation and Tab reaches every link.
+- `<gb-pager>` is "← Previous", "Page 2 of 9" and "Next →". `href` is the URL of a page with `{page}` in it, so every page is a real link. `pages` can be left off when the server only says whether another page follows: add `more` to show Next, and the text is "Page 2". The end that can't go anywhere is hidden but keeps its space; with a single page nothing shows. `pager.page` and `pager.pages` read and set the attributes, `pager.url(n)` gives a page's URL.
+- `<gb-form-row>` is a player's last rounds as small squares, oldest left. Set `results` to `{ place, players, href, label? }` items. Each square is a link to its match showing the place; `label` is its name for screen readers and tooltip (default "Won" or "3rd of 6"). A win is filled with `up` with dark text. No results shows the `empty` text (default "No matches yet.").
+
+The segmented options are 32px tall inside a 3px track, the pager links 36px and the form squares 24px; all are 40px on touch screens. None has a shadow root; their styles are added to the page once, like the field's.
+
 ### Leaderboard and tables
 
 ```ts

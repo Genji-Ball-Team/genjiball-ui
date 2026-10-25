@@ -1,0 +1,31 @@
+<section class="g-section">
+  <h2>Recent form</h2>
+  <div class="g-stack g-narrow">
+    <figure class="g-state">
+      <gb-form-row id="form-demo" label="Recent form"></gb-form-row>
+      <figcaption>Oldest left, newest right. A win is filled</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-form-row id="form-wrap" label="Long run of rounds"></gb-form-row>
+      <figcaption>Wraps when there are many</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-form-row></gb-form-row>
+      <figcaption>Empty</figcaption>
+    </figure>
+  </div>
+</section>
+
+<script type="module">
+  const rounds = (places) =>
+    places.map((place, i) => ({
+      place,
+      players: 6,
+      href: `#match-${800 + i}`,
+      label: `${place === 1 ? "Won" : `Place ${place} of 6 in`} round ${(i % 3) + 1} of match #${800 + i}`,
+    }));
+  document.getElementById("form-demo").results = rounds([4, 2, 1, 3, 1, 6, 2, 1]);
+  document.getElementById("form-wrap").results = rounds(
+    Array.from({ length: 40 }, (_, i) => ((i * 7) % 6) + 1),
+  );
+</script>
