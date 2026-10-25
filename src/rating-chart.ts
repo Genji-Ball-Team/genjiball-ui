@@ -20,6 +20,8 @@ export interface RatingPoint {
   readonly change?: number;
   /** What the tooltip calls the match ("Match #412"). Without it, "Match 1", "Match 2"… */
   readonly label?: string;
+  /** A short label for under the chart ("Oct 5"). The first and last point's are its ends. */
+  readonly axis?: string;
   /** The player's place in the match, and how many played it ("2nd of 6"). */
   readonly place?: number;
   readonly players?: number;
@@ -46,13 +48,20 @@ const styles = `:host {
 ${chartStyles}
 .line { fill: none; stroke: var(--gb-chart-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .last { fill: var(--gb-chart-line); stroke: var(--gb-chart-bg); stroke-width: 2; }
+.axis {
+  display: flex; justify-content: space-between; margin: 6px 0 0; padding: 0 ${pad.right}px 0 ${pad.left}px;
+  color: var(--muted); font-size: var(--label-size); font-variant-numeric: tabular-nums;
+}
+.axis[hidden] { display: none; }
+.axis span:only-child { margin: 0 auto; }
 .cursor circle { fill: var(--green); stroke: var(--gb-chart-bg); stroke-width: 2; }`;
 
 /**
  * `<gb-rating-chart label="Rating over the last 40 matches">`: a player's rating after each match,
  * as brand.md's Charts section draws it. Give it data with properties:
  *
- * - `points`: {@link RatingPoint}s, oldest first.
+ * - `points`: {@link RatingPoint}s, oldest first. When the first and last have an `axis`, those
+ *   two labels go under the chart's ends.
  * - `tiers`: {@link TierLine}s. Those near the ratings shown get a dashed line and their chip.
  *
  * The whole line is `up` if the rating went up over the points shown and `down` if it went down
@@ -71,6 +80,7 @@ export class GbRatingChart extends HTMLElement {
   readonly #tip = document.createElement("div");
   readonly #said = document.createElement("p");
   readonly #svg = draw("svg", { role: "img", part: "chart" });
+  readonly #axis = document.createElement("p");
   #points: readonly RatingPoint[] = [];
   #tiers: readonly TierLine[] = [];
   // Where each point is drawn, and the one the cursor is on (-1: none).
@@ -89,7 +99,10 @@ export class GbRatingChart extends HTMLElement {
     this.#tip.setAttribute("part", "tooltip");
     this.#said.className = "gb-sr";
     this.#said.setAttribute("aria-live", "polite");
-    this.#root.append(style, this.#svg, this.#tip, this.#said);
+    this.#axis.className = "axis";
+    this.#axis.setAttribute("aria-hidden", "true");
+    this.#axis.setAttribute("part", "axis");
+    this.#root.append(style, this.#svg, this.#axis, this.#tip, this.#said);
     this.#listen(this.#svg);
   }
 
@@ -150,6 +163,7 @@ export class GbRatingChart extends HTMLElement {
     if (this.getAttribute("direction") !== direction) this.setAttribute("direction", direction);
     svg.replaceChildren();
     svg.style.display = first && last ? "" : "none";
+    this.#drawAxis();
     if (!first || !last) {
       svg.removeAttribute("tabindex");
       return;
@@ -201,6 +215,16 @@ export class GbRatingChart extends HTMLElement {
     svg.append(grid, ...tierLines.map((tier) => tier.group), line, dot, cursor);
     for (const tier of tierLines) tier.fit();
     if (kept >= 0) this.#show(kept);
+  }
+
+  /** The first and last point's axis labels, under the chart's ends, when both have one. */
+  #drawAxis(): void {
+    const first = this.#points[0];
+    const last = this.#points.at(-1);
+    const ends =
+      first?.axis && last?.axis ? [first.axis, ...(last === first ? [] : [last.axis])] : [];
+    this.#axis.replaceChildren(...ends.map((text) => span("", text)));
+    this.#axis.hidden = ends.length === 0;
   }
 
   #label(links: boolean): string {

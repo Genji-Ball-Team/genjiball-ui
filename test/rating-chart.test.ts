@@ -144,3 +144,17 @@ test("a redraw keeps keyboard focus and the point it's on", () => {
   expect(tipOf(chart)?.hidden).toBe(false);
   expect(tipOf(chart)?.textContent).toContain("Match #3");
 });
+
+test("the first and last point's axis labels go under the chart's ends", () => {
+  const axisOf = (chart: GbRatingChart) => chart.shadowRoot?.querySelector<HTMLElement>(".axis");
+  const chart = make();
+  expect(axisOf(chart)?.hidden).toBe(true);
+  chart.points = points.map((point, index) => ({ ...point, axis: `Oct ${index + 1}` }));
+  expect(axisOf(chart)?.hidden).toBe(false);
+  expect([...(axisOf(chart)?.children ?? [])].map((label) => label.textContent)).toEqual([
+    "Oct 1",
+    "Oct 4",
+  ]);
+  chart.points = [{ rating: 1830, axis: "Oct 1" }];
+  expect(axisOf(chart)?.textContent).toBe("Oct 1");
+});

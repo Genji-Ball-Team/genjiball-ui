@@ -33,7 +33,15 @@
       const change = Math.round((random() - 0.5) * 50 + drift);
       rating += change;
       const place = 1 + Math.floor(random() * 6);
-      return { rating, change, place, players: 6, label: `Match #${380 + i}`, href: "#" };
+      // Every other day, ending on Oct 24.
+      const day = new Date(Date.UTC(2026, 9, 24 - (steps - 1 - i) * 2));
+      const axis = day.toLocaleDateString("en", {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      });
+      const label = `Match #${380 + i} · ${axis}`;
+      return { rating, change, place, players: 6, label, axis, href: "#" };
     });
   }
   const up = document.getElementById("chart-up");
