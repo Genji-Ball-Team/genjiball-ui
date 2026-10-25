@@ -1,3 +1,4 @@
+import { ordinal } from "./chart-scale.js";
 import { defineElement } from "./define.js";
 import { lightStyles } from "./light-styles.js";
 
@@ -30,13 +31,6 @@ export interface FormResult {
   href: string;
   /** The full label, e.g. "Won round 3 of match #812". Left off, it is "Won" or "3rd of 6". */
   label?: string;
-}
-
-const suffixes = ["th", "st", "nd", "rd"];
-
-function ordinal(n: number): string {
-  const tail = n % 100;
-  return `${n}${suffixes[(tail - 20) % 10] ?? suffixes[tail] ?? "th"}`;
 }
 
 /**
