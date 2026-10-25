@@ -19,11 +19,13 @@ export interface Bar {
 const styles = `:host { display: block; position: relative; contain: inline-size; }
 :host([hidden]) { display: none; }
 .bars {
-  display: flex; align-items: flex-end; gap: 2px; block-size: var(--gb-bar-height, 120px);
+  display: flex; align-items: flex-end; justify-content: space-around; gap: 2px;
+  block-size: var(--gb-bar-height, 120px);
   margin: 0; padding: 0; list-style: none;
 }
 .bar {
-  flex: 1 1 0; min-inline-size: 1px; border-radius: 3px 3px 0 0; background: var(--muted); outline-offset: 2px;
+  /* A few bars stay bar-shaped instead of filling the chart. */
+  flex: 1 1 0; min-inline-size: 1px; max-inline-size: 48px; border-radius: 3px 3px 0 0; background: var(--muted); outline-offset: 2px;
   transition: background-color var(--fade-duration);
 }
 .bar.zero { background: var(--border); block-size: 2px; border-radius: 0; }
