@@ -1,10 +1,11 @@
 import "./chip.js";
 import { defineElement } from "./define.js";
 import { lightStyles } from "./light-styles.js";
+import { iconSvg } from "./icons.js";
 import { follow, lower, raise } from "./overlay.js";
 import { maxResults, optionRow } from "./search-parts.js";
 import type { SearchItem, SearchQuery } from "./search-parts.js";
-import { lens, styles } from "./search-styles.js";
+import { styles } from "./search-styles.js";
 
 export { maxResults };
 export type { SearchItem, SearchQuery };
@@ -112,13 +113,17 @@ export class GbSearch extends HTMLElement {
     this.#live.className = "gb-search-live";
     this.#live.setAttribute("role", "status");
     this.#popup.append(this.#list, this.#note);
-    this.#box.insertAdjacentHTML("afterbegin", lens);
+    this.#box.insertAdjacentHTML("afterbegin", iconSvg("search"));
     this.#box.append(this.#input, this.#hint);
     this.#input.addEventListener("input", this.#onInput);
     this.#input.addEventListener("keydown", this.#onKeydown);
     this.#input.addEventListener("focus", () => {
       this.#wanted = true;
-      this.#sync();
+      // A box filled before it was focused (from the address, say) asks for its suggestions now.
+      const query = this.#query();
+      if (!this.#filter && !this.loading && query.length >= this.#min && query !== this.#answered)
+        this.#ask();
+      else this.#sync();
     });
     this.addEventListener("focusout", this.#onFocusOut);
   }
@@ -267,11 +272,9 @@ export class GbSearch extends HTMLElement {
     if (error) return { text: `⚠ ${error}`, error: true };
     if (this.#items.length > 0) return { text: "", error: false };
     if (this.loading) return { text: "Searching…", error: false };
-    if (this.#answered === undefined || this.#answered === "") return { text: "", error: false };
-    return {
-      text: `${this.getAttribute("empty") ?? "No one called"} “${this.#answered}”.`,
-      error: false,
-    };
+    if (!this.#answered) return { text: "", error: false };
+    const empty = this.getAttribute("empty") ?? "No one called";
+    return { text: `${empty} “${this.#answered}”.`, error: false };
   }
 
   /** Opens or closes the list to match the state, and keeps the input's ARIA attributes true. */

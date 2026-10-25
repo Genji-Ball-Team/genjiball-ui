@@ -351,3 +351,19 @@ test("connecting again doesn't add a second input", () => {
   expect(element.querySelectorAll("input")).toHaveLength(1);
   expect(element.querySelectorAll("label")).toHaveLength(1);
 });
+
+test("a box filled before it's focused asks for its suggestions on focus, once", () => {
+  const element = make({ value: "ryu" });
+  const queries: string[] = [];
+  element.addEventListener("query", (event) => {
+    queries.push(detailOf(event).query);
+    detailOf(event).answer(players);
+  });
+  expect(element.open).toBe(false);
+  element.input.focus();
+  expect(queries).toEqual(["ryu"]);
+  expect(element.open).toBe(true);
+  element.input.blur();
+  element.input.focus();
+  expect(queries).toEqual(["ryu"]);
+});

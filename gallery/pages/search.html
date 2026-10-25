@@ -119,8 +119,6 @@
       event.preventDefault();
       document.getElementById("picked").textContent = `Picked: ${event.detail.name}`;
     });
-    // The pre-filled ones start with their query answered.
-    if (search.value) search.input.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
   document.getElementById("filter").addEventListener("input", (event) => {

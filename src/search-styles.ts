@@ -1,9 +1,5 @@
 import { fadeKeyframes, surfaceStyles } from "./overlay.js";
 
-// The search icon is drawn here until the icon set has it (brand.md, Genji touch): same duotone
-// style as icons.ts, a soft glass under a 1.75px outline. TODO: use <gb-icon name="search">.
-export const lens = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="currentColor" fill-opacity="0.22" stroke="none"/><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>`;
-
 // No shadow root, like the field: the input stays a native element in the page, so it submits with
 // its form and autofills. The list is an overlay in the top layer where the browser has one.
 export const styles = `gb-search { display: grid; grid-template-columns: minmax(0, 1fr); gap: 5px; }
