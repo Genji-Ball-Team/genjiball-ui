@@ -86,6 +86,41 @@ import "@genji-ball-team/ui/field.js"; // registers <gb-field>
 
 Fields are 36px tall, 40px on touch screens. The field has no shadow root; its styles are added to the page (or the shadow root it's in) once.
 
+### Search
+
+```ts
+import "@genji-ball-team/ui/search.js"; // registers <gb-search>
+```
+
+```html
+<gb-search label="Find a player" placeholder="Find a player" shortcut="/"></gb-search>
+```
+
+```ts
+search.addEventListener("query", (event) => {
+  const { query, signal, answer, fail } = event.detail;
+  fetch(`/players?search=${encodeURIComponent(query)}`, { signal })
+    .then((response) => response.json())
+    .then(
+      (players) => answer(players),
+      () => fail(),
+    );
+});
+search.addEventListener("pick", (event) => console.log(event.detail.name));
+```
+
+`<gb-search>` is the player search box: a field with the search icon at its start and, below it, a list of at most 8 suggestions that your app supplies as the user types. It is an ARIA combobox (the input is a real `<input type="search">` in the page, so `name` and `value` submit with a form). Each suggestion is `{ name, tier?, note?, detail?, href? }`: the part of `name` that matches is bold, `tier` adds a tier chip, `note` is small text after the name ("was Kyoryu"), `detail` sits at the end (a rating) and `href` makes the row a link.
+
+- `label` names the box and shows above it; `hide-label` keeps it for screen readers when the page heading says what it searches. `placeholder`, `name`, `value` and `disabled` go to the input.
+- `query` fires after a pause in typing (`delay`, default 150 ms) once the text has `min-length` characters (default 1). Its `detail` has `query`, a `signal` that aborts when a newer query replaces this one, and `answer(items)` and `fail(message?)`, which do nothing once their query is out of date, so a slow answer never overwrites a newer one. Between `query` and the answer the box is `loading`.
+- No results shows "No one called “x”." (`empty` changes the start of the line); `fail()` shows an orange line, "The search didn't load. Try again.", until the next query. `results` and `error` can also be set from code.
+- `pick` fires when an item is clicked or chosen with Enter; `detail` is the item. A cancelable event: an item with an `href` goes to its page unless you `preventDefault()`.
+- Keys: ↓ and ↑ move through the list (round the end) and set `aria-activedescendant`, Home and End jump to the first and last once an item is active, Enter chooses, Escape closes the list and then clears the box. Focus stays in the input.
+- `shortcut="/"` focuses the box from anywhere outside a text field and shows the key as a hint inside it while it's empty and not focused; it's never shown on touch screens. Use it on a page with one main search.
+- `filter` leaves out the list: the box only filters the page, so listen to `input` (and `Escape` clears it).
+
+The search icon is drawn inside the component until the icon set has it. The box has no shadow root; its styles are added to the page once.
+
 ### Chips
 
 ```ts
