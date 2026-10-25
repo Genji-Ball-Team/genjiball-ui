@@ -39,6 +39,10 @@ test("primary buttons: dark text on brand green", () => {
   expect(contrastRatio(rgb("bg"), rgb("green"))).toBeGreaterThanOrEqual(text);
 });
 
+test("a win in the recent form: dark text on up", () => {
+  expect(contrastRatio(rgb("bg"), rgb("up"))).toBeGreaterThanOrEqual(text);
+});
+
 // Title chips: every colour the shimmer passes under the text, from the base to the band's peak.
 test.each([
   ["god", "bg", ["god", "god-rim"]],

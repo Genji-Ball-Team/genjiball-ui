@@ -13,6 +13,14 @@
     "modules": ["nav", "tabs", "icon"]
   },
   {
+    "group": "Controls",
+    "slug": "segmented",
+    "title": "Segmented control",
+    "modules": ["segmented"]
+  },
+  { "group": "Controls", "slug": "pager", "title": "Pager", "modules": ["pager"] },
+  { "group": "Data", "slug": "form-row", "title": "Recent form", "modules": ["form-row"] },
+  {
     "group": "Data",
     "slug": "panels",
     "title": "Panels and stats",
