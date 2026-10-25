@@ -39,6 +39,18 @@
     "title": "Rating chart",
     "modules": ["rating-chart", "panel", "delta", "empty"]
   },
+  {
+    "group": "Data",
+    "slug": "compare-chart",
+    "title": "Compare chart",
+    "modules": ["compare-chart", "panel", "empty", "skeleton"]
+  },
+  {
+    "group": "Data",
+    "slug": "bar-chart",
+    "title": "Bar chart",
+    "modules": ["bar-chart", "panel", "empty", "skeleton"]
+  },
   { "group": "Data", "slug": "avatars", "title": "Avatars", "modules": ["avatar"] },
   { "group": "Feedback", "slug": "toasts", "title": "Toasts", "modules": ["toast", "button"] },
   {
