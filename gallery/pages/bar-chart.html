@@ -1,0 +1,72 @@
+<section class="g-section">
+  <h2>Activity a day (hover a bar, or Tab in and use the arrow keys)</h2>
+  <gb-panel label="Rated rounds a day">
+    <gb-bar-chart id="days" label="Rated rounds a day"></gb-bar-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>A few days, with a zero</h2>
+  <gb-panel label="Matches this week">
+    <gb-bar-chart id="week" label="Matches this week" height="80"></gb-bar-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>One bar</h2>
+  <gb-panel label="Rated rounds a day">
+    <gb-bar-chart id="one" label="Rated rounds a day"></gb-bar-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>Loading</h2>
+  <gb-panel label="Rated rounds a day">
+    <section aria-busy="true" aria-label="Rated rounds a day" class="g-stack">
+      <gb-skeleton block style="block-size: 120px"></gb-skeleton>
+    </section>
+  </gb-panel>
+</section>
+
+<section class="g-section">
+  <h2>No activity</h2>
+  <gb-panel label="Rated rounds a day">
+    <gb-empty>No rated rounds yet.</gb-empty>
+  </gb-panel>
+</section>
+
+<script type="module">
+  const day = (offset) =>
+    new Date(Date.UTC(2026, 9, 1 + offset, 12)).toLocaleDateString("en", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
+  const short = (offset) =>
+    new Date(Date.UTC(2026, 9, 1 + offset, 12)).toLocaleDateString("en", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
+  const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+  const bar = (offset, rounds, last) => {
+    const matches = Math.ceil(rounds / 4);
+    const players = rounds ? Math.min(30, 4 + matches) : 0;
+    return {
+      value: rounds,
+      label: day(offset),
+      axis: last ? "Today" : short(offset),
+      text: plural(rounds, "rated round"),
+      detail: `${plural(matches, "match", "matches")} · ${plural(players, "player")}`,
+    };
+  };
+  // A seeded week-by-week pattern, with a quiet day now and then.
+  const rounds = Array.from({ length: 60 }, (_, i) => {
+    const wave = Math.round(14 + 12 * Math.sin(i / 3.1) + ((i * 7) % 5));
+    return i % 11 === 4 ? 0 : wave;
+  });
+  document.getElementById("days").bars = rounds.map((n, i) => bar(i, n, i === 59));
+  document.getElementById("week").bars = [6, 11, 0, 9, 14, 3, 8].map((n, i) => bar(i, n, i === 6));
+  document.getElementById("one").bars = [bar(0, 18, true)];
+</script>

@@ -384,6 +384,66 @@ chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
 - A mouse click, a second tap on the same point, or Enter fires a cancelable `open` event (`detail: { index, point }`), then goes to the point's `href`. Cancel it to open the match some other way.
 - One axis, on the left. It draws at its box's width, 240px tall (180px under 480px wide), or the `height` attribute. `--gb-chart-bg` is the surface it sits on (`panel` unless the app says so). With no points it draws nothing; show a `<gb-empty>` instead.
 
+### Compare chart
+
+```ts
+import "@genji-ball-team/ui/compare-chart.js"; // registers <gb-compare-chart>
+
+const chart = document.querySelector("gb-compare-chart");
+chart.series = [
+  {
+    name: "Ana",
+    points: [
+      { rating: 1830, at: "2026-10-05T18:02:00Z", label: "Match #412", href: "/match?id=412" },
+    ],
+  },
+  {
+    name: "Ben",
+    points: [
+      { rating: 1790, at: "2026-10-05T19:30:00Z", label: "Match #413", href: "/match?id=413" },
+    ],
+  },
+];
+chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
+```
+
+```html
+<gb-compare-chart axis="time" label="Ratings over time"></gb-compare-chart>
+```
+
+- Up to three players' ratings on one chart (more are ignored). Players are told apart by stroke, not hue: `fg` solid, `soft` dashed, `muted` dotted. Each name is at its line's end (cut at 14 letters, 10 on a phone) and whole in a key above the chart. There is no up or down colour and no `direction`.
+- `axis="matches"` (the default) puts every player's nth match in the same place, with lines from match to match. `axis="time"` puts each match where it was played (`at`: milliseconds or an ISO date) and draws steps, since a rating holds until the next match.
+- Tiers near the ratings shown get a dashed line and chip, placed clear of every line.
+- Hover, a tap or the arrow keys (Home and End too) show a green crosshair and a tooltip with every player's rating at that point (a dash before their first match). A click, a second tap or Enter fires a cancelable `open` event (`detail: { series, index, point }`) for the player whose point under the cursor is nearest, then goes to the point's `href`.
+- `label` is what screen readers hear first, `height` and `--gb-chart-bg` work as on the rating chart. With no points it draws nothing; show a `<gb-empty>` instead.
+
+### Bar chart
+
+```ts
+import "@genji-ball-team/ui/bar-chart.js"; // registers <gb-bar-chart>
+
+const chart = document.querySelector("gb-bar-chart");
+chart.bars = [
+  {
+    value: 12,
+    label: "Mon, Oct 5",
+    axis: "Oct 5",
+    text: "12 rated rounds",
+    detail: "3 matches · 5 players",
+  },
+  { value: 0, label: "Tue, Oct 6", axis: "Today", text: "0 rated rounds" },
+];
+```
+
+```html
+<gb-bar-chart label="Rated rounds a day" height="120"></gb-bar-chart>
+```
+
+- A bar for each day with a value, oldest first, in `muted`; the hovered or focused one is `fg`. A zero is a 2px stub in `border`. Bars are rounded at the top only.
+- The axis is the first and last bar's `axis` (or `label`). The chart's `label` is read with the highest value ("Rated rounds a day, most 24").
+- Hover or focus shows a tooltip with `text` (or the number), `label` and `detail`. Tab stops once on the row; the arrow keys, Home and End step between the bars. Each bar has a screen-reader label with its value.
+- `height` in pixels, 120 without it. With no bars it draws nothing; show a `<gb-empty>` instead.
+
 ### Motion: count-up and the blade slash
 
 ```ts

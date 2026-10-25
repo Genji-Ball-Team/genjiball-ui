@@ -73,3 +73,39 @@ export function lineCrosses(spots: readonly Spot[], from: Spot, to: Spot, margin
   if (ys.length === 0) return false;
   return Math.min(...ys) - margin < to.y && Math.max(...ys) + margin > from.y;
 }
+
+/**
+ * Where to write labels at the ends of lines (`ends`, in pixels from the top, NaN for a line with no
+ * end): each at its line's end unless that's within `gap` of the label above, then just below it.
+ * Labels pushed past `max` are brought back up, so none leaves the chart.
+ */
+export function spreadLabels(
+  ends: readonly number[],
+  { gap, max }: { gap: number; max: number },
+): number[] {
+  const order = ends
+    .map((end, index) => ({ end, index }))
+    .filter(({ end }) => !Number.isNaN(end))
+    .sort((a, b) => a.end - b.end);
+  const placed = ends.map(() => Number.NaN);
+  let last = Number.NEGATIVE_INFINITY;
+  for (const { end, index } of order) {
+    last = Math.max(end, last + gap);
+    placed[index] = last;
+  }
+  let limit = max;
+  for (const { index } of order.reverse()) {
+    limit = Math.min(placed[index] ?? limit, limit);
+    placed[index] = limit;
+    limit -= gap;
+  }
+  return placed;
+}
+
+/** A line over time as the corners it turns at: a rating holds until the next match, then steps. */
+export function stepCorners(spots: readonly Spot[]): Spot[] {
+  return spots.flatMap((spot, index) => {
+    const before = spots[index - 1];
+    return before ? [{ x: spot.x, y: before.y }, spot] : [spot];
+  });
+}
