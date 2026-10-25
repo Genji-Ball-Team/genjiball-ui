@@ -40,7 +40,7 @@ import { iconSvg } from "@genji-ball-team/ui/icons.js"; // the same icons as <sv
 <button><gb-icon name="records" label="Records"></gb-icon></button>
 ```
 
-The set: `player`, `matches`, `records`, `deflects`, `live`, `leaderboard`. They're drawn in `currentColor`, so they take the text colour. `<gb-icon>` is 1.25em by default; set `inline-size` and `block-size` to change that. Leave `label` off when text next to the icon already says the same (the icon is then hidden from screen readers), and always give one to an icon-only button. The SVG files are in the package too, as `dist/icons/<name>.svg`.
+The set: `player`, `matches`, `records`, `deflects`, `live`, `leaderboard`, `search`, `close`, `back`, `next`, `share`, `enlarge`, `external`, `copy`, `tourney`. They're drawn in `currentColor`, so they take the text colour. `<gb-icon>` is 1.25em by default; set `inline-size` and `block-size` to change that. Leave `label` off when text next to the icon already says the same (the icon is then hidden from screen readers), and always give one to an icon-only button. The SVG files are in the package too, as `dist/icons/<name>.svg`.
 
 ### Buttons
 

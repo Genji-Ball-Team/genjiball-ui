@@ -3,20 +3,42 @@ import { iconSvg, icons, isIconName, type IconName } from "../src/icons.js";
 
 const names = Object.keys(icons) as IconName[];
 
-test("the set has the six icons brand.md names", () => {
-  expect(names).toEqual(["player", "matches", "records", "deflects", "live", "leaderboard"]);
+test("the set has the icons brand.md names", () => {
+  expect(names).toEqual([
+    "player",
+    "matches",
+    "records",
+    "deflects",
+    "live",
+    "leaderboard",
+    "search",
+    "close",
+    "back",
+    "next",
+    "share",
+    "enlarge",
+    "external",
+    "copy",
+    "tourney",
+  ]);
 });
+
+const lineOnly: IconName[] = ["close", "back", "next", "enlarge"];
 
 test.each(names)("%s is drawn in currentColor only, with no ids to collide", (name) => {
   const svg = iconSvg(name);
   expect(svg).not.toMatch(/\b(id|mask|clip-path|style|class)=/);
   expect(svg).not.toMatch(/#[0-9a-f]{3,8}\b|rgb\(|oklch\(/i);
-  expect([...svg.matchAll(/(?:fill|stroke)="([^"]+)"/g)].map(([, value = ""]) => value)).toEqual([
-    "none",
-    "currentColor",
-    "currentColor",
-    "none",
-  ]);
+  const paints = [...svg.matchAll(/(?:fill|stroke)="([^"]+)"/g)].map(([, value = ""]) => value);
+  // The svg's own "none" and "currentColor", the fill group's, then the outline's stroke group.
+  expect(paints).toEqual(
+    icons[name].fill ? ["none", "currentColor", "currentColor", "none"] : ["none", "currentColor"],
+  );
+});
+
+test.each(names)("%s has a fill group exactly when it has a fill", (name) => {
+  expect(iconSvg(name).includes("<g ")).toBe(icons[name].fill !== "");
+  expect(lineOnly.includes(name)).toBe(icons[name].fill === "");
 });
 
 test.each(names)("%s stays on the 24px grid", (name) => {
