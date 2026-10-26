@@ -1,0 +1,46 @@
+<section class="g-section">
+  <h2>Tiers</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-chip-select label="Tier" id="tier-demo" value="ascendant,grandmaster">
+        <button value="sovereign" tier="sovereign">Sovereign</button>
+        <button value="champion" tier="champion">Champion</button>
+        <button value="ascendant" tier="ascendant">Ascendant</button>
+        <button value="grandmaster" tier="grandmaster">Grandmaster</button>
+        <button value="master" tier="master">Master</button>
+        <button value="apprentice" tier="apprentice">Apprentice</button>
+        <button value="rookie" tier="rookie">Rookie</button>
+        <button value="none">No tier</button>
+      </gb-chip-select>
+      <figcaption>Two picked. A click picks or unpicks one</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Plain</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <gb-chip-select label="Mode">
+        <button value="ranked">Ranked</button>
+        <button value="tourney">Tourney</button>
+      </gb-chip-select>
+      <figcaption>None picked</figcaption>
+    </figure>
+    <figure class="g-state">
+      <gb-chip-select label="Disabled option" value="a">
+        <button value="a">Rounds</button>
+        <button value="b" disabled>Tourneys</button>
+      </gb-chip-select>
+      <figcaption>Disabled option</figcaption>
+    </figure>
+  </div>
+</section>
+
+<script type="module">
+  const tier = document.getElementById("tier-demo");
+  tier.addEventListener("change", () => {
+    tier.closest("figure").querySelector("figcaption").textContent =
+      `Picked: ${tier.values.join(", ") || "none"}`;
+  });
+</script>
