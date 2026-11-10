@@ -4,18 +4,29 @@ name: Release
 # publishes it to npm with provenance. The tag must match `version` in package.json. Publishes with
 # the NPM_TOKEN secret until trusted publishing is set up (#4); then this drops NODE_AUTH_TOKEN and
 # the secret goes.
+#
+# After a successful publish, the gallery job builds the gallery from the same commit and deploys it
+# to ui.genjiball.us, with the CLOUDFLARE_API_TOKEN secret. Without that secret it says so and skips;
+# the npm release isn't affected either way, since it's done by then. Run the workflow by hand
+# (Actions, Release, Run workflow) to deploy only the gallery: nothing is published to npm then. A
+# manual run deploys the default branch (main) only; picked on any other branch or tag, the gallery
+# job fails before it reads the token, so no other ref's code runs with it.
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   release:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -37,3 +48,54 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  gallery:
+    # After a publish that worked, or on its own when run by hand (the release job is skipped then).
+    needs: release
+    if: >-
+      always() && (needs.release.result == 'success' ||
+      (github.event_name == 'workflow_dispatch' && needs.release.result == 'skipped'))
+    runs-on: ubuntu-latest
+    concurrency: gallery-deploy
+    steps:
+      # A manual run can pick any branch or tag; only the default branch may deploy. (A tag push
+      # only gets here after its publish, from the tagged commit.)
+      - name: Only the default branch deploys by hand
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          REF: ${{ github.ref }}
+          DEFAULT: refs/heads/${{ github.event.repository.default_branch }}
+        run: |
+          if [ "$REF" != "$DEFAULT" ]; then
+            echo "::error title=Gallery not deployed::Run by hand from $REF. The gallery deploys by hand only from $DEFAULT: pick that branch under Run workflow."
+            exit 1
+          fi
+      - name: Check for the Cloudflare token
+        id: token
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::warning title=Gallery not deployed::No CLOUDFLARE_API_TOKEN secret, so the gallery deploy is skipped. Add it under Settings, Secrets and variables, Actions. The npm release is not affected."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.token.outputs.deploy == 'true'
+        uses: actions/checkout@v7
+      - if: steps.token.outputs.deploy == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.token.outputs.deploy == 'true'
+        run: npm ci
+      - name: Build the gallery
+        if: steps.token.outputs.deploy == 'true'
+        run: npm run build && npm run gallery
+      - name: Deploy the gallery to ui.genjiball.us
+        if: steps.token.outputs.deploy == 'true'
+        # The account is pinned in gallery/wrangler.jsonc: only the Genji Ball account.
+        run: npx --yes wrangler deploy -c gallery/wrangler.jsonc
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
