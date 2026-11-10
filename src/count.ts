@@ -2,7 +2,7 @@ import { defineElement } from "./define.js";
 import { durationMs, motionAllowed } from "./motion.js";
 import { tokens } from "./tokens.js";
 
-const styles = `:host { display: inline; font-variant-numeric: tabular-nums; white-space: nowrap; }
+const styles = `:host { display: inline; position: relative; font-variant-numeric: tabular-nums; white-space: nowrap; }
 :host([hidden]) { display: none; }
 .gb-sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }`;
 

@@ -26,8 +26,10 @@ const forwarded = ["aria-label", "aria-description", "aria-expanded", "aria-hasp
 
 // The label, the spinner and the feedback text share one grid cell, so the button is as wide as the
 // widest of them and doesn't change width when it gets busy or says "Copied ✓". The label is hidden
-// with opacity, not visibility, so it stays the button's name for screen readers.
-const styles = `:host { display: inline-block; vertical-align: middle; }
+// with opacity, not visibility, so it stays the button's name for screen readers. The host is
+// positioned so the visually hidden status line sits inside it: without that it is placed against
+// the page and, in a scrolling panel, can make the whole page scroll.
+const styles = `:host { display: inline-block; position: relative; vertical-align: middle; }
 :host([hidden]) { display: none; }
 button {
   display: inline-grid; place-items: center; inline-size: 100%; block-size: 36px; padding: 0 14px;
