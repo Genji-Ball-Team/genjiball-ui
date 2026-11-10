@@ -7,7 +7,7 @@ gb-form-row[hidden] { display: none; }
 gb-form-row > ul { display: flex; flex-wrap: wrap; gap: 4px; margin: 0; padding: 0; list-style: none; }
 gb-form-row a {
   display: grid; place-items: center; inline-size: 24px; block-size: 24px; border-radius: var(--r-chip);
-  background: var(--raised); color: var(--soft); font-size: 0.78rem; font-weight: 600; line-height: 1;
+  background: var(--raised); color: var(--soft); font-size: var(--small-size); font-weight: 600; line-height: 1;
   font-variant-numeric: tabular-nums; text-decoration: none; -webkit-tap-highlight-color: transparent;
 }
 gb-form-row a:hover { background: var(--line); color: var(--fg); }
@@ -17,7 +17,7 @@ gb-form-row a[data-won] { background: var(--up); color: var(--bg); font-weight: 
 gb-form-row a[data-won]:hover { background: color-mix(in oklch, var(--up) 80%, var(--fg)); color: var(--bg); }
 gb-form-row > p { margin: 0; color: var(--muted); font-size: var(--body-size); }
 /* Tap targets on phones and tablets: at least 40px. */
-@media (pointer: coarse) { gb-form-row a { inline-size: 40px; block-size: 40px; font-size: 0.9rem; } }`;
+@media (pointer: coarse) { gb-form-row a { inline-size: 40px; block-size: 40px; font-size: var(--body-size); } }`;
 
 const adoptStyles = lightStyles(styles);
 

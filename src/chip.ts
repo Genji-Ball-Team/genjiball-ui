@@ -29,14 +29,14 @@ const styles = `:host {
   --chip: var(--soft);
   display: inline-block; vertical-align: middle; padding: 0.1rem 0.42rem; border-radius: var(--r-chip);
   color: var(--chip); background: color-mix(in oklch, var(--chip) 16%, transparent);
-  font-size: 0.6rem; font-weight: 800; line-height: 1.45; letter-spacing: 0.1em;
+  font-size: var(--chip-size); font-weight: 800; line-height: 1.45; letter-spacing: 0.1em;
   text-transform: uppercase; white-space: nowrap;
 }
 :host([hidden]) { display: none; }
 ${tiers.map((tier) => `:host([tier="${tier}"]) { --chip: var(--t-${tier}); }`).join("\n")}
 
 ${titled} {
-  padding: 0.06rem 0.38rem; font-size: 0.52rem; line-height: 1.4; letter-spacing: 0.14em;
+  padding: 0.06rem 0.38rem; font-size: var(--title-chip-size); line-height: 1.4; letter-spacing: 0.14em;
   background-size: 200% 100%; animation: shimmer 2.6s linear infinite;
 }
 :host([title-chip="god"]) {

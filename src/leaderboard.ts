@@ -25,7 +25,7 @@ const styles = `gb-leaderboard { display: block; container-type: inline-size; }
 gb-leaderboard[hidden] { display: none; }
 gb-leaderboard > table {
   position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto auto; column-gap: 8px;
-  inline-size: 100%; border-spacing: 0; font-size: 0.86rem; font-variant-numeric: tabular-nums;
+  inline-size: 100%; border-spacing: 0; font-size: var(--compact-size); font-variant-numeric: tabular-nums;
 }
 gb-leaderboard > table > :is(thead, tbody), gb-leaderboard tr {
   display: grid; grid-column: 1 / -1; grid-template-columns: subgrid;

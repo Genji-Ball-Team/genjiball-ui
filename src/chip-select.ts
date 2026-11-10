@@ -13,7 +13,7 @@ ${item} {
   --pick: var(--green);
   display: inline-flex; flex: none; align-items: center; gap: 6px; block-size: 32px; margin: 0; padding: 0 0.65rem;
   border: 1px solid var(--control-border); border-radius: var(--r); background: none; color: var(--soft);
-  font: inherit; font-size: 0.82rem; font-weight: 600; line-height: 1; white-space: nowrap;
+  font: inherit; font-size: var(--compact-size); font-weight: 600; line-height: 1; white-space: nowrap;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 ${tiers.map((tier) => `${item}[tier="${tier}"] { --pick: var(--t-${tier}); }`).join("\n")}

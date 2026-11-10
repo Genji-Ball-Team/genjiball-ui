@@ -1,7 +1,8 @@
 import { defineElement } from "./define.js";
 
 // A raised tile, like the brand sheet's tier tiles: the label on top, then the number, big,
-// condensed and tabular so tiles side by side line up.
+// condensed and tabular so tiles side by side line up. The number's 1.6rem is the stat's own, between
+// title and display, not a step on the type scale.
 const styles = `:host {
   display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: var(--r); background: var(--raised);
 }

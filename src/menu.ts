@@ -11,7 +11,7 @@ gb-menu > .gb-overlay-panel:focus-visible { outline: none; }
 gb-menu > .gb-overlay-panel > :is(button, a) {
   display: flex; align-items: center; gap: 8px; flex: none; block-size: 32px; margin: 0; padding: 0 10px;
   border: 0; border-radius: calc(var(--r) - 2px); background: none; color: var(--fg);
-  font: inherit; font-size: 0.84rem; line-height: 1; text-align: start; text-decoration: none; white-space: nowrap;
+  font: inherit; font-size: var(--compact-size); line-height: 1; text-align: start; text-decoration: none; white-space: nowrap;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 gb-menu > .gb-overlay-panel > :is(button, a) > gb-icon { inline-size: 18px; block-size: 18px; color: var(--soft); }

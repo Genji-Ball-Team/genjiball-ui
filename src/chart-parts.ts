@@ -28,7 +28,7 @@ export const format = new Intl.NumberFormat("en");
 export const tipStyles = `.tip {
   position: absolute; inset: 0 auto auto 0; display: flex; flex-direction: column; gap: 1px; padding: 5px 9px;
   border: 1px solid var(--green); border-radius: var(--r); background: var(--raised); box-shadow: var(--shadow-float);
-  color: var(--fg); font-size: 0.74rem; font-variant-numeric: tabular-nums; line-height: 1.35; white-space: nowrap;
+  color: var(--fg); font-size: var(--small-size); font-variant-numeric: tabular-nums; line-height: 1.35; white-space: nowrap;
   pointer-events: none; transition: opacity var(--fade-duration);
 }
 .tip[hidden] { display: flex; opacity: 0; visibility: hidden; }
@@ -36,7 +36,7 @@ export const tipStyles = `.tip {
 .up { color: var(--up); }
 .down { color: var(--down); }
 .none { color: var(--muted); }
-.go { color: var(--green); font-size: 0.68rem; font-weight: 650; }
+.go { color: var(--green); font-size: var(--small-size); font-weight: 650; }
 .gb-sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) { .tip { transition: none; } }`;
 
@@ -49,7 +49,7 @@ svg.links { cursor: pointer; }
 .grid text { fill: var(--muted); font-size: var(--label-size); font-variant-numeric: tabular-nums; }
 .tier line { stroke: var(--tier); stroke-dasharray: 4 4; }
 .tier rect { fill: color-mix(in oklch, var(--tier) 16%, var(--gb-chart-bg)); }
-.tier text { fill: var(--tier); font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em; }
+.tier text { fill: var(--tier); font-size: var(--chip-size); font-weight: 800; letter-spacing: 0.1em; }
 .cursor line { stroke: color-mix(in oklch, var(--green) 50%, transparent); }
 ${tipStyles}`;
 

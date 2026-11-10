@@ -60,10 +60,22 @@ export const tokens = {
   "body-size": "0.9rem",
   "body-weight": "400",
   "body-width": "100%",
-  "label-size": "0.64rem",
+  // Controls and dense rows: buttons, inputs, nav, menus, table and leaderboard rows, toasts.
+  "compact-size": "0.85rem",
+  "compact-weight": "400",
+  "compact-width": "100%",
+  // Secondary text: field labels and errors, tooltips, deltas, chart names, hints.
+  "small-size": "0.75rem",
+  "small-weight": "400",
+  "small-width": "100%",
+  "label-size": "0.7rem",
   "label-weight": "700",
   "label-width": "75%",
   "label-tracking": "0.16em",
+  // Chips sit between label and the floor; no text anywhere goes under `type-floor`.
+  "chip-size": "0.68rem",
+  "title-chip-size": "0.66rem",
+  "type-floor": "0.66rem",
 
   // Motion: the blade slash, the count-up and the delta after it, and quick fades like tooltips.
   "slash-duration": "0.55s",

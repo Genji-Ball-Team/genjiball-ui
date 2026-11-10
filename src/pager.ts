@@ -6,7 +6,7 @@ const styles = `gb-pager { display: grid; grid-template-columns: 1fr auto 1fr; a
 gb-pager[hidden], gb-pager:empty { display: none; }
 gb-pager > a {
   display: inline-flex; align-items: center; gap: 6px; block-size: 36px; padding: 0 8px; border-radius: var(--r);
-  color: var(--soft); font-size: 0.84rem; font-weight: 650; line-height: 1; text-decoration: none; white-space: nowrap;
+  color: var(--soft); font-size: var(--compact-size); font-weight: 650; line-height: 1; text-decoration: none; white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
 }
 gb-pager > a:hover { color: var(--fg); }
@@ -14,7 +14,7 @@ gb-pager > a:focus-visible { outline: 2px solid var(--green); outline-offset: 2p
 gb-pager > a[rel="next"] { justify-self: end; }
 /* Out of sight and out of the tab order, but still taking its space, so nothing moves. */
 gb-pager > a[hidden] { display: inline-flex; visibility: hidden; }
-gb-pager > span { color: var(--muted); font-size: 0.84rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+gb-pager > span { color: var(--muted); font-size: var(--compact-size); font-variant-numeric: tabular-nums; white-space: nowrap; }
 @media (pointer: coarse) { gb-pager > a { block-size: 40px; } }`;
 
 const adoptStyles = lightStyles(styles);

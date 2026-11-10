@@ -13,7 +13,7 @@ const styles = `gb-tooltip { display: inline-block; vertical-align: middle; }
 gb-tooltip[hidden] { display: none; }
 .gb-tooltip-tip {
   ${surfaceStyles} z-index: 1001; max-inline-size: min(260px, calc(100vw - 16px)); padding: 5px 9px;
-  font-size: 0.75rem; line-height: 1.35; overflow-wrap: anywhere;
+  font-size: var(--small-size); line-height: 1.35; overflow-wrap: anywhere;
 }
 .gb-tooltip-tip[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) { .gb-tooltip-tip { animation: none; } }`;

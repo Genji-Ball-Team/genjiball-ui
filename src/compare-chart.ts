@@ -48,7 +48,7 @@ ${chartStyles}
 .s0 { --c: var(--fg); }
 .s1 { --c: var(--soft); }
 .s2 { --c: var(--muted); }
-.key { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 8px; padding: 0; list-style: none; color: var(--soft); font-size: 0.8rem; }
+.key { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 8px; padding: 0; list-style: none; color: var(--soft); font-size: var(--small-size); }
 .key[hidden] { display: none; }
 .key li { display: flex; align-items: center; gap: 6px; }
 .sw { display: inline-block; inline-size: 20px; border-block-start: 2px solid var(--c); }
@@ -58,7 +58,7 @@ ${chartStyles}
 .s1 > .line { stroke-dasharray: 7 5; stroke-linecap: butt; }
 .s2 > .line { stroke-dasharray: 0.01 5; }
 .last, .cursor .dot { fill: var(--c); stroke: var(--gb-chart-bg); stroke-width: 2; }
-.name { fill: var(--c); font-size: 0.72rem; font-weight: 650; }
+.name { fill: var(--c); font-size: var(--small-size); font-weight: 650; }
 .row { display: flex; align-items: center; gap: 6px; }
 .row b { margin-inline-start: auto; padding-inline-start: 10px; }
 .when { color: var(--muted); }`;
