@@ -537,7 +537,7 @@ npm run check   # typecheck, lint, tests, build, gallery
 It's on ui.genjiball.us (a Cloudflare Worker with static assets, `gallery/wrangler.jsonc`, pinned to the Genji Ball account), deployed by the Release workflow (`.github/workflows/release.yml`):
 
 - **After each release.** Once a `v*` tag's npm publish succeeds, the `gallery` job builds the gallery from that commit and deploys it, so the site shows the version on npm.
-- **On its own.** Actions, Release, Run workflow deploys only the gallery, from the branch or tag picked there. Nothing goes to npm.
+- **On its own.** Actions, Release, Run workflow deploys only the gallery, from `main`. Run from any other branch or tag, the job refuses before it touches the token. Nothing goes to npm.
 - **The token.** The deploy uses the `CLOUDFLARE_API_TOKEN` Actions secret: a token for the Genji Ball account that can edit Workers scripts and their custom domain on genjiball.us. Without it the job logs "Gallery not deployed" as a warning and skips; the npm release goes ahead either way.
 
 `npm run gallery:deploy` still deploys by hand from your machine: check `npx wrangler whoami` shows the Genji Ball account first.
