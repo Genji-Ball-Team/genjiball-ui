@@ -125,7 +125,7 @@
 - One spacing scale on a 4px base, two densities: compact for tables, lists and leaderboards; comfortable for page layout, cards, hero areas and forms.
 - On phones, tables step up to comfortable; tap targets at least 40px tall.
 - Tables on a narrow screen never shrink their text or wrap a row into a jumble:
-  - A table can mark columns as lower priority. When the table doesn't fit, those columns drop out first, before anything scrolls. The row's name and its main value (e.g. rating) are never lower priority.
+  - A table can mark columns as lower priority. When the table doesn't fit, those columns drop out first, before anything scrolls. The row's name and its main value (e.g. rating) are never lower priority. Neither is any column whose value people need: a dropped column can't be brought back on that screen.
   - If it still doesn't fit, the table scrolls sideways. The first column, the row's name, stays in view at the start while the rest scrolls under it, on the row's own background, so every row stays readable.
 
 ## Accessibility
@@ -144,7 +144,7 @@
 - Tier thresholds: dashed line in the tier colour with its small tier chip; reaching a rank = crossing a line. No tier-coloured bands.
 - Clickable: each point opens that match. Hover (or first tap on phones): pointer cursor, green crosshair and dot, tooltip with match, place, rating, delta and a green "Open match →".
 - Other charts: neutral marks; colour only where it means something (up/down, tier chips, gold for records). Recessive grid and axes, 2px lines, tabular numbers, one axis only, screen-reader label on every chart.
-- Compare chart: one line a player, up to three, told apart by stroke as well as shade, never by hue: `fg` solid, `soft` dashed, `muted` dotted. Up and down don't apply, since the chart compares players, not one player over time. Each line has its player's name at its end, plus a key above the chart; the key always stays. The names at the line ends never overlap: when lines end close together, their names are nudged apart just enough, staying in the same order top to bottom as the line ends. Tier lines, hover and click work as on the rating line; the tooltip lists every player's rating at that point.
+- Compare chart: one line a player, up to three, told apart by stroke as well as shade, never by hue: `fg` solid, `soft` dashed, `muted` dotted. Up and down don't apply, since the chart compares players, not one player over time. Each line has its player's name at its end, plus a key above the chart; the key always stays. The names at the line ends never overlap: when lines end close together, their names are nudged apart just enough, staying in the same order top to bottom as the line ends. When the chart is too short to fit every name apart, it draws no names at the line ends at all rather than overlapping ones; the key still names every line. Tier lines, hover and click work as on the rating line; the tooltip lists every player's rating at that point.
 - Bar chart (e.g. activity a day): bars in `muted`, the hovered or focused one in `fg`. A zero is a 2px stub in `border`, so the day still shows. Bars are rounded at the top only. The axis is the first and last label under the bars, with the highest value in the chart's label. Each bar is focusable, arrow keys step between bars, and each bar has a tooltip and a screen-reader label with its value.
 
 ## Buttons
