@@ -10,7 +10,7 @@ export function itemStyles(item: string, active: string): string {
   return `${item} {
   position: relative; display: inline-flex; flex: none; align-items: center; gap: 6px; block-size: 32px; margin: 0;
   padding: 0 0.65rem; border: 0; border-radius: var(--r); background: none; color: var(--muted);
-  font: inherit; font-size: 0.82rem; font-weight: 550; line-height: 1; text-decoration: none; white-space: nowrap;
+  font: inherit; font-size: var(--compact-size); font-weight: 550; line-height: 1; text-decoration: none; white-space: nowrap;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 ${item}:hover { color: var(--soft); }

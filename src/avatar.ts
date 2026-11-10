@@ -2,7 +2,8 @@ import { defineElement } from "./define.js";
 
 // Hidden until the app turns avatars on with `--gb-avatar-display` (brand.md, Players): there are no
 // pictures before Discord linking, and no generated ones. The picture, or the grey initial when
-// there's none or it fails to load, fills a square with the one brand radius.
+// there's none or it fails to load, fills a square with the one brand radius. The initial's size is
+// the avatar's own, set from its square rather than the type scale, but never under the floor.
 const styles = `:host {
   --gb-avatar-size: 32px;
   display: var(--gb-avatar-display, none); flex: none; vertical-align: middle; overflow: hidden;
@@ -12,7 +13,7 @@ const styles = `:host {
 img, .initial { inline-size: 100%; block-size: 100%; }
 img { display: block; object-fit: cover; }
 .initial {
-  display: grid; place-items: center; color: var(--soft); font-size: calc(var(--gb-avatar-size) * 0.45);
+  display: grid; place-items: center; color: var(--soft); font-size: max(var(--type-floor), calc(var(--gb-avatar-size) * 0.45));
   font-weight: 700; font-stretch: var(--heading-width); line-height: 1; user-select: none;
 }`;
 

@@ -20,7 +20,7 @@ gb-table[hidden] { display: none; }
 gb-table[sticky] { max-block-size: var(--gb-table-height, 70vh); overflow: auto; }
 gb-table > table {
   inline-size: 100%; border-collapse: separate; border-spacing: 0;
-  font-size: 0.86rem; font-variant-numeric: tabular-nums; line-height: 1.3;
+  font-size: var(--compact-size); font-variant-numeric: tabular-nums; line-height: 1.3;
 }
 gb-table > table > caption {
   padding-block-end: 8px; color: var(--muted); text-align: start; text-transform: uppercase;

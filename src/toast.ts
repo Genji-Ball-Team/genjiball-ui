@@ -29,7 +29,7 @@ const toastStyles = `:host {
   display: flex; align-items: center; gap: 10px; box-sizing: border-box; inline-size: min(360px, 100%);
   padding: 7px 7px 7px 12px; border: 1px solid var(--border); border-radius: var(--r);
   background: var(--raised); box-shadow: var(--shadow-float); color: var(--fg);
-  font-size: 0.84rem; line-height: 1.35; animation: enter 0.15s ease-out;
+  font-size: var(--compact-size); line-height: 1.35; animation: enter 0.15s ease-out;
 }
 :host([hidden]) { display: none; }
 .icon { flex: none; inline-size: 16px; block-size: 16px; color: var(--up); }

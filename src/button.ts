@@ -32,7 +32,7 @@ const styles = `:host { display: inline-block; vertical-align: middle; }
 button {
   display: inline-grid; place-items: center; inline-size: 100%; block-size: 36px; padding: 0 14px;
   border: 1px solid transparent; border-radius: var(--r); color: var(--fg);
-  font: inherit; font-size: 0.84rem; font-weight: 650; line-height: 1; white-space: nowrap;
+  font: inherit; font-size: var(--compact-size); font-weight: 650; line-height: 1; white-space: nowrap;
   cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
 button:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }

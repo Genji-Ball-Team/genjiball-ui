@@ -3,7 +3,7 @@ import { motionAllowed } from "./motion.js";
 
 // Never colour alone (brand.md, Colour): the arrow says which way, the colour only repeats it.
 const styles = `:host {
-  display: inline-block; font-size: 0.78rem; font-weight: 650; font-variant-numeric: tabular-nums;
+  display: inline-block; font-size: var(--small-size); font-weight: 650; font-variant-numeric: tabular-nums;
   line-height: 1; white-space: nowrap; color: var(--muted);
 }
 :host([hidden]) { display: none; }

@@ -7,14 +7,14 @@ import { lightStyles } from "./light-styles.js";
 // root the field sits in) instead.
 const styles = `gb-field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 5px; }
 gb-field[hidden] { display: none; }
-.gb-field-label { font-size: 0.74rem; font-weight: 600; color: var(--soft); }
-.gb-field-error { font-size: 0.72rem; color: var(--down); }
+.gb-field-label { font-size: var(--small-size); font-weight: 600; color: var(--soft); }
+.gb-field-error { font-size: var(--small-size); color: var(--down); }
 .gb-field-error:empty { display: none; }
 
 gb-field > :is(input, select, textarea) {
   grid-area: 2 / 1; inline-size: 100%; min-inline-size: 0; block-size: 36px; margin: 0; padding: 0 10px;
   border: 1px solid var(--control-border); border-radius: var(--r); background: var(--raised); color: var(--fg);
-  font: inherit; font-size: 0.86rem;
+  font: inherit; font-size: var(--compact-size);
 }
 gb-field > textarea { block-size: auto; min-block-size: 80px; padding: 8px 10px; resize: vertical; }
 gb-field > select { appearance: none; padding-inline-end: 32px; cursor: pointer; }
@@ -35,7 +35,7 @@ gb-field > select + .gb-field-mark { place-self: center end; inline-size: 12px; 
 
 /* Checkbox and switch: the box, then the label beside it, the error under both. */
 gb-field:has(> [type="checkbox"]) { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; align-items: center; }
-gb-field:has(> [type="checkbox"]) > .gb-field-label { grid-area: 1 / 2; font-size: 0.86rem; font-weight: 400; color: var(--fg); cursor: pointer; }
+gb-field:has(> [type="checkbox"]) > .gb-field-label { grid-area: 1 / 2; font-size: var(--compact-size); font-weight: 400; color: var(--fg); cursor: pointer; }
 gb-field:has(> [type="checkbox"]) > .gb-field-error { grid-area: 2 / 1 / 3 / 3; }
 gb-field:has(> :disabled) > .gb-field-label { cursor: not-allowed; }
 gb-field > [type="checkbox"] {
