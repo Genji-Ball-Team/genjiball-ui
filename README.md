@@ -534,7 +534,13 @@ npm run check   # typecheck, lint, tests, build, gallery
 
 `npm run build && npm run gallery` writes the gallery to `gallery-dist/`, a static site that loads the built package from `gallery-dist/ui/`. Serve that folder with any static server to look at it. Each page's source is in `gallery/pages/`, listed in `gallery/pages.json`; the tokens and icons pages are generated from `src/`. A test fails when an element the package defines isn't on any page, so a new component comes with its page.
 
-`npm run gallery:deploy` puts it on ui.genjiball.us (a Cloudflare Worker with static assets, `gallery/wrangler.jsonc`). It's run by hand: check `npx wrangler whoami` shows the Genji Ball account first.
+It's on ui.genjiball.us (a Cloudflare Worker with static assets, `gallery/wrangler.jsonc`, pinned to the Genji Ball account), deployed by the Release workflow (`.github/workflows/release.yml`):
+
+- **After each release.** Once a `v*` tag's npm publish succeeds, the `gallery` job builds the gallery from that commit and deploys it, so the site shows the version on npm.
+- **On its own.** Actions, Release, Run workflow deploys only the gallery, from the branch or tag picked there. Nothing goes to npm.
+- **The token.** The deploy uses the `CLOUDFLARE_API_TOKEN` Actions secret: a token for the Genji Ball account that can edit Workers scripts and their custom domain on genjiball.us. Without it the job logs "Gallery not deployed" as a warning and skips; the npm release goes ahead either way.
+
+`npm run gallery:deploy` still deploys by hand from your machine: check `npx wrangler whoami` shows the Genji Ball account first.
 
 ## License
 

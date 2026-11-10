@@ -1,5 +1,7 @@
-// The gallery at ui.genjiball.us: static files only, no Worker code. Deployed by hand with
-// `npm run gallery:deploy`, to the Genji Ball Cloudflare account only (check `npx wrangler whoami`).
+// The gallery at ui.genjiball.us: static files only, no Worker code. Deployed by the Release workflow
+// after each npm publish, or on its own by running that workflow by hand; it needs the
+// CLOUDFLARE_API_TOKEN Actions secret. `npm run gallery:deploy` still works by hand. Genji Ball
+// Cloudflare account only (pinned below; by hand, check `npx wrangler whoami` first).
 {
   "name": "genjiball-ui-gallery",
   "account_id": "c212ad20cc4f4b5382766735f57b91c3",
