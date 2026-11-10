@@ -272,3 +272,17 @@ test("one point draws and reads out", () => {
   key(chart, "End");
   expect(tipOf(chart)?.textContent).toBe("Match 1Ana1,500");
 });
+
+test("over time, a few round dates go under the chart; by match, none", () => {
+  const month = [0, 6, 13, 20, 29].map((days) => ({
+    rating: 1700 + days,
+    at: start + days * 24 * hour,
+  }));
+  const dates = (chart: GbCompareChart) =>
+    [...(svgOf(chart)?.querySelectorAll(".axis text") ?? [])].map((text) => text.textContent);
+  const byTime = dates(make([{ name: "Ana", points: month }], "time"));
+  expect(byTime.length).toBeGreaterThan(1);
+  expect(byTime.length).toBeLessThanOrEqual(7);
+  for (const text of byTime) expect(text).toMatch(/^[A-Z][a-z]{2} \d{1,2}$/);
+  expect(dates(make([{ name: "Ana", points: month }]))).toEqual([]);
+});

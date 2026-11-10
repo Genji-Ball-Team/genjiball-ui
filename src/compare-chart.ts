@@ -1,6 +1,9 @@
 import {
+  type AxisTick,
   type Pad,
   type TierLine,
+  axisLabels,
+  axisRoom,
   chartStyles,
   draw,
   format,
@@ -9,6 +12,7 @@ import {
   span,
   spreadEndNames,
   tierLine,
+  timeAxis,
 } from "./chart-parts.js";
 import { type Spot, chartScale, stepCorners } from "./chart-scale.js";
 import { type Stop, compareStops, placeOf, timeOf } from "./compare-stops.js";
@@ -78,7 +82,8 @@ const whenFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyl
  *
  * - `axis`: `matches` (the default) puts every player's nth match at the same place and draws lines
  *   from match to match; `time` puts matches where they were played and draws steps, since a rating
- *   holds until the next match. Points then need `at`.
+ *   holds until the next match. Points then need `at`, and a few round dates go under the chart
+ *   (more on a wider one, never touching).
  *
  * Hovering, tapping or the arrow keys show a tooltip with every player's rating at that point. A
  * click, a second tap or Enter fires a cancelable `open` event ({@link CompareOpenDetail}) for the
@@ -210,14 +215,14 @@ export class GbCompareChart extends HTMLElement {
     const width = this.#width || 600;
     const height = Number(this.getAttribute("height")) || (width < 480 ? 180 : 240);
     const names = this.#names(series, width);
-    const room = { ...pad, right: names.room };
+    const room = { ...pad, right: names.room, bottom: pad.bottom + (this.#byTime ? axisRoom : 0) };
     const scale = chartScale(
       all.map((point) => point.rating),
       { thresholds: this.#tiers.map((tier) => tier.threshold) },
     );
     const y = (value: number) =>
       room.top + ((scale.hi - value) / (scale.hi - scale.lo)) * (height - room.top - room.bottom);
-    this.#place(series, { width, room, y });
+    const axis = axisLabels(this.#place(series, { width, room, y }), { width, height });
 
     const links = all.some((point) => point.href);
     for (const [name, value] of Object.entries({ width, height, tabindex: 0 }))
@@ -237,12 +242,18 @@ export class GbCompareChart extends HTMLElement {
 
     svg.append(
       gridLines(scale.ticks, y, { width, pad: room }),
+      axis.group,
       ...tierLines.map((tier) => tier.group),
       ...series.map((_, n) => this.#line(n, names.text[n] ?? "")),
       cursor,
     );
-    spreadEndNames([...svg.querySelectorAll<SVGTextElement>(".name")], height);
+    // The names stay above the dates, if there are any.
+    spreadEndNames(
+      [...svg.querySelectorAll<SVGTextElement>(".name")],
+      height - (this.#byTime ? axisRoom : 0),
+    );
     for (const tier of tierLines) tier.fit();
+    axis.fit();
     if (kept >= 0) this.#show(kept, this.#owner);
   }
 
@@ -259,11 +270,14 @@ export class GbCompareChart extends HTMLElement {
     return { text, room: 12 + Math.max(0, ...text.map((name) => name.length)) * letter };
   }
 
-  /** Works out where every point is drawn, and the stops the cursor and the keys move between. */
+  /**
+   * Works out where every point is drawn, and the stops the cursor and the keys move between. Over
+   * time, returns the dates to label the axis with.
+   */
   #place(
     series: readonly CompareSeries[],
     { width, room, y }: { width: number; room: Pad; y: (value: number) => number },
-  ): void {
+  ): AxisTick[] {
     const byTime = this.#byTime;
     const stops = compareStops(series, byTime);
     const from = stops[0]?.at ?? 0;
@@ -278,6 +292,7 @@ export class GbCompareChart extends HTMLElement {
       })),
     );
     this.#stops = stops.map((stop) => ({ ...stop, x: xOf(stop.at) }));
+    return byTime ? timeAxis(from, to, { inner, xOf }) : [];
   }
 
   /** The lines as the corners they turn at: over time a rating holds, then steps to the next. */

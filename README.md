@@ -405,8 +405,8 @@ import "@genji-ball-team/ui/rating-chart.js"; // registers <gb-rating-chart>
 
 const chart = document.querySelector("gb-rating-chart");
 chart.points = [
-  { rating: 1830, label: "Match #412", place: 3, players: 6, href: "/match?id=412" },
-  { rating: 1854, label: "Match #415", place: 1, players: 6, href: "/match?id=415" },
+  { rating: 1830, label: "Match #412", axis: "Oct 5", place: 3, players: 6, href: "/match?id=412" },
+  { rating: 1854, label: "Match #415", axis: "Oct 6", place: 1, players: 6, href: "/match?id=415" },
 ];
 chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
 ```
@@ -419,7 +419,8 @@ chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
 - Tiers near the ratings shown get a dashed line in their colour with their chip, placed where the line doesn't run through it. No bands.
 - Hover, a tap or the arrow keys (Home and End too) show a green crosshair and a tooltip with the match, place, rating, change and "Open match →". Screen readers hear each point as the keys reach it. A point's `change` is worked out from the point before when it isn't given.
 - A mouse click, a second tap on the same point, or Enter fires a cancelable `open` event (`detail: { index, point }`), then goes to the point's `href`. Cancel it to open the match some other way.
-- One axis, on the left. It draws at its box's width, 240px tall (180px under 480px wide), or the `height` attribute. `--gb-chart-bg` is the surface it sits on (`panel` unless the app says so). With no points it draws nothing; show a `<gb-empty>` instead.
+- Give each point an `axis` label (a short date, "Oct 5") and a few evenly spaced points show theirs under the chart, the first and last among them: as many as fit the chart's width without touching (two to seven; three on a phone), and a date repeated over several matches only once. Without `axis` labels there's no date row.
+- Ratings are on the left. It draws at its box's width, 240px tall (180px under 480px wide), or the `height` attribute. `--gb-chart-bg` is the surface it sits on (`panel` unless the app says so). With no points it draws nothing; show a `<gb-empty>` instead.
 
 ### Compare chart
 
@@ -449,7 +450,7 @@ chart.tiers = [{ tier: "grandmaster", label: "Grandmaster", threshold: 1900 }];
 ```
 
 - Up to three players' ratings on one chart (more are ignored). Players are told apart by stroke, not hue: `fg` solid, `soft` dashed, `muted` dotted. Each name is at its line's end (cut at 14 letters, 10 on a phone) and whole in a key above the chart. There is no up or down colour and no `direction`.
-- `axis="matches"` (the default) puts every player's nth match in the same place, with lines from match to match. `axis="time"` puts each match where it was played (`at`: milliseconds or an ISO date) and draws steps, since a rating holds until the next match.
+- `axis="matches"` (the default) puts every player's nth match in the same place, with lines from match to match. `axis="time"` puts each match where it was played (`at`: milliseconds or an ISO date) and draws steps, since a rating holds until the next match. Over time, a few round dates go under the chart (every so many hours, days, weeks or months, in the viewer's time zone), as many as fit the width without touching.
 - Tiers near the ratings shown get a dashed line and chip, placed clear of every line.
 - Hover, a tap or the arrow keys (Home and End too) show a green crosshair and a tooltip with every player's rating at that point (a dash before their first match). A click, a second tap or Enter fires a cancelable `open` event (`detail: { series, index, point }`) for the player whose point under the cursor is nearest, then goes to the point's `href`.
 - `label` is what screen readers hear first, `height` and `--gb-chart-bg` work as on the rating chart. With no points it draws nothing; show a `<gb-empty>` instead.

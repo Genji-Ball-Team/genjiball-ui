@@ -1,4 +1,11 @@
-import { type Spot, lineCrosses, spreadLabels } from "./chart-scale.js";
+import {
+  type Spot,
+  keepApart,
+  lineCrosses,
+  spreadLabels,
+  tickCount,
+  timeTicks,
+} from "./chart-scale.js";
 import type { Tier } from "./chip.js";
 
 /** A tier threshold: a dashed line in the tier's colour with its chip. */
@@ -83,6 +90,57 @@ export function gridLines(
     grid.append(text);
   }
   return grid;
+}
+
+/** A label under the plot (a date), at its x in pixels. */
+export interface AxisTick {
+  readonly x: number;
+  readonly text: string;
+}
+
+/** The room under the plot for the axis labels, in pixels. */
+export const axisRoom = 16;
+
+/**
+ * The labels under the plot, in the grid's colour and size, centred on their x but kept inside the
+ * chart. Their widths come from the text, so `fit` (once the SVG is in the page) drops the ones that
+ * would touch their neighbour, keeping both ends.
+ */
+export function axisLabels(
+  ticks: readonly AxisTick[],
+  { width, height }: { width: number; height: number },
+): { group: SVGGElement; fit: () => void } {
+  const group = draw("g", { class: "grid axis" });
+  const texts = ticks.map((tick) => {
+    const text = draw("text", { x: tick.x, y: height - 4, "text-anchor": "middle" });
+    text.textContent = tick.text;
+    return text;
+  });
+  group.append(...texts);
+  const fit = () => {
+    const spans = texts.map((text, index) => {
+      const measured =
+        typeof text.getComputedTextLength === "function" ? text.getComputedTextLength() : 0;
+      const half = (measured || (text.textContent ?? "").length * 6.4) / 2;
+      const x = Math.min(Math.max(ticks[index]?.x ?? 0, half + 1), width - half - 1);
+      text.setAttribute("x", String(x));
+      return [x - half, x + half] as const;
+    });
+    const kept = new Set(keepApart(spans, 12));
+    texts.forEach((text, index) => {
+      if (!kept.has(index)) text.remove();
+    });
+  };
+  return { group, fit };
+}
+
+/** Round dates from `from` to `to` (milliseconds) for a time axis `inner` pixels wide, at `xOf`. */
+export function timeAxis(
+  from: number,
+  to: number,
+  { inner, xOf }: { inner: number; xOf: (at: number) => number },
+): AxisTick[] {
+  return timeTicks(from, to, tickCount(inner)).map(({ at, text }) => ({ x: xOf(at), text }));
 }
 
 /** Where a tier line goes: its box, and the lines of the chart its chip must stay clear of. */

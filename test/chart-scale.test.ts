@@ -1,5 +1,14 @@
 import { expect, test } from "vitest";
-import { chartScale, lineCrosses, ordinal, spreadLabels } from "../src/chart-scale.js";
+import {
+  chartScale,
+  evenIndexes,
+  keepApart,
+  lineCrosses,
+  ordinal,
+  spreadLabels,
+  tickCount,
+  timeTicks,
+} from "../src/chart-scale.js";
 
 test("the range holds every value, with room above and below", () => {
   const scale = chartScale([1800, 1850, 2000]);
@@ -88,4 +97,107 @@ test("labels side by side don't push each other; overlapping ones do", () => {
 
 test("a line with no end gets no label", () => {
   expect(spreadLabels([Number.NaN, 50], { gap: 13, max: 200 })).toEqual([Number.NaN, 50]);
+});
+
+test("how many axis labels fit: one per 70px, two to seven", () => {
+  expect([100, 291, 548, 2000].map(tickCount)).toEqual([2, 4, 7, 7]);
+});
+
+test("evenly spaced indexes take in both ends", () => {
+  expect(evenIndexes(40, 4)).toEqual([0, 13, 26, 39]);
+  expect(evenIndexes(3, 7)).toEqual([0, 1, 2]);
+  expect(evenIndexes(1, 4)).toEqual([0]);
+  expect(evenIndexes(0, 4)).toEqual([]);
+});
+
+test("labels that would touch are dropped, the ends kept", () => {
+  expect(
+    keepApart(
+      [
+        [0, 30],
+        [40, 70],
+        [60, 90],
+        [100, 130],
+      ],
+      8,
+    ),
+  ).toEqual([0, 1, 3]);
+  // The last wins over the one before it.
+  expect(
+    keepApart(
+      [
+        [0, 30],
+        [40, 70],
+        [75, 105],
+      ],
+      8,
+    ),
+  ).toEqual([0, 2]);
+  // Only the two ends, touching: the first stays.
+  expect(
+    keepApart(
+      [
+        [0, 30],
+        [20, 50],
+      ],
+      8,
+    ),
+  ).toEqual([0]);
+});
+
+const hour = 3_600_000;
+const day = 24 * hour;
+const start = new Date(2026, 8, 3, 15, 20).getTime();
+
+function expectRound(ticks: { at: number }[], from: number, to: number, count: number): void {
+  expect(ticks.length).toBeGreaterThan(1);
+  expect(ticks.length).toBeLessThanOrEqual(count);
+  ticks.forEach(({ at }, n) => {
+    expect(at).toBeGreaterThanOrEqual(from);
+    expect(at).toBeLessThanOrEqual(to);
+    if (n) expect(at).toBeGreaterThan(ticks[n - 1]?.at ?? 0);
+  });
+}
+
+test("time ticks over a month are round days, labelled by date", () => {
+  const ticks = timeTicks(start, start + 30 * day, 4);
+  expectRound(ticks, start, start + 30 * day, 4);
+  for (const { at, text } of ticks) {
+    expect(new Date(at).getHours()).toBe(0);
+    expect(text).toMatch(/^[A-Z][a-z]{2} \d{1,2}$/);
+  }
+  // Seven fit: a week apart.
+  const week = timeTicks(start, start + 30 * day, 7);
+  expectRound(week, start, start + 30 * day, 7);
+  expect(Math.round(((week[1]?.at ?? 0) - (week[0]?.at ?? 0)) / day)).toBe(7);
+});
+
+test("time ticks within a day are round hours; over a year, months", () => {
+  const hours = timeTicks(start, start + 10 * hour, 4);
+  expectRound(hours, start, start + 10 * hour, 4);
+  for (const { at, text } of hours) {
+    expect(new Date(at).getMinutes()).toBe(0);
+    expect(text).toMatch(new Date(at).getHours() ? /^\d{1,2}\s[AP]M$/ : /^[A-Z][a-z]{2} \d/);
+  }
+  const months = timeTicks(start, start + 400 * day, 5);
+  expectRound(months, start, start + 400 * day, 5);
+  for (const { at, text } of months) {
+    expect(new Date(at).getDate()).toBe(1);
+    expect(text).toMatch(/^([A-Z][a-z]{2}|\d{4})$/);
+  }
+  expect(months.map(({ text }) => text)).toContain("2027");
+});
+
+test("room for two labels still gets two dates, even if a round step gives three", () => {
+  for (const days of [30, 190]) {
+    const ticks = timeTicks(start, start + days * day, 2);
+    expect(ticks.length).toBeGreaterThanOrEqual(2);
+    expect(ticks.length).toBeLessThanOrEqual(3);
+  }
+});
+
+test("no span, or less than an hour, is one date", () => {
+  expect(timeTicks(start, start, 4)).toHaveLength(1);
+  expect(timeTicks(start, start + 10 * 60_000, 4)).toHaveLength(1);
+  expect(timeTicks(Number.NaN, start, 4)).toEqual([]);
 });

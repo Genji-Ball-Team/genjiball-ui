@@ -48,6 +48,112 @@ export function ordinal(place: number): string {
   return `${place}${suffixes[ordinals.select(place)] ?? "th"}`;
 }
 
+/** How many labels fit under a plot `inner` pixels wide: one per 70px, two to seven. */
+export function tickCount(inner: number): number {
+  return Math.max(2, Math.min(7, Math.floor(inner / 70)));
+}
+
+/** Up to `count` of the indexes 0 to `length - 1`, evenly spaced, the first and the last among them. */
+export function evenIndexes(length: number, count: number): number[] {
+  if (length < 1 || count < 1) return [];
+  const n = Math.min(count, length);
+  if (n === 1) return [0];
+  return [
+    ...new Set(Array.from({ length: n }, (_, i) => Math.round((i * (length - 1)) / (n - 1)))),
+  ];
+}
+
+/**
+ * Which of the labels at `spans` (each one's left and right edge, left to right) to keep so that
+ * none comes within `gap` of the next. The first always stays; the last wins over the ones before
+ * it, so both ends of the axis keep their label.
+ */
+export function keepApart(spans: readonly (readonly [number, number])[], gap: number): number[] {
+  const kept: number[] = [];
+  const clear = (index: number) => {
+    const before = spans[kept.at(-1) ?? -1];
+    return !before || (spans[index]?.[0] ?? 0) >= before[1] + gap;
+  };
+  spans.forEach((_, index) => {
+    if (index === spans.length - 1) while (kept.length > 1 && !clear(index)) kept.pop();
+    if (clear(index)) kept.push(index);
+  });
+  return kept;
+}
+
+const hour = 3_600_000;
+const day = 24 * hour;
+// Round steps for a time axis: hours, days, weeks, then calendar months.
+const timeSteps: TimeStep[] = [1, 3, 6, 12, 24, 48, 168, 336]
+  .map((hours) => ({ size: hours * hour, months: 0 }))
+  .concat([1, 3, 6, 12].map((months) => ({ size: months * 30.4 * day, months })));
+const dayFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric" });
+const hourFormat = new Intl.DateTimeFormat("en", { hour: "numeric" });
+const monthFormat = new Intl.DateTimeFormat("en", { month: "short" });
+
+/** A labelled date on a time axis, in milliseconds. */
+export interface TimeTick {
+  readonly at: number;
+  readonly text: string;
+}
+
+type TimeStep = { readonly size: number; readonly months: number };
+
+/**
+ * Round dates from `from` to `to` (milliseconds) to label a time axis with: every so many hours,
+ * days, weeks or months, in the viewer's time zone, the finest step that gives at most `count` (one
+ * more when that's what it takes to have two). Labelled for the step: "3 PM" (midnight says the
+ * day), "Oct 5", "Oct" (January says the year). One date when there's no span or no round hour in it.
+ */
+export function timeTicks(from: number, to: number, count: number): TimeTick[] {
+  if (!Number.isFinite(from) || !Number.isFinite(to) || count < 1) return [];
+  const one = [{ at: from, text: dayFormat.format(from) }];
+  if (to <= from) return one;
+  const span = to - from;
+  const years = Math.ceil(span / count / (365 * day));
+  let finer: TimeTick[] = [];
+  for (const step of [...timeSteps, { size: years * 365 * day, months: 12 * years }]) {
+    if (span / step.size > count + 1) continue;
+    const ticks = stepDates(from, to, step);
+    if (ticks.length <= count) {
+      const best = ticks.length > 1 || finer.length === 0 ? ticks : finer;
+      return best.length ? best : one;
+    }
+    finer = ticks;
+  }
+  return finer.length ? finer : one;
+}
+
+/** Every round date from `from` to `to` a step apart. */
+function stepDates(from: number, to: number, step: TimeStep): TimeTick[] {
+  const date = new Date(from);
+  const hours = step.size / hour;
+  if (step.months) {
+    date.setHours(0, 0, 0, 0);
+    date.setDate(1);
+    while (date.getTime() < from || date.getMonth() % Math.min(step.months, 12))
+      date.setMonth(date.getMonth() + 1);
+  } else if (hours >= 24) {
+    date.setHours(0, 0, 0, 0);
+    if (date.getTime() < from) date.setDate(date.getDate() + 1);
+  } else {
+    date.setMinutes(0, 0, 0);
+    while (date.getTime() < from || date.getHours() % hours) date.setHours(date.getHours() + 1);
+  }
+  const ticks: TimeTick[] = [];
+  while (date.getTime() <= to) {
+    const at = date.getTime();
+    let text = dayFormat.format(at);
+    if (step.months) text = date.getMonth() ? monthFormat.format(at) : String(date.getFullYear());
+    else if (hours < 24 && date.getHours()) text = hourFormat.format(at);
+    ticks.push({ at, text });
+    if (step.months) date.setMonth(date.getMonth() + step.months);
+    else if (hours >= 24) date.setDate(date.getDate() + hours / 24);
+    else date.setHours(date.getHours() + hours);
+  }
+  return ticks;
+}
+
 /** A point or box corner in a chart's pixels. */
 export interface Spot {
   readonly x: number;

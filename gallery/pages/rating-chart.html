@@ -17,6 +17,39 @@
 </section>
 
 <section class="g-section">
+  <h2>Phone width: fewer dates</h2>
+  <div style="max-inline-size: 375px">
+    <gb-panel label="Rating">
+      <gb-rating-chart id="chart-phone" label="Rating over the last 30 matches"></gb-rating-chart>
+    </gb-panel>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Drag the corner: dates come and go with the width</h2>
+  <div
+    style="
+      resize: horizontal;
+      overflow: hidden;
+      inline-size: min(560px, 100%);
+      min-inline-size: 200px;
+      max-inline-size: 100%;
+    "
+  >
+    <gb-panel label="Rating">
+      <gb-rating-chart id="chart-resize" label="Rating over the last 60 matches"></gb-rating-chart>
+    </gb-panel>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Several matches a day: each date once</h2>
+  <gb-panel label="Rating">
+    <gb-rating-chart id="chart-days" label="Rating over the last 12 matches"></gb-rating-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
   <h2>No matches</h2>
   <gb-panel label="Rating">
     <gb-empty>No rated matches yet.</gb-empty>
@@ -33,7 +66,15 @@
       const change = Math.round((random() - 0.5) * 50 + drift);
       rating += change;
       const place = 1 + Math.floor(random() * 6);
-      return { rating, change, place, players: 6, label: `Match #${380 + i}`, href: "#" };
+      // Every other day, ending on Oct 24.
+      const day = new Date(Date.UTC(2026, 9, 24 - (steps - 1 - i) * 2));
+      const axis = day.toLocaleDateString("en", {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      });
+      const label = `Match #${380 + i} · ${axis}`;
+      return { rating, change, place, players: 6, label, axis, href: "#" };
     });
   }
   const up = document.getElementById("chart-up");
@@ -45,5 +86,17 @@
   const down = document.getElementById("chart-down");
   down.points = walk(2280, 20, -9, 11);
   down.tiers = [{ tier: "ascendant", label: "Ascendant", threshold: 2200 }];
-  for (const chart of [up, down]) chart.addEventListener("open", (event) => event.preventDefault());
+  const phone = document.getElementById("chart-phone");
+  phone.points = walk(1780, 30, 6, 7);
+  phone.tiers = up.tiers;
+  const resize = document.getElementById("chart-resize");
+  resize.points = walk(1700, 60, 3, 5);
+  // Four matches on each of three days.
+  const days = document.getElementById("chart-days");
+  days.points = walk(1850, 12, 2, 3).map((point, i) => {
+    const axis = ["Oct 22", "Oct 23", "Oct 24"][Math.floor(i / 4)];
+    return { ...point, axis, label: `Match #${380 + i} · ${axis}` };
+  });
+  for (const chart of [up, down, phone, resize, days])
+    chart.addEventListener("open", (event) => event.preventDefault());
 </script>
