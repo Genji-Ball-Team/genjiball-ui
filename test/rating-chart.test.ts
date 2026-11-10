@@ -145,16 +145,74 @@ test("a redraw keeps keyboard focus and the point it's on", () => {
   expect(tipOf(chart)?.textContent).toContain("Match #3");
 });
 
-test("the first and last point's axis labels go under the chart's ends", () => {
-  const axisOf = (chart: GbRatingChart) => chart.shadowRoot?.querySelector<HTMLElement>(".axis");
-  const chart = make();
-  expect(axisOf(chart)?.hidden).toBe(true);
-  chart.points = points.map((point, index) => ({ ...point, axis: `Oct ${index + 1}` }));
-  expect(axisOf(chart)?.hidden).toBe(false);
-  expect([...(axisOf(chart)?.children ?? [])].map((label) => label.textContent)).toEqual([
-    "Oct 1",
-    "Oct 4",
+// Forty matches, one a day from Oct 1, or with the dates given.
+const daily = (dates = Array.from({ length: 40 }, (_, n) => `Day ${n + 1}`)) =>
+  dates.map((axis, n) => ({ rating: 1800 + ((n * 7) % 30), axis }));
+
+function sized(width: number, given: readonly RatingPoint[]): GbRatingChart {
+  const chart = document.createElement("gb-rating-chart") as GbRatingChart;
+  Object.defineProperty(chart, "clientWidth", { value: width, configurable: true });
+  chart.points = given;
+  document.body.append(chart);
+  return chart;
+}
+
+const ticksOf = (chart: GbRatingChart) =>
+  [...(svgOf(chart)?.querySelectorAll(".axis text") ?? [])].map((text) => ({
+    text: text.textContent,
+    x: Number(text.getAttribute("x")),
+  }));
+
+test("a few evenly spaced points' axis labels go under the chart, both ends among them", () => {
+  const wide = ticksOf(sized(600, daily()));
+  expect(wide.map(({ text }) => text)).toEqual([
+    "Day 1",
+    "Day 8",
+    "Day 14",
+    "Day 21",
+    "Day 27",
+    "Day 34",
+    "Day 40",
   ]);
-  chart.points = [{ rating: 1830, axis: "Oct 1" }];
-  expect(axisOf(chart)?.textContent).toBe("Oct 1");
+  // A point apart at most (14px here); the last is pulled in to stay inside the chart.
+  const gaps = wide.slice(1, -1).map(({ x }, n) => x - (wide[n]?.x ?? 0));
+  for (const gap of gaps) expect(Math.abs(gap - (gaps[0] ?? 0))).toBeLessThan(15);
+  expect(wide.at(-1)?.x).toBeLessThanOrEqual(600 - (6 * 6.4) / 2);
+});
+
+test("a phone-wide chart has fewer labels, all inside it", () => {
+  const phone = ticksOf(sized(343, daily()));
+  expect(phone.map(({ text }) => text)).toEqual(["Day 1", "Day 14", "Day 27", "Day 40"]);
+  for (const { x, text } of phone) {
+    const half = ((text ?? "").length * 6.4) / 2;
+    expect(x - half).toBeGreaterThanOrEqual(0);
+    expect(x + half).toBeLessThanOrEqual(343);
+  }
+});
+
+test("labels too long to fit are dropped so none touch, keeping both ends", () => {
+  const long = ticksOf(sized(600, daily(daily().map((_, n) => `October ${n + 1}, 2026 (Sat)`))));
+  expect(long[0]?.text).toBe("October 1, 2026 (Sat)");
+  expect(long.at(-1)?.text).toBe("October 40, 2026 (Sat)");
+  expect(long.length).toBeLessThan(7);
+  long.slice(1).forEach(({ x, text }, n) => {
+    const before = long[n];
+    const reach = ((text ?? "").length * 6.4 + (before?.text ?? "").length * 6.4) / 2;
+    expect(x - (before?.x ?? 0)).toBeGreaterThanOrEqual(reach);
+  });
+});
+
+test("a date repeated over several matches is said once", () => {
+  const dates = daily().map((_, n) => (n < 20 ? "Oct 1" : "Oct 2"));
+  expect(ticksOf(sized(600, daily(dates))).map(({ text }) => text)).toEqual(["Oct 1", "Oct 2"]);
+});
+
+test("without axis labels there is no axis and no room kept for one; one point has one label", () => {
+  const plain = make();
+  expect(ticksOf(plain)).toEqual([]);
+  // The cursor reaches down to the plot's bottom: 10px above the 240px chart's edge.
+  expect(svgOf(plain)?.querySelector(".cursor line")?.getAttribute("y2")).toBe("230");
+  const one = sized(600, [{ rating: 1830, axis: "Oct 1" }]);
+  expect(ticksOf(one).map(({ text }) => text)).toEqual(["Oct 1"]);
+  expect(svgOf(one)?.querySelector(".cursor line")?.getAttribute("y2")).toBe("214");
 });

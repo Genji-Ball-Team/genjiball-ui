@@ -1,5 +1,8 @@
 import {
+  type AxisTick,
   type TierLine,
+  axisLabels,
+  axisRoom,
   chartStyles,
   draw,
   format,
@@ -8,7 +11,7 @@ import {
   span,
   tierLine,
 } from "./chart-parts.js";
-import { type Spot, chartScale, ordinal } from "./chart-scale.js";
+import { type Spot, chartScale, evenIndexes, ordinal, tickCount } from "./chart-scale.js";
 import { defineElement } from "./define.js";
 
 export type { TierLine } from "./chart-parts.js";
@@ -20,7 +23,10 @@ export interface RatingPoint {
   readonly change?: number;
   /** What the tooltip calls the match ("Match #412"). Without it, "Match 1", "Match 2"… */
   readonly label?: string;
-  /** A short label for under the chart ("Oct 5"). The first and last point's are its ends. */
+  /**
+   * A short label for the axis under the chart ("Oct 5"). A few evenly spaced points show theirs,
+   * more on a wider chart; give every point one.
+   */
   readonly axis?: string;
   /** The player's place in the match, and how many played it ("2nd of 6"). */
   readonly place?: number;
@@ -48,20 +54,15 @@ const styles = `:host {
 ${chartStyles}
 .line { fill: none; stroke: var(--gb-chart-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .last { fill: var(--gb-chart-line); stroke: var(--gb-chart-bg); stroke-width: 2; }
-.axis {
-  display: flex; justify-content: space-between; margin: 6px 0 0; padding: 0 ${pad.right}px 0 ${pad.left}px;
-  color: var(--muted); font-size: var(--label-size); font-variant-numeric: tabular-nums;
-}
-.axis[hidden] { display: none; }
-.axis span:only-child { margin: 0 auto; }
 .cursor circle { fill: var(--green); stroke: var(--gb-chart-bg); stroke-width: 2; }`;
 
 /**
  * `<gb-rating-chart label="Rating over the last 40 matches">`: a player's rating after each match,
  * as brand.md's Charts section draws it. Give it data with properties:
  *
- * - `points`: {@link RatingPoint}s, oldest first. When the first and last have an `axis`, those
- *   two labels go under the chart's ends.
+ * - `points`: {@link RatingPoint}s, oldest first. When they have an `axis` label, a few evenly spaced
+ *   ones go under the chart, the first and last among them: as many as fit the width without
+ *   touching (two to seven; repeats of the same date are left out).
  * - `tiers`: {@link TierLine}s. Those near the ratings shown get a dashed line and their chip.
  *
  * The whole line is `up` if the rating went up over the points shown and `down` if it went down
@@ -80,7 +81,6 @@ export class GbRatingChart extends HTMLElement {
   readonly #tip = document.createElement("div");
   readonly #said = document.createElement("p");
   readonly #svg = draw("svg", { role: "img", part: "chart" });
-  readonly #axis = document.createElement("p");
   #points: readonly RatingPoint[] = [];
   #tiers: readonly TierLine[] = [];
   // Where each point is drawn, and the one the cursor is on (-1: none).
@@ -99,10 +99,7 @@ export class GbRatingChart extends HTMLElement {
     this.#tip.setAttribute("part", "tooltip");
     this.#said.className = "gb-sr";
     this.#said.setAttribute("aria-live", "polite");
-    this.#axis.className = "axis";
-    this.#axis.setAttribute("aria-hidden", "true");
-    this.#axis.setAttribute("part", "axis");
-    this.#root.append(style, this.#svg, this.#axis, this.#tip, this.#said);
+    this.#root.append(style, this.#svg, this.#tip, this.#said);
     this.#listen(this.#svg);
   }
 
@@ -163,7 +160,6 @@ export class GbRatingChart extends HTMLElement {
     if (this.getAttribute("direction") !== direction) this.setAttribute("direction", direction);
     svg.replaceChildren();
     svg.style.display = first && last ? "" : "none";
-    this.#drawAxis();
     if (!first || !last) {
       svg.removeAttribute("tabindex");
       return;
@@ -173,12 +169,14 @@ export class GbRatingChart extends HTMLElement {
     this.#width = this.clientWidth;
     const width = this.#width || 600;
     const height = Number(this.getAttribute("height")) || (width < 480 ? 180 : 240);
+    const labelled = points.some((point) => point.axis);
+    const box = labelled ? { ...pad, bottom: pad.bottom + axisRoom } : pad;
     const scale = chartScale(
       points.map((point) => point.rating),
       { thresholds: this.#tiers.map((tier) => tier.threshold) },
     );
     const y = (value: number) =>
-      pad.top + ((scale.hi - value) / (scale.hi - scale.lo)) * (height - pad.top - pad.bottom);
+      box.top + ((scale.hi - value) / (scale.hi - scale.lo)) * (height - box.top - box.bottom);
     const inner = width - pad.left - pad.right;
     this.#spots = points.map((point, index) => ({
       x: pad.left + (points.length > 1 ? (index / (points.length - 1)) * inner : inner / 2),
@@ -191,13 +189,27 @@ export class GbRatingChart extends HTMLElement {
     svg.classList.toggle("links", links);
     svg.setAttribute("aria-label", this.#label(links));
 
-    const grid = gridLines(scale.ticks, y, { width, pad });
+    const grid = gridLines(scale.ticks, y, { width, pad: box });
+    const axis = axisLabels(labelled ? this.#ticks(tickCount(inner)) : [], { width, height });
     const tierLines = this.#tiers
       .filter((tier) => tier.threshold > scale.lo && tier.threshold < scale.hi)
       .map((tier) =>
-        tierLine(tier, y(tier.threshold), { width, height, pad, lines: () => [this.#spots] }),
+        tierLine(tier, y(tier.threshold), { width, height, pad: box, lines: () => [this.#spots] }),
       );
 
+    svg.append(
+      grid,
+      axis.group,
+      ...tierLines.map((tier) => tier.group),
+      ...this.#line(box.top, height - box.bottom),
+    );
+    for (const tier of tierLines) tier.fit();
+    axis.fit();
+    if (kept >= 0) this.#show(kept);
+  }
+
+  /** The rating line, the dot at its end and the cursor, which reaches from `top` to `bottom`. */
+  #line(top: number, bottom: number): SVGElement[] {
     const line = draw("path", {
       class: "line",
       d: this.#spots
@@ -207,24 +219,25 @@ export class GbRatingChart extends HTMLElement {
     const end = this.#spots.at(-1) ?? { x: 0, y: 0 };
     const dot = draw("circle", { class: "last", cx: end.x, cy: end.y, r: 4 });
     const cursor = draw("g", { class: "cursor", display: "none" });
-    cursor.append(
-      draw("line", { y1: pad.top, y2: height - pad.bottom }),
-      draw("circle", { r: 4.5 }),
-    );
-
-    svg.append(grid, ...tierLines.map((tier) => tier.group), line, dot, cursor);
-    for (const tier of tierLines) tier.fit();
-    if (kept >= 0) this.#show(kept);
+    cursor.append(draw("line", { y1: top, y2: bottom }), draw("circle", { r: 4.5 }));
+    return [line, dot, cursor];
   }
 
-  /** The first and last point's axis labels, under the chart's ends, when both have one. */
-  #drawAxis(): void {
-    const first = this.#points[0];
-    const last = this.#points.at(-1);
-    const ends =
-      first?.axis && last?.axis ? [first.axis, ...(last === first ? [] : [last.axis])] : [];
-    this.#axis.replaceChildren(...ends.map((text) => span("", text)));
-    this.#axis.hidden = ends.length === 0;
+  /** Up to `count` evenly spaced points' axis labels, at their x, a date said once. */
+  #ticks(count: number): AxisTick[] {
+    const ticks: AxisTick[] = [];
+    for (const index of evenIndexes(this.#points.length, count)) {
+      const text = this.#points[index]?.axis;
+      const x = this.#spots[index]?.x ?? 0;
+      if (!text) continue;
+      // The same date again (matches on one day) is said once: at the first, or at the chart's end.
+      if (ticks.at(-1)?.text === text) {
+        if (index < this.#points.length - 1) continue;
+        ticks.pop();
+      }
+      ticks.push({ x, text });
+    }
+    return ticks;
   }
 
   #label(links: boolean): string {

@@ -6,6 +6,22 @@
 </section>
 
 <section class="g-section">
+  <h2>By time on a phone: fewer dates</h2>
+  <div style="max-inline-size: 375px">
+    <gb-panel label="Ratings">
+      <gb-compare-chart id="by-time-phone" axis="time" label="Ratings over time"></gb-compare-chart>
+    </gb-panel>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>By time, over half a year: months</h2>
+  <gb-panel label="Ratings">
+    <gb-compare-chart id="by-months" axis="time" label="Ratings over time"></gb-compare-chart>
+  </gb-panel>
+</section>
+
+<section class="g-section">
   <h2>By match, two players</h2>
   <gb-panel label="Ratings">
     <gb-compare-chart id="by-match" height="200"></gb-compare-chart>
@@ -76,6 +92,14 @@
     { name: "Ryujin", points: walk(1740, 9, 9, 13, 70) },
   ];
   byTime.tiers = tiers;
+  const phone = document.getElementById("by-time-phone");
+  phone.series = byTime.series;
+  phone.tiers = tiers;
+  const months = document.getElementById("by-months");
+  months.series = [
+    { name: "Hanzo_Main", points: walk(1790, 40, 2, 7, 120) },
+    { name: "Dragonblade", points: walk(1830, 30, 1, 11, 160) },
+  ];
   const byMatch = document.getElementById("by-match");
   byMatch.series = [
     { name: "Hanzo_Main", points: walk(1790, 24, 5, 7, 30) },
@@ -108,6 +132,6 @@
     ["Dragonblade", 1708],
     ["Ryujin", 1702],
   ]);
-  for (const chart of [byTime, byMatch])
+  for (const chart of [byTime, phone, months, byMatch])
     chart.addEventListener("open", (event) => event.preventDefault());
 </script>
