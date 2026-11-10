@@ -235,3 +235,90 @@ test("sorting keeps dropped columns dropped", () => {
   expect(dropped(element)).toEqual([false, true, false]);
   expect(cells(element, 1).every((cell) => cell.classList.contains("gb-table-drop"))).toBe(true);
 });
+
+/** A table from `html` in a box `width` wide, each column 100px while its header shows. */
+function shaped(width: number, html: string): GbTable {
+  const element = document.createElement("gb-table") as GbTable;
+  element.innerHTML = `<table>${html}</table>`;
+  Object.defineProperty(element, "clientWidth", { get: () => width });
+  Object.defineProperty(element, "scrollWidth", {
+    get: () =>
+      Math.max(
+        width,
+        element.headers.filter((h) => !h.classList.contains("gb-table-drop")).length * 100,
+      ),
+  });
+  document.body.append(element);
+  element.fit();
+  return element;
+}
+
+const droppedText = (element: GbTable) =>
+  [...(element.table?.querySelectorAll(".gb-table-drop") ?? [])].map((cell) => cell.textContent);
+
+test("a footer's cells drop with their column", () => {
+  const element = shaped(
+    200,
+    `<thead><tr><th>Player</th><th data-priority="low">Saves</th><th>Rating</th></tr></thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr></tbody>
+    <tfoot><tr><td>Total</td><td>3 saves</td><td>2,000</td></tr></tfoot>`,
+  );
+  expect(droppedText(element)).toEqual(["Saves", "3", "3 saves"]);
+});
+
+test("a multi-row header drops the column's cell in every header row", () => {
+  const element = shaped(
+    200,
+    `<thead>
+      <tr><th>Who</th><th>Extra</th><th>Main</th></tr>
+      <tr><th>Player</th><th data-priority="low">Saves</th><th>Rating</th></tr>
+    </thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr></tbody>`,
+  );
+  expect(droppedText(element)).toEqual(["Extra", "Saves", "3"]);
+});
+
+test("a header coming down from the row above (rowspan) still lines its column up", () => {
+  const element = shaped(
+    200,
+    `<thead>
+      <tr><th rowspan="2">Player</th><th>Saves</th><th>Rating</th></tr>
+      <tr><th data-priority="low">Total</th><th>Now</th></tr>
+    </thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr></tbody>`,
+  );
+  expect(element.headers.map((h) => h.textContent)).toEqual(["Player", "Total", "Now"]);
+  expect(droppedText(element)).toEqual(["Saves", "Total", "3"]);
+});
+
+test("a column under a cell spanning several never drops", () => {
+  const element = shaped(
+    100,
+    `<thead><tr><th>Player</th><th data-priority="low">Goals</th><th data-priority="low">Saves</th><th data-priority="low">Note</th></tr></thead>
+    <tbody><tr><td>a</td><td>1</td><td>3</td><td>x</td></tr></tbody>
+    <tfoot><tr><td>Total</td><td colspan="2">4</td><td>x</td></tr></tfoot>`,
+  );
+  // Note drops; Goals and Saves share the footer's 4, so they stay and the table scrolls.
+  expect(droppedText(element)).toEqual(["Note", "x", "x"]);
+});
+
+test("rows that don't line up drop nothing: the table scrolls with its pinned column", () => {
+  const element = shaped(
+    100,
+    `<thead><tr><th>Player</th><th data-priority="low">Saves</th><th>Rating</th></tr></thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr><tr><td colspan="2">b</td><td>1</td><td>extra</td></tr></tbody>`,
+  );
+  expect(droppedText(element)).toEqual([]);
+  expect(element.headers[0]?.classList.contains("gb-table-pin-end")).toBe(true);
+});
+
+test("cells after a rowspan line up by their real column", () => {
+  const element = shaped(
+    600,
+    `<thead><tr><th>Group</th><th>Player</th><th data-type="number">Rating</th></tr></thead>
+    <tbody><tr><td rowspan="2">A</td><td>x</td><td>1</td></tr><tr><td>y</td><td>2</td></tr></tbody>`,
+  );
+  const second = element.table?.querySelectorAll("tbody > tr")[1];
+  expect(second?.lastElementChild?.classList.contains("gb-table-num")).toBe(true);
+  expect(second?.firstElementChild?.classList.contains("gb-table-num")).toBe(false);
+});
