@@ -24,8 +24,9 @@ export interface RatingPoint {
   /** What the tooltip calls the match ("Match #412"). Without it, "Match 1", "Match 2"… */
   readonly label?: string;
   /**
-   * A short label for the axis under the chart ("Oct 5"). A few evenly spaced points show theirs,
-   * more on a wider chart; give every point one.
+   * A short label for the axis under the chart ("Oct 5"). A few evenly spaced points among the
+   * ones that have a label show theirs, more on a wider chart; give every point one for even
+   * spacing.
    */
   readonly axis?: string;
   /** The player's place in the match, and how many played it ("2nd of 6"). */
@@ -223,16 +224,20 @@ export class GbRatingChart extends HTMLElement {
     return [line, dot, cursor];
   }
 
-  /** Up to `count` evenly spaced points' axis labels, at their x, a date said once. */
+  /**
+   * Up to `count` axis labels, at their x, a date said once: picked evenly from the points that
+   * have one, so a chart where only some points carry a label still shows them.
+   */
   #ticks(count: number): AxisTick[] {
     const ticks: AxisTick[] = [];
-    for (const index of evenIndexes(this.#points.length, count)) {
-      const text = this.#points[index]?.axis;
+    const labelled = this.#points.flatMap((point, index) => (point.axis ? [index] : []));
+    for (const pick of evenIndexes(labelled.length, count)) {
+      const index = labelled[pick] ?? 0;
+      const text = this.#points[index]?.axis ?? "";
       const x = this.#spots[index]?.x ?? 0;
-      if (!text) continue;
       // The same date again (matches on one day) is said once: at the first, or at the chart's end.
       if (ticks.at(-1)?.text === text) {
-        if (index < this.#points.length - 1) continue;
+        if (pick < labelled.length - 1) continue;
         ticks.pop();
       }
       ticks.push({ x, text });

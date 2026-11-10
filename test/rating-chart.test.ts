@@ -207,6 +207,17 @@ test("a date repeated over several matches is said once", () => {
   expect(ticksOf(sized(600, daily(dates))).map(({ text }) => text)).toEqual(["Oct 1", "Oct 2"]);
 });
 
+test("when only some points have a label, the ticks are picked from those", () => {
+  // Labels only on points 3, 17 and 30: none of them is at an even index of the forty.
+  const some = daily().map((point, n) =>
+    [3, 17, 30].includes(n) ? point : { rating: point.rating },
+  );
+  expect(ticksOf(sized(600, some)).map(({ text }) => text)).toEqual(["Day 4", "Day 18", "Day 31"]);
+  // One labelled point among many still shows its label rather than an empty axis row.
+  const lone = daily().map((point, n) => (n === 5 ? point : { rating: point.rating }));
+  expect(ticksOf(sized(343, lone)).map(({ text }) => text)).toEqual(["Day 6"]);
+});
+
 test("without axis labels there is no axis and no room kept for one; one point has one label", () => {
   const plain = make();
   expect(ticksOf(plain)).toEqual([]);
