@@ -7,9 +7,10 @@ import {
   gridLines,
   plotPad,
   span,
+  spreadEndNames,
   tierLine,
 } from "./chart-parts.js";
-import { type Spot, chartScale, spreadLabels, stepCorners } from "./chart-scale.js";
+import { type Spot, chartScale, stepCorners } from "./chart-scale.js";
 import { type Stop, compareStops, placeOf, timeOf } from "./compare-stops.js";
 import { defineElement } from "./define.js";
 
@@ -240,7 +241,7 @@ export class GbCompareChart extends HTMLElement {
       ...series.map((_, n) => this.#line(n, names.text[n] ?? "")),
       cursor,
     );
-    this.#spreadNames(height);
+    spreadEndNames([...svg.querySelectorAll<SVGTextElement>(".name")], height);
     for (const tier of tierLines) tier.fit();
     if (kept >= 0) this.#show(kept, this.#owner);
   }
@@ -282,33 +283,6 @@ export class GbCompareChart extends HTMLElement {
   /** The lines as the corners they turn at: over time a rating holds, then steps to the next. */
   #vertices(): Spot[][] {
     return this.#byTime ? this.#lines.map(stepCorners) : this.#lines;
-  }
-
-  /**
-   * Names at close ends would overprint: they're nudged apart, in their lines' order, a line of text
-   * apart (as tall as the text really is, so a larger font still fits) and inside the chart. Names
-   * side by side, at ends far apart over time, are left where they are.
-   */
-  #spreadNames(height: number): void {
-    const labels = [...this.#svg.querySelectorAll<SVGTextElement>(".name")];
-    const size = labels[0] ? getComputedStyle(labels[0]).fontSize : "";
-    // A line of text apart, at least 14px. happy-dom leaves a rem size unresolved.
-    const gap = /px$/.test(size) ? Math.max(14, Number.parseFloat(size) * 1.3) : 14;
-    const spans = labels.map((label) => {
-      const x = Number(label.getAttribute("x"));
-      const width =
-        typeof label.getComputedTextLength === "function" && label.getComputedTextLength() > 0
-          ? label.getComputedTextLength()
-          : (label.textContent ?? "").length * 6.4;
-      return [x, x + width] as const;
-    });
-    const ys = spreadLabels(
-      labels.map((label) => Number(label.dataset.end)),
-      { gap, min: gap / 2, max: height - gap / 2, spans },
-    );
-    labels.forEach((label, n) => {
-      label.setAttribute("y", String(ys[n] ?? 0));
-    });
   }
 
   #line(n: number, name: string): SVGGElement {
