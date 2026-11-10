@@ -76,30 +76,59 @@ export function lineCrosses(spots: readonly Spot[], from: Spot, to: Spot, margin
 
 /**
  * Where to write labels at the ends of lines (`ends`, in pixels from the top, NaN for a line with no
- * end): each at its line's end unless that's within `gap` of the label above, then just below it.
- * Labels pushed past `max` are brought back up, so none leaves the chart.
+ * end): each at its line's end unless that's within `gap` of the label above, then just below it, so
+ * they keep their lines' order. Labels pushed past `max` are brought back up and none goes above
+ * `min`, so they stay inside the chart (unless there's no room for all of them).
+ *
+ * `spans`, if given, is each label's left and right edge: labels side by side that don't overlap
+ * don't push each other.
  */
 export function spreadLabels(
   ends: readonly number[],
-  { gap, max }: { gap: number; max: number },
+  {
+    gap,
+    min = Number.NEGATIVE_INFINITY,
+    max,
+    spans,
+  }: { gap: number; min?: number; max: number; spans?: readonly (readonly [number, number])[] },
 ): number[] {
-  const order = ends
-    .map((end, index) => ({ end, index }))
-    .filter(({ end }) => !Number.isNaN(end))
-    .sort((a, b) => a.end - b.end);
   const placed = ends.map(() => Number.NaN);
-  let last = Number.NEGATIVE_INFINITY;
-  for (const { end, index } of order) {
-    last = Math.max(end, last + gap);
-    placed[index] = last;
-  }
-  let limit = max;
-  for (const { index } of order.reverse()) {
-    limit = Math.min(placed[index] ?? limit, limit);
-    placed[index] = limit;
-    limit -= gap;
+  for (const group of overlapping(ends, spans)) {
+    const order = group.sort((a, b) => (ends[a] ?? 0) - (ends[b] ?? 0) || a - b);
+    let last = min - gap;
+    for (const index of order) {
+      last = Math.max(ends[index] ?? 0, last + gap);
+      placed[index] = last;
+    }
+    let limit = max;
+    for (const index of order.reverse()) {
+      limit = Math.max(Math.min(placed[index] ?? limit, limit), min);
+      placed[index] = limit;
+      limit -= gap;
+    }
   }
   return placed;
+}
+
+/** The labels (by index, the ones with an end) in groups whose spans overlap, directly or through another. */
+function overlapping(
+  ends: readonly number[],
+  spans: readonly (readonly [number, number])[] | undefined,
+): number[][] {
+  const groups: number[][] = [];
+  const meets = (a: number, b: number) => {
+    const [left, right] = spans?.[a] ?? [0, 0];
+    const [otherLeft, otherRight] = spans?.[b] ?? [0, 0];
+    return !spans || (left < otherRight && otherLeft < right);
+  };
+  ends.forEach((end, index) => {
+    if (Number.isNaN(end)) return;
+    const touching = groups.filter((group) => group.some((other) => meets(index, other)));
+    const merged = [...touching.flat(), index];
+    for (const group of touching) groups.splice(groups.indexOf(group), 1);
+    groups.push(merged);
+  });
+  return groups;
 }
 
 /** A line over time as the corners it turns at: a rating holds until the next match, then steps. */

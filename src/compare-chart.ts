@@ -7,9 +7,10 @@ import {
   gridLines,
   plotPad,
   span,
+  spreadEndNames,
   tierLine,
 } from "./chart-parts.js";
-import { type Spot, chartScale, spreadLabels, stepCorners } from "./chart-scale.js";
+import { type Spot, chartScale, stepCorners } from "./chart-scale.js";
 import { type Stop, compareStops, placeOf, timeOf } from "./compare-stops.js";
 import { defineElement } from "./define.js";
 
@@ -224,11 +225,6 @@ export class GbCompareChart extends HTMLElement {
     svg.classList.toggle("links", links);
     svg.setAttribute("aria-label", this.#label(series, links));
 
-    // Names at close ends would overprint: they're spread apart.
-    const nameYs = spreadLabels(
-      this.#lines.map((spots) => spots.at(-1)?.y ?? Number.NaN),
-      { gap: 13, max: height - 6 },
-    );
     const box = { width, height, pad: room, lines: () => this.#vertices() };
     const tierLines = this.#tiers
       .filter((tier) => tier.threshold > scale.lo && tier.threshold < scale.hi)
@@ -242,9 +238,10 @@ export class GbCompareChart extends HTMLElement {
     svg.append(
       gridLines(scale.ticks, y, { width, pad: room }),
       ...tierLines.map((tier) => tier.group),
-      ...series.map((_, n) => this.#line(n, names.text[n] ?? "", nameYs[n] ?? 0)),
+      ...series.map((_, n) => this.#line(n, names.text[n] ?? "")),
       cursor,
     );
+    spreadEndNames([...svg.querySelectorAll<SVGTextElement>(".name")], height);
     for (const tier of tierLines) tier.fit();
     if (kept >= 0) this.#show(kept, this.#owner);
   }
@@ -256,7 +253,10 @@ export class GbCompareChart extends HTMLElement {
     const text = series.map(({ name }) =>
       name.length > limit ? `${name.slice(0, limit - 1)}…` : name,
     );
-    return { text, room: 12 + Math.max(0, ...text.map((name) => name.length)) * 6.4 };
+    // The names are sized in rem: a page with larger text needs more room for them.
+    const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const letter = 6.4 * (rem / 16);
+    return { text, room: 12 + Math.max(0, ...text.map((name) => name.length)) * letter };
   }
 
   /** Works out where every point is drawn, and the stops the cursor and the keys move between. */
@@ -285,7 +285,7 @@ export class GbCompareChart extends HTMLElement {
     return this.#byTime ? this.#lines.map(stepCorners) : this.#lines;
   }
 
-  #line(n: number, name: string, nameY: number): SVGGElement {
+  #line(n: number, name: string): SVGGElement {
     const group = draw("g", { class: `s${n}` });
     const vertices = this.#vertices()[n] ?? [];
     const end = vertices.at(-1);
@@ -302,8 +302,9 @@ export class GbCompareChart extends HTMLElement {
     const label = draw("text", {
       class: "name",
       x: end.x + 9,
-      y: nameY,
+      y: end.y,
       dy: "0.35em",
+      "data-end": end.y,
     });
     label.textContent = name;
     group.append(label);
