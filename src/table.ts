@@ -13,8 +13,9 @@ const chevron =
   '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 // The table's width never pushes the page wider (`contain`): a table too wide for its box scrolls
-// inside it. Every cell has its row's fill, so the first column can stay in place while the rest scroll
-// under it. `--gb-table-bg` is the surface the table sits on: a panel unless the app says so.
+// inside it. Every cell has its row's fill, so the pinned columns can stay in place while the rest
+// scroll under them, behind a 1px edge once scrolled. `--gb-table-bg` is the surface the table sits
+// on: a panel unless the app says so.
 const styles = `gb-table { --gb-table-bg: var(--panel); display: block; overflow-x: auto; contain: inline-size; }
 gb-table[hidden] { display: none; }
 gb-table[sticky] { max-block-size: var(--gb-table-height, 70vh); overflow: auto; }
@@ -38,9 +39,13 @@ gb-table tbody th { border: 0; padding-block-end: 0; vertical-align: middle; col
 gb-table tbody > tr:nth-child(even) > * { background: var(--raised); }
 gb-table tbody > tr:nth-child(even) > :first-child { border-start-start-radius: var(--r); border-end-start-radius: var(--r); }
 gb-table tbody > tr:nth-child(even) > :last-child { border-start-end-radius: var(--r); border-end-end-radius: var(--r); }
-gb-table tr > :first-child { position: sticky; inset-inline-start: 0; z-index: 1; }
+gb-table tr > :is(:first-child, .gb-table-pin) { position: sticky; inset-inline-start: 0; z-index: 1; }
 gb-table[sticky] thead th { position: sticky; inset-block-start: 0; z-index: 2; }
-gb-table[sticky] thead th:first-child { z-index: 3; }
+gb-table[sticky] thead th:is(:first-child, .gb-table-pin) { z-index: 3; }
+gb-table.gb-table-scrolled .gb-table-pin-end::after {
+  content: ""; position: absolute; inset-block: 0; inset-inline-end: 0; inline-size: 1px; background: var(--border);
+}
+gb-table .gb-table-drop { display: none; }
 gb-table .gb-table-num { text-align: end; }
 
 .gb-table-sort {
@@ -87,6 +92,15 @@ function toNumber(text: string): number {
   return cleaned === "" ? Number.NaN : Number(cleaned);
 }
 
+/** The columns that may drop, in the order they go: low, then medium, each from the right. */
+function dropOrder(headers: HTMLTableCellElement[], lead: number): number[] {
+  const order: number[] = [];
+  for (const level of ["low", "medium"])
+    for (let index = headers.length - 1; index >= lead; index--)
+      if (headers[index]?.dataset.priority === level) order.push(index);
+  return order;
+}
+
 /**
  * `<gb-table>`: a data table. Wrap a plain `<table>` in it:
  *
@@ -100,8 +114,15 @@ function toNumber(text: string): number {
  * ```
  *
  * Compact rows with tabular numbers and every other row raised; 40px rows on phones. A table wider
- * than its box scrolls sideways with the first column held in place.
+ * than its box first drops its low-priority columns, then scrolls sideways with the first column held
+ * in place, behind a thin edge.
  *
+ * - `data-priority="low"` on a header: that column drops out when the table doesn't fit its box
+ *   (the box, not the window), before anything scrolls. `data-priority="medium"` columns drop next.
+ *   Within a level the rightmost column goes first, one at a time, and they come back when there's
+ *   room again.
+ * - A row header (`<th scope="row">`) in the first three columns is held in place with the columns
+ *   before it, so a place column doesn't scroll the names away.
  * - `data-type="number"` on a header: that column lines up on the right and sorts as numbers.
  * - `data-sort` on a header makes it a button. Picking it sorts by that column, numbers high to low
  *   first and text A to Z, and again reverses it. The table fires a cancelable `sort` event
@@ -115,22 +136,97 @@ function toNumber(text: string): number {
  */
 export class GbTable extends HTMLElement {
   #observer: MutationObserver | undefined;
+  #resize: ResizeObserver | undefined;
+  #width = -1;
 
   connectedCallback(): void {
     adoptStyles(this.getRootNode());
     this.addEventListener("click", this.#onClick);
+    this.addEventListener("scroll", this.#onScroll, { passive: true });
     this.#sync();
     this.#observer ??= new MutationObserver(() => {
       this.#sync();
     });
     this.#observer.observe(this, { childList: true, subtree: true });
+    if (typeof ResizeObserver !== "undefined") {
+      // Only a new width changes what fits; dropping a column can change the height.
+      this.#resize ??= new ResizeObserver(() => {
+        if (this.clientWidth === this.#width) return;
+        this.#width = this.clientWidth;
+        this.fit();
+      });
+      this.#resize.observe(this);
+    }
+    // Columns get wider once the font is in.
+    if ("fonts" in document)
+      void document.fonts.ready.then(() => {
+        this.fit();
+      });
   }
 
   disconnectedCallback(): void {
     this.removeEventListener("click", this.#onClick);
+    this.removeEventListener("scroll", this.#onScroll);
     this.#observer?.disconnect();
     this.#observer = undefined;
+    this.#resize?.disconnect();
+    this.#resize = undefined;
+    this.#width = -1;
   }
+
+  /**
+   * Fits the table to its box: shows every column, drops low-priority ones until it fits, and holds
+   * the lead columns in place. Runs by itself when the box's width or the rows change.
+   */
+  fit(): void {
+    const table = this.table;
+    if (!table) return;
+    const headers = this.headers;
+    const columns = this.#columns(table, headers.length);
+    const lead = this.#leadColumns(table);
+    for (const cells of columns) for (const cell of cells) cell.classList.remove("gb-table-drop");
+    // A table with no width (hidden, or not laid out) can't tell what fits.
+    if (this.clientWidth > 0)
+      for (const index of dropOrder(headers, lead)) {
+        if (this.scrollWidth <= this.clientWidth) break;
+        for (const cell of columns[index] ?? []) cell.classList.add("gb-table-drop");
+      }
+    let start = 0;
+    columns.forEach((cells, index) => {
+      const pinned = index < lead;
+      for (const cell of cells) {
+        cell.classList.toggle("gb-table-pin", pinned);
+        cell.classList.toggle("gb-table-pin-end", index === lead - 1);
+        if (pinned && index > 0) cell.style.insetInlineStart = `${start}px`;
+        else cell.style.removeProperty("inset-inline-start");
+      }
+      if (pinned) start += headers[index]?.offsetWidth ?? 0;
+    });
+    this.#onScroll();
+    this.#observer?.takeRecords();
+  }
+
+  /** Each column's cells, its header first. */
+  #columns(table: HTMLTableElement, count: number): HTMLTableCellElement[][] {
+    const columns = this.headers.map((header) => [header]);
+    for (const body of bodiesOf(table))
+      for (const row of rowsOf(body))
+        cellsOf(row).forEach((cell, index) => {
+          if (index < count) columns[index]?.push(cell);
+        });
+    return columns;
+  }
+
+  /** How many columns stay in place: up to a row header in the first three, else the first. */
+  #leadColumns(table: HTMLTableElement): number {
+    const row = table.querySelector(":scope > tbody > tr");
+    const header = row ? cellsOf(row).findIndex((cell) => cell.tagName === "TH") : -1;
+    return header >= 0 && header < 3 ? header + 1 : 1;
+  }
+
+  readonly #onScroll = (): void => {
+    this.classList.toggle("gb-table-scrolled", Math.abs(this.scrollLeft) >= 1);
+  };
 
   /** The `<table>` inside. */
   get table(): HTMLTableElement | null {
@@ -201,7 +297,7 @@ export class GbTable extends HTMLElement {
         cellsOf(row).forEach((cell, index) => {
           cell.classList.toggle("gb-table-num", numeric.has(index));
         });
-    this.#observer?.takeRecords();
+    this.fit();
   }
 
   readonly #onClick = (event: MouseEvent): void => {

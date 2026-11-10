@@ -101,6 +101,42 @@
 </section>
 
 <section class="g-section">
+  <h2>Narrow: low-priority columns drop out</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <div style="inline-size: 343px">
+        <gb-table id="scoreboard-narrow"></gb-table>
+      </div>
+      <figcaption>343px: low Touches and Streak drop, then medium Deflects</figcaption>
+    </figure>
+    <figure class="g-state">
+      <div class="g-resize" style="inline-size: 560px">
+        <gb-table id="scoreboard-resize"></gb-table>
+      </div>
+      <figcaption>Drag the corner</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
+  <h2>Narrow: the names stay while rounds scroll</h2>
+  <div class="g-row">
+    <figure class="g-state">
+      <div style="inline-size: 343px">
+        <gb-table id="rounds-narrow"></gb-table>
+      </div>
+      <figcaption>343px, at the start</figcaption>
+    </figure>
+    <figure class="g-state">
+      <div style="inline-size: 343px">
+        <gb-table id="rounds-scrolled"></gb-table>
+      </div>
+      <figcaption>343px, scrolled: the edge shows</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="g-section">
   <h2>Sticky header</h2>
   <gb-table sticky style="--gb-table-height: 220px">
     <table>
@@ -122,4 +158,44 @@
     { length: 16 },
     (_, i) => `<tr><td>Log ${1060 - i}</td><td>${hosts[i % 4]}</td><td>${1 + (i % 3)}</td></tr>`,
   ).join("");
+
+  // A match scoreboard: place, then the name as the row header, and two columns that may drop.
+  const players = [
+    ["Kyoryu", 9, 14, 41, 47, 5, 2871, 24],
+    ["Shimada", 6, 11, 36, 40, 3, 2512, 9],
+    ["Ronin", 4, 9, 29, 33, 2, 1984, -6],
+    ["Tanuki", 2, 5, 18, 21, 1, 1460, -18],
+  ];
+  const scoreboard = `<table>
+    <thead><tr><th data-sort data-type="number" aria-sort="ascending">#</th><th data-sort>Player</th>
+      <th data-sort data-type="number">Won</th><th data-sort data-type="number">Kills</th>
+      <th data-sort data-type="number" data-priority="medium">Deflects</th>
+      <th data-sort data-type="number" data-priority="low">Touches</th>
+      <th data-sort data-type="number" data-priority="low">Streak</th>
+      <th data-sort data-type="number">Rating</th></tr></thead>
+    <tbody>${players
+      .map(
+        ([name, won, kills, deflects, touches, streak, rating, change], i) =>
+          `<tr><td>${i + 1}</td><th scope="row">${name}</th><td>${won}</td><td>${kills}</td>
+          <td>${deflects}</td><td>${touches}</td><td>${streak}</td>
+          <td data-value="${rating}">${rating.toLocaleString("en")} <gb-delta value="${change}"></gb-delta></td></tr>`,
+      )
+      .join("")}</tbody></table>`;
+  for (const id of ["scoreboard-narrow", "scoreboard-resize"])
+    document.getElementById(id).innerHTML = scoreboard;
+
+  // A rounds grid: a player column and 21 rounds, each the player's place.
+  const names = ["Kyoryu", "Shimada", "Ronin", "Tanuki", "Hanzo-main"];
+  const roundCells = (p) =>
+    Array.from({ length: 21 }, (_, r) => `<td>${((p + r * 3) % 5) + 1}</td>`).join("");
+  const grid = `<table><thead><tr><th>Player</th>${Array.from(
+    { length: 21 },
+    (_, r) => `<th data-type="number">${r + 1}</th>`,
+  ).join("")}</tr></thead>
+    <tbody>${names.map((name, p) => `<tr><th scope="row">${name}</th>${roundCells(p)}</tr>`).join("")}</tbody></table>`;
+  for (const id of ["rounds-narrow", "rounds-scrolled"])
+    document.getElementById(id).innerHTML = grid;
+  requestAnimationFrame(() => {
+    document.getElementById("rounds-scrolled").scrollLeft = 160;
+  });
 </script>

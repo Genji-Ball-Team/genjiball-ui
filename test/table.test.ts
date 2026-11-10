@@ -130,3 +130,108 @@ test("rows added later get the number column too", async () => {
 test("sticky is only an attribute, for the styles", () => {
   expect(make(true).hasAttribute("sticky")).toBe(true);
 });
+
+/** A table whose columns are 100px each, in a box `width` wide. */
+function sized(width: number, priorities: (string | null)[], rowHeader = -1): GbTable {
+  const box = { width };
+  const element = document.createElement("gb-table") as GbTable;
+  const head = priorities
+    .map((priority, index) => `<th${priority ? ` data-priority="${priority}"` : ""}>C${index}</th>`)
+    .join("");
+  const row = priorities
+    .map((_, index) =>
+      index === rowHeader ? `<th scope="row">r${index}</th>` : `<td>r${index}</td>`,
+    )
+    .join("");
+  element.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody><tr>${row}</tr><tr>${row}</tr></tbody></table>`;
+  Object.defineProperty(element, "clientWidth", { get: () => box.width });
+  Object.defineProperty(element, "scrollWidth", {
+    get: () =>
+      Math.max(
+        box.width,
+        element.headers.filter((h) => !h.classList.contains("gb-table-drop")).length * 100,
+      ),
+  });
+  document.body.append(element);
+  element.fit();
+  boxes.set(element, box);
+  return element;
+}
+
+const boxes = new WeakMap<GbTable, { width: number }>();
+
+function resize(element: GbTable, width: number): void {
+  const box = boxes.get(element);
+  if (box) box.width = width;
+  element.fit();
+}
+
+const dropped = (element: GbTable) =>
+  element.headers.map((header) => header.classList.contains("gb-table-drop"));
+
+test("low-priority columns drop out, rightmost first, only as far as needed", () => {
+  const element = sized(400, [null, "low", null, "low", null, "low"]);
+  expect(dropped(element)).toEqual([false, false, false, true, false, true]);
+  // The cells go with their header.
+  expect(cells(element, 5).every((cell) => cell.classList.contains("gb-table-drop"))).toBe(true);
+  expect(cells(element, 1).some((cell) => cell.classList.contains("gb-table-drop"))).toBe(false);
+});
+
+test("medium columns drop after every low one", () => {
+  const element = sized(200, [null, "medium", "low", null, "low"]);
+  expect(dropped(element)).toEqual([false, true, true, false, true]);
+});
+
+test("nothing drops when the table fits, and dropped columns come back with room", () => {
+  const element = sized(600, [null, "low", null]);
+  expect(dropped(element)).toEqual([false, false, false]);
+  resize(element, 200);
+  expect(dropped(element)).toEqual([false, true, false]);
+  resize(element, 300);
+  expect(dropped(element)).toEqual([false, false, false]);
+});
+
+test("unmarked columns never drop; the table scrolls instead", () => {
+  expect(dropped(sized(200, [null, null, null]))).toEqual([false, false, false]);
+});
+
+test("a table with no width drops nothing", () => {
+  expect(dropped(sized(0, [null, "low"]))).toEqual([false, false]);
+});
+
+test("the first column is held in place, with the edge on it", () => {
+  const element = sized(200, [null, null, null]);
+  expect(cells(element, 0).every((cell) => cell.classList.contains("gb-table-pin-end"))).toBe(true);
+  expect(cells(element, 1).some((cell) => cell.classList.contains("gb-table-pin"))).toBe(false);
+});
+
+test("a row header in the lead columns is held in place with the columns before it", () => {
+  const element = sized(200, [null, null, null, null], 1);
+  const pinned = (index: number) =>
+    [element.headers[index], ...cells(element, index)].every((cell) =>
+      cell?.classList.contains("gb-table-pin"),
+    );
+  expect([0, 1, 2].map(pinned)).toEqual([true, true, false]);
+  expect(cells(element, 1).every((cell) => cell.classList.contains("gb-table-pin-end"))).toBe(true);
+  expect(cells(element, 0).some((cell) => cell.classList.contains("gb-table-pin-end"))).toBe(false);
+});
+
+test("a row header further right only pins the first column", () => {
+  const element = sized(200, [null, null, null, null], 3);
+  expect(cells(element, 3).some((cell) => cell.classList.contains("gb-table-pin"))).toBe(false);
+});
+
+test("the edge shows once the table is scrolled sideways", () => {
+  const element = sized(200, [null, null, null]);
+  expect(element.classList.contains("gb-table-scrolled")).toBe(false);
+  Object.defineProperty(element, "scrollLeft", { get: () => 40 });
+  element.dispatchEvent(new Event("scroll"));
+  expect(element.classList.contains("gb-table-scrolled")).toBe(true);
+});
+
+test("sorting keeps dropped columns dropped", () => {
+  const element = sized(200, [null, "low", null]);
+  element.sort(0, "descending");
+  expect(dropped(element)).toEqual([false, true, false]);
+  expect(cells(element, 1).every((cell) => cell.classList.contains("gb-table-drop"))).toBe(true);
+});

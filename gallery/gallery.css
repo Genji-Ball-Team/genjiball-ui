@@ -171,6 +171,17 @@ code {
   max-width: 420px;
 }
 
+/* A box the viewer can drag narrower or wider, to watch a component fit itself. */
+.g-resize {
+  max-inline-size: 100%;
+  min-inline-size: 200px;
+  padding: 8px;
+  overflow: hidden;
+  resize: horizontal;
+  border: 1px dashed var(--border);
+  border-radius: var(--r);
+}
+
 /* Tokens */
 .g-swatches {
   display: grid;
