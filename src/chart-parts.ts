@@ -136,7 +136,8 @@ export function tierLine(
  * Names at the ends of close lines (texts placed at their x, their line's end in `data-end`) would
  * overprint: they're nudged apart, in their lines' order, a line of text apart (as tall as the text
  * really is, so a larger font still fits) and inside the chart. Names side by side, at ends far
- * apart over time, are left where they are.
+ * apart over time, are left where they are. When the chart is too short to fit them all apart, the
+ * names are hidden instead (the key still names every line).
  */
 export function spreadEndNames(labels: readonly SVGTextElement[], height: number): void {
   const size = labels[0] ? getComputedStyle(labels[0]).fontSize : "";
@@ -154,7 +155,20 @@ export function spreadEndNames(labels: readonly SVGTextElement[], height: number
     labels.map((label) => Number(label.dataset.end)),
     { gap, min: gap / 2, max: height - gap / 2, spans },
   );
+  // Too short a chart for all of them a line apart: no names at the ends at all rather than names
+  // printed over each other. The key above the chart still names every line.
+  const clash = spans.some(([left, right], a) =>
+    spans.some(
+      ([otherLeft, otherRight], b) =>
+        b > a &&
+        left < otherRight &&
+        otherLeft < right &&
+        Math.abs((ys[a] ?? 0) - (ys[b] ?? 0)) < gap - 0.5,
+    ),
+  );
   labels.forEach((label, n) => {
     label.setAttribute("y", String(ys[n] ?? 0));
+    if (clash) label.setAttribute("display", "none");
+    else label.removeAttribute("display");
   });
 }

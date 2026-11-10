@@ -138,6 +138,22 @@ test("three near-equal endings keep their order and all stay inside the chart", 
   }
 });
 
+test("a chart too short for every name a line apart draws none at the ends; the key stays", () => {
+  const chart = document.createElement("gb-compare-chart") as GbCompareChart;
+  chart.setAttribute("height", "36");
+  chart.series = ending([1700, 1700, 1700]);
+  document.body.append(chart);
+  const shown = [...(svgOf(chart)?.querySelectorAll(".name") ?? [])].filter(
+    (name) => name.getAttribute("display") !== "none",
+  );
+  expect(shown).toEqual([]);
+  expect(root(chart)?.querySelectorAll(".key li").length).toBe(3);
+  // With room again, the names come back.
+  chart.setAttribute("height", "240");
+  const back = [...(svgOf(chart)?.querySelectorAll(".name") ?? [])];
+  expect(back.map((name) => name.getAttribute("display"))).toEqual([null, null, null]);
+});
+
 test("names at ends far apart over time aren't pushed by each other", () => {
   const chart = make(
     [
