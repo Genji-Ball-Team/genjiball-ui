@@ -130,3 +130,195 @@ test("rows added later get the number column too", async () => {
 test("sticky is only an attribute, for the styles", () => {
   expect(make(true).hasAttribute("sticky")).toBe(true);
 });
+
+/** A table whose columns are 100px each, in a box `width` wide. */
+function sized(width: number, priorities: (string | null)[], rowHeader = -1): GbTable {
+  const box = { width };
+  const element = document.createElement("gb-table") as GbTable;
+  const head = priorities
+    .map((priority, index) => `<th${priority ? ` data-priority="${priority}"` : ""}>C${index}</th>`)
+    .join("");
+  const row = priorities
+    .map((_, index) =>
+      index === rowHeader ? `<th scope="row">r${index}</th>` : `<td>r${index}</td>`,
+    )
+    .join("");
+  element.innerHTML = `<table><thead><tr>${head}</tr></thead><tbody><tr>${row}</tr><tr>${row}</tr></tbody></table>`;
+  Object.defineProperty(element, "clientWidth", { get: () => box.width });
+  Object.defineProperty(element, "scrollWidth", {
+    get: () =>
+      Math.max(
+        box.width,
+        element.headers.filter((h) => !h.classList.contains("gb-table-drop")).length * 100,
+      ),
+  });
+  document.body.append(element);
+  element.fit();
+  boxes.set(element, box);
+  return element;
+}
+
+const boxes = new WeakMap<GbTable, { width: number }>();
+
+function resize(element: GbTable, width: number): void {
+  const box = boxes.get(element);
+  if (box) box.width = width;
+  element.fit();
+}
+
+const dropped = (element: GbTable) =>
+  element.headers.map((header) => header.classList.contains("gb-table-drop"));
+
+test("low-priority columns drop out, rightmost first, only as far as needed", () => {
+  const element = sized(400, [null, "low", null, "low", null, "low"]);
+  expect(dropped(element)).toEqual([false, false, false, true, false, true]);
+  // The cells go with their header.
+  expect(cells(element, 5).every((cell) => cell.classList.contains("gb-table-drop"))).toBe(true);
+  expect(cells(element, 1).some((cell) => cell.classList.contains("gb-table-drop"))).toBe(false);
+});
+
+test("medium columns drop after every low one", () => {
+  const element = sized(200, [null, "medium", "low", null, "low"]);
+  expect(dropped(element)).toEqual([false, true, true, false, true]);
+});
+
+test("nothing drops when the table fits, and dropped columns come back with room", () => {
+  const element = sized(600, [null, "low", null]);
+  expect(dropped(element)).toEqual([false, false, false]);
+  resize(element, 200);
+  expect(dropped(element)).toEqual([false, true, false]);
+  resize(element, 300);
+  expect(dropped(element)).toEqual([false, false, false]);
+});
+
+test("unmarked columns never drop; the table scrolls instead", () => {
+  expect(dropped(sized(200, [null, null, null]))).toEqual([false, false, false]);
+});
+
+test("a table with no width drops nothing", () => {
+  expect(dropped(sized(0, [null, "low"]))).toEqual([false, false]);
+});
+
+test("the first column is held in place, with the edge on it", () => {
+  const element = sized(200, [null, null, null]);
+  expect(cells(element, 0).every((cell) => cell.classList.contains("gb-table-pin-end"))).toBe(true);
+  expect(cells(element, 1).some((cell) => cell.classList.contains("gb-table-pin"))).toBe(false);
+});
+
+test("a row header in the lead columns is held in place with the columns before it", () => {
+  const element = sized(200, [null, null, null, null], 1);
+  const pinned = (index: number) =>
+    [element.headers[index], ...cells(element, index)].every((cell) =>
+      cell?.classList.contains("gb-table-pin"),
+    );
+  expect([0, 1, 2].map(pinned)).toEqual([true, true, false]);
+  expect(cells(element, 1).every((cell) => cell.classList.contains("gb-table-pin-end"))).toBe(true);
+  expect(cells(element, 0).some((cell) => cell.classList.contains("gb-table-pin-end"))).toBe(false);
+});
+
+test("a row header further right only pins the first column", () => {
+  const element = sized(200, [null, null, null, null], 3);
+  expect(cells(element, 3).some((cell) => cell.classList.contains("gb-table-pin"))).toBe(false);
+});
+
+test("the edge shows once the table is scrolled sideways", () => {
+  const element = sized(200, [null, null, null]);
+  expect(element.classList.contains("gb-table-scrolled")).toBe(false);
+  Object.defineProperty(element, "scrollLeft", { get: () => 40 });
+  element.dispatchEvent(new Event("scroll"));
+  expect(element.classList.contains("gb-table-scrolled")).toBe(true);
+});
+
+test("sorting keeps dropped columns dropped", () => {
+  const element = sized(200, [null, "low", null]);
+  element.sort(0, "descending");
+  expect(dropped(element)).toEqual([false, true, false]);
+  expect(cells(element, 1).every((cell) => cell.classList.contains("gb-table-drop"))).toBe(true);
+});
+
+/** A table from `html` in a box `width` wide, each column 100px while its header shows. */
+function shaped(width: number, html: string): GbTable {
+  const element = document.createElement("gb-table") as GbTable;
+  element.innerHTML = `<table>${html}</table>`;
+  Object.defineProperty(element, "clientWidth", { get: () => width });
+  Object.defineProperty(element, "scrollWidth", {
+    get: () =>
+      Math.max(
+        width,
+        element.headers.filter((h) => !h.classList.contains("gb-table-drop")).length * 100,
+      ),
+  });
+  document.body.append(element);
+  element.fit();
+  return element;
+}
+
+const droppedText = (element: GbTable) =>
+  [...(element.table?.querySelectorAll(".gb-table-drop") ?? [])].map((cell) => cell.textContent);
+
+test("a footer's cells drop with their column", () => {
+  const element = shaped(
+    200,
+    `<thead><tr><th>Player</th><th data-priority="low">Saves</th><th>Rating</th></tr></thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr></tbody>
+    <tfoot><tr><td>Total</td><td>3 saves</td><td>2,000</td></tr></tfoot>`,
+  );
+  expect(droppedText(element)).toEqual(["Saves", "3", "3 saves"]);
+});
+
+test("a multi-row header drops the column's cell in every header row", () => {
+  const element = shaped(
+    200,
+    `<thead>
+      <tr><th>Who</th><th>Extra</th><th>Main</th></tr>
+      <tr><th>Player</th><th data-priority="low">Saves</th><th>Rating</th></tr>
+    </thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr></tbody>`,
+  );
+  expect(droppedText(element)).toEqual(["Extra", "Saves", "3"]);
+});
+
+test("a header coming down from the row above (rowspan) still lines its column up", () => {
+  const element = shaped(
+    200,
+    `<thead>
+      <tr><th rowspan="2">Player</th><th>Saves</th><th>Rating</th></tr>
+      <tr><th data-priority="low">Total</th><th>Now</th></tr>
+    </thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr></tbody>`,
+  );
+  expect(element.headers.map((h) => h.textContent)).toEqual(["Player", "Total", "Now"]);
+  expect(droppedText(element)).toEqual(["Saves", "Total", "3"]);
+});
+
+test("a column under a cell spanning several never drops", () => {
+  const element = shaped(
+    100,
+    `<thead><tr><th>Player</th><th data-priority="low">Goals</th><th data-priority="low">Saves</th><th data-priority="low">Note</th></tr></thead>
+    <tbody><tr><td>a</td><td>1</td><td>3</td><td>x</td></tr></tbody>
+    <tfoot><tr><td>Total</td><td colspan="2">4</td><td>x</td></tr></tfoot>`,
+  );
+  // Note drops; Goals and Saves share the footer's 4, so they stay and the table scrolls.
+  expect(droppedText(element)).toEqual(["Note", "x", "x"]);
+});
+
+test("rows that don't line up drop nothing: the table scrolls with its pinned column", () => {
+  const element = shaped(
+    100,
+    `<thead><tr><th>Player</th><th data-priority="low">Saves</th><th>Rating</th></tr></thead>
+    <tbody><tr><td>a</td><td>3</td><td>2,000</td></tr><tr><td colspan="2">b</td><td>1</td><td>extra</td></tr></tbody>`,
+  );
+  expect(droppedText(element)).toEqual([]);
+  expect(element.headers[0]?.classList.contains("gb-table-pin-end")).toBe(true);
+});
+
+test("cells after a rowspan line up by their real column", () => {
+  const element = shaped(
+    600,
+    `<thead><tr><th>Group</th><th>Player</th><th data-type="number">Rating</th></tr></thead>
+    <tbody><tr><td rowspan="2">A</td><td>x</td><td>1</td></tr><tr><td>y</td><td>2</td></tr></tbody>`,
+  );
+  const second = element.table?.querySelectorAll("tbody > tr")[1];
+  expect(second?.lastElementChild?.classList.contains("gb-table-num")).toBe(true);
+  expect(second?.firstElementChild?.classList.contains("gb-table-num")).toBe(false);
+});

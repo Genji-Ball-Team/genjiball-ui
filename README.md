@@ -378,12 +378,14 @@ import "@genji-ball-team/ui/delta.js"; // registers <gb-delta>
       <tr>
         <th data-sort>Map</th>
         <th data-sort data-type="number" aria-sort="descending">Goals</th>
+        <th data-type="number" data-priority="low">Saves</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Ayutthaya</td>
+        <th scope="row">Ayutthaya</th>
         <td>4</td>
+        <td>9</td>
       </tr>
     </tbody>
   </table>
@@ -391,7 +393,7 @@ import "@genji-ball-team/ui/delta.js"; // registers <gb-delta>
 ```
 
 - `<gb-leaderboard>` is the brand sheet's leaderboard: one rounded row per player with the tier bar (`data-tier`), place, name, tier chip, rating and change. `data-title="god"` or `"demigod"` gives a row its title look, the only rows that move (still under reduced motion). Put the name first in its cell, in an `<a>` or `<span>`, so a long one is cut short. In a box narrower than 440px the tier chip moves under the name. The header row is read by screen readers but not shown.
-- `<gb-table>` is any other data table: compact rows, tabular numbers, every other row raised, 40px rows on phones. A table too wide for its box scrolls sideways with the first column held still. `data-type="number"` on a header lines its column up on the right. `data-sort` makes a header a sort button: numbers sort high to low first, text A to Z, and `aria-sort` follows. It fires a cancelable `sort` event (`detail: { column, direction }`) first; cancel it to sort on the server. A cell's `data-value` is sorted on instead of its text. `sticky` keeps the header in view while the table scrolls in its own box, up to `--gb-table-height` (70vh).
+- `<gb-table>` is any other data table: compact rows, tabular numbers, every other row raised, 40px rows on phones. A table too wide for its box first drops its low-priority columns, then scrolls sideways with the first column held still behind a thin edge. `data-priority="low"` on a header lets that column drop out when the table doesn't fit its box (the box's width, not the window's), before anything scrolls; `data-priority="medium"` columns go after every low one. Within a level the rightmost goes first, one at a time, and they come back when there's room. A dropped column can't be shown on that screen, so mark only columns people can do without there, never the row's name, its main value or anything they need to read. Columns are counted through the `thead` (every row of it), each `tbody` and the `tfoot`, `colspan` and `rowspan` included; a column under a cell spanning several never drops, and if the rows don't all come to the same number of columns nothing drops and the table scrolls instead. A row header (`<th scope="row">`) in the first three columns is held in place along with the columns before it, so a place column doesn't scroll the names away. `fit()` refits by hand; it runs by itself when the box's width or the rows change. `data-type="number"` on a header lines its column up on the right. `data-sort` makes a header a sort button: numbers sort high to low first, text A to Z, and `aria-sort` follows. It fires a cancelable `sort` event (`detail: { column, direction }`) first; cancel it to sort on the server. A cell's `data-value` is sorted on instead of its text. `sticky` keeps the header in view while the table scrolls in its own box, up to `--gb-table-height` (70vh).
 - `<gb-delta value="-11">` is a rating change: "▲ 24" in `up`, "▼ 11" in `down`, a muted "–" for 0. Screen readers hear "up 24".
 
 Both tables keep a real `<table>` in the page, so they show before the script loads. Neither has a shadow root; their styles are added to the page once.
