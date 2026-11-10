@@ -2,7 +2,7 @@ import { fadeKeyframes, surfaceStyles } from "./overlay.js";
 
 // No shadow root, like the field: the input stays a native element in the page, so it submits with
 // its form and autofills. The list is an overlay in the top layer where the browser has one.
-export const styles = `gb-search { display: grid; grid-template-columns: minmax(0, 1fr); gap: 5px; }
+export const styles = `gb-search { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 5px; }
 gb-search[hidden] { display: none; }
 .gb-search-label { font-size: var(--small-size); font-weight: 600; color: var(--soft); }
 gb-search[hide-label] > .gb-search-label {
