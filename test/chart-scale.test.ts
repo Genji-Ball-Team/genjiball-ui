@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { chartScale, lineCrosses, ordinal } from "../src/chart-scale.js";
+import { chartScale, lineCrosses, ordinal, spreadLabels } from "../src/chart-scale.js";
 
 test("the range holds every value, with room above and below", () => {
   const scale = chartScale([1800, 1850, 2000]);
@@ -63,4 +63,29 @@ test("whether a line runs through a box", () => {
   expect(lineCrosses(line, ...box(150, -7))).toBe(true); // over the flat part
   expect(lineCrosses(line, ...box(300, 0))).toBe(false); // past its end
   expect(lineCrosses([{ x: 50, y: 50 }], ...box(30, 40))).toBe(true); // one point
+});
+
+test("labels at close ends are spread a gap apart, in order", () => {
+  expect(spreadLabels([50, 52], { gap: 13, max: 200 })).toEqual([50, 63]);
+  expect(spreadLabels([52, 50], { gap: 13, max: 200 })).toEqual([63, 50]);
+  expect(spreadLabels([60, 60, 61], { gap: 13, max: 200 })).toEqual([60, 73, 86]);
+  expect(spreadLabels([10, 100], { gap: 13, max: 200 })).toEqual([10, 100]);
+});
+
+test("spread labels stay between min and max", () => {
+  expect(spreadLabels([198, 199, 200], { gap: 13, min: 6, max: 194 })).toEqual([168, 181, 194]);
+  expect(spreadLabels([2, 1, 0], { gap: 13, min: 6, max: 194 })).toEqual([32, 19, 6]);
+});
+
+test("labels side by side don't push each other; overlapping ones do", () => {
+  const spans = [
+    [0, 40],
+    [100, 140],
+    [120, 160],
+  ] as const;
+  expect(spreadLabels([50, 50, 50], { gap: 13, max: 200, spans })).toEqual([50, 50, 63]);
+});
+
+test("a line with no end gets no label", () => {
+  expect(spreadLabels([Number.NaN, 50], { gap: 13, max: 200 })).toEqual([Number.NaN, 50]);
 });

@@ -13,6 +13,18 @@
 </section>
 
 <section class="g-section">
+  <h2>Close endings: names nudged apart, in order</h2>
+  <div class="g-grid">
+    <gb-panel label="Two players 20 apart">
+      <gb-compare-chart id="close-two" label="Two players ending 20 apart"></gb-compare-chart>
+    </gb-panel>
+    <gb-panel label="Three within 6">
+      <gb-compare-chart id="close-three" label="Three players ending within 6"></gb-compare-chart>
+    </gb-panel>
+  </div>
+</section>
+
+<section class="g-section">
   <h2>One point each</h2>
   <gb-panel label="Ratings">
     <gb-compare-chart id="one"></gb-compare-chart>
@@ -74,6 +86,28 @@
     { name: "Hanzo_Main", points: [{ rating: 1812 }] },
     { name: "Dragonblade", points: [{ rating: 1790 }] },
   ];
+  // Lines that climb from far apart to end within a few points of each other.
+  const closing = (ends) =>
+    ends.map(([name, end], n) => ({
+      name,
+      points: Array.from({ length: 12 }, (_, i) => ({
+        rating: Math.round(
+          1300 +
+            n * 120 +
+            ((end - 1300 - n * 120) * i) / 11 +
+            (i < 11 ? (i % 3) * 15 * (n - 1) : 0),
+        ),
+      })),
+    }));
+  document.getElementById("close-two").series = closing([
+    ["Hanzo_Main", 1702],
+    ["Dragonblade", 1682],
+  ]);
+  document.getElementById("close-three").series = closing([
+    ["Hanzo_Main", 1705],
+    ["Dragonblade", 1708],
+    ["Ryujin", 1702],
+  ]);
   for (const chart of [byTime, byMatch])
     chart.addEventListener("open", (event) => event.preventDefault());
 </script>

@@ -224,11 +224,6 @@ export class GbCompareChart extends HTMLElement {
     svg.classList.toggle("links", links);
     svg.setAttribute("aria-label", this.#label(series, links));
 
-    // Names at close ends would overprint: they're spread apart.
-    const nameYs = spreadLabels(
-      this.#lines.map((spots) => spots.at(-1)?.y ?? Number.NaN),
-      { gap: 13, max: height - 6 },
-    );
     const box = { width, height, pad: room, lines: () => this.#vertices() };
     const tierLines = this.#tiers
       .filter((tier) => tier.threshold > scale.lo && tier.threshold < scale.hi)
@@ -242,9 +237,10 @@ export class GbCompareChart extends HTMLElement {
     svg.append(
       gridLines(scale.ticks, y, { width, pad: room }),
       ...tierLines.map((tier) => tier.group),
-      ...series.map((_, n) => this.#line(n, names.text[n] ?? "", nameYs[n] ?? 0)),
+      ...series.map((_, n) => this.#line(n, names.text[n] ?? "")),
       cursor,
     );
+    this.#spreadNames(height);
     for (const tier of tierLines) tier.fit();
     if (kept >= 0) this.#show(kept, this.#owner);
   }
@@ -256,7 +252,10 @@ export class GbCompareChart extends HTMLElement {
     const text = series.map(({ name }) =>
       name.length > limit ? `${name.slice(0, limit - 1)}…` : name,
     );
-    return { text, room: 12 + Math.max(0, ...text.map((name) => name.length)) * 6.4 };
+    // The names are sized in rem: a page with larger text needs more room for them.
+    const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const letter = 6.4 * (rem / 16);
+    return { text, room: 12 + Math.max(0, ...text.map((name) => name.length)) * letter };
   }
 
   /** Works out where every point is drawn, and the stops the cursor and the keys move between. */
@@ -285,7 +284,34 @@ export class GbCompareChart extends HTMLElement {
     return this.#byTime ? this.#lines.map(stepCorners) : this.#lines;
   }
 
-  #line(n: number, name: string, nameY: number): SVGGElement {
+  /**
+   * Names at close ends would overprint: they're nudged apart, in their lines' order, a line of text
+   * apart (as tall as the text really is, so a larger font still fits) and inside the chart. Names
+   * side by side, at ends far apart over time, are left where they are.
+   */
+  #spreadNames(height: number): void {
+    const labels = [...this.#svg.querySelectorAll<SVGTextElement>(".name")];
+    const size = labels[0] ? getComputedStyle(labels[0]).fontSize : "";
+    // A line of text apart, at least 14px. happy-dom leaves a rem size unresolved.
+    const gap = /px$/.test(size) ? Math.max(14, Number.parseFloat(size) * 1.3) : 14;
+    const spans = labels.map((label) => {
+      const x = Number(label.getAttribute("x"));
+      const width =
+        typeof label.getComputedTextLength === "function" && label.getComputedTextLength() > 0
+          ? label.getComputedTextLength()
+          : (label.textContent ?? "").length * 6.4;
+      return [x, x + width] as const;
+    });
+    const ys = spreadLabels(
+      labels.map((label) => Number(label.dataset.end)),
+      { gap, min: gap / 2, max: height - gap / 2, spans },
+    );
+    labels.forEach((label, n) => {
+      label.setAttribute("y", String(ys[n] ?? 0));
+    });
+  }
+
+  #line(n: number, name: string): SVGGElement {
     const group = draw("g", { class: `s${n}` });
     const vertices = this.#vertices()[n] ?? [];
     const end = vertices.at(-1);
@@ -302,8 +328,9 @@ export class GbCompareChart extends HTMLElement {
     const label = draw("text", {
       class: "name",
       x: end.x + 9,
-      y: nameY,
+      y: end.y,
       dy: "0.35em",
+      "data-end": end.y,
     });
     label.textContent = name;
     group.append(label);

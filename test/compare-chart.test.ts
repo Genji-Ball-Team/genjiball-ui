@@ -76,15 +76,92 @@ test("only three players are drawn, and long names are cut on the chart only", (
   expect(root(long)?.querySelector(".key")?.textContent).toBe("A very long player name");
 });
 
+const nameYs = (chart: GbCompareChart) =>
+  [...(svgOf(chart)?.querySelectorAll(".name") ?? [])].map((name) =>
+    Number(name.getAttribute("y")),
+  );
+
+/** Players whose lines end at `ends`, with a tier far below so the chart spans a few hundred. */
+const ending = (ends: number[]) =>
+  ends.map((rating, n) => ({
+    name: ["Ana", "Ben", "Cy"][n] ?? "",
+    points: [{ rating: 1400 + n * 40 }, { rating: 1900 - n * 50 }, { rating }],
+  }));
+
+/** Each name at least a line apart from the next, top to bottom in the order the lines end. */
+function expectApartInOrder(ys: number[], ends: number[]): void {
+  const order = ends.map((_, n) => n).sort((a, b) => (ends[b] ?? 0) - (ends[a] ?? 0));
+  const sorted = order.map((n) => ys[n] ?? 0);
+  sorted.slice(1).forEach((y, i) => {
+    expect(y - (sorted[i] ?? 0)).toBeGreaterThanOrEqual(14);
+  });
+}
+
 test("close line ends keep their names apart", () => {
   const close = ["Ana", "Ben"].map((name) => ({
     name,
     points: [{ rating: 1500 }, { rating: 1500 }],
   }));
-  const ys = [...(svgOf(make(close))?.querySelectorAll(".name") ?? [])].map((name) =>
-    Number(name.getAttribute("y")),
+  const ys = nameYs(make(close));
+  expect(Math.abs((ys[0] ?? 0) - (ys[1] ?? 0))).toBeGreaterThanOrEqual(14);
+});
+
+test("two near-equal endings: the names are nudged apart, the higher one stays on top", () => {
+  for (const ends of [
+    [1620, 1600],
+    [1600, 1620],
+    [1610, 1610],
+  ]) {
+    const ys = nameYs(make(ending(ends)));
+    expectApartInOrder(ys, ends);
+    document.body.replaceChildren();
+  }
+});
+
+test("three near-equal endings keep their order and all stay inside the chart", () => {
+  for (const ends of [
+    [1600, 1610, 1605],
+    [1700, 1700, 1700],
+    // At the top and the bottom of the range, where nudging could push a name out.
+    [1950, 1948, 1946],
+    [1400, 1402, 1398],
+  ]) {
+    const chart = make(ending(ends));
+    const ys = nameYs(chart);
+    expectApartInOrder(ys, ends);
+    const height = Number(svgOf(chart)?.getAttribute("height"));
+    for (const y of ys) {
+      expect(y).toBeGreaterThan(0);
+      expect(y).toBeLessThan(height);
+    }
+    document.body.replaceChildren();
+  }
+});
+
+test("names at ends far apart over time aren't pushed by each other", () => {
+  const chart = make(
+    [
+      {
+        name: "Ana",
+        points: [
+          { rating: 1500, at: start },
+          { rating: 1600, at: start + 10 * hour },
+        ],
+      },
+      {
+        name: "Ben",
+        points: [
+          { rating: 1520, at: start },
+          { rating: 1600, at: start + 2 * hour },
+        ],
+      },
+    ],
+    "time",
   );
-  expect(Math.abs((ys[0] ?? 0) - (ys[1] ?? 0))).toBeGreaterThanOrEqual(13);
+  const ends = [...(svgOf(chart)?.querySelectorAll(".last") ?? [])].map((dot) =>
+    Number(dot.getAttribute("cy")),
+  );
+  expect(nameYs(chart)).toEqual(ends);
 });
 
 test("only tiers near the ratings shown get a line and chip", () => {
